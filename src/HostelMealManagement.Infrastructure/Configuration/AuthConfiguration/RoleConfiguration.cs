@@ -18,9 +18,16 @@ public class RoleConfiguration: IEntityTypeConfiguration<Role>
         }, new Role
         {
             Id = 2,
-            Name = "Employee",
-            NormalizedName = "EMPLOYEE",
-            Description= "Default role assigned to all employees."
-        });
+            Name = "Manager",
+            NormalizedName = "Manager",
+            Description= "Default role assigned to Manager."
+        }, new Role
+        {
+            Id = 3,
+            Name = "Member",
+            NormalizedName = "Member",
+            Description = "Default role assigned to Member."
+        }
+        );
     }
 }
