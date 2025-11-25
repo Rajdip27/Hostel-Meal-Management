@@ -18,6 +18,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\HostelMealManagement.Core\HostelMealManagement.Core.csproj" />
+	  <ProjectReference Include="..\HostelMealManagement.Infrastructure\HostelMealManagement.Infrastructure.csproj" />
 	</ItemGroup>
 
 </Project>
