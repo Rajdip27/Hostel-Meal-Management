@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace HostelMealManagement.Application.Repositories.Base;
 
-internal interface IBaseService<T> where T : AuditableEntity
+public interface IBaseService<T> where T : AuditableEntity
 {
     IQueryable<T> All();
     IQueryable<T> All(params Expression<Func<T, Object>>[] includeProperties);

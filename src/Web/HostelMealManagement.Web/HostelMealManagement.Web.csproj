@@ -24,4 +24,8 @@
     <ProjectReference Include="..\..\HostelMealManagement.Infrastructure\HostelMealManagement.Infrastructure.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="wwwroot\images\profiles\" />
+	</ItemGroup>
+
 </Project>

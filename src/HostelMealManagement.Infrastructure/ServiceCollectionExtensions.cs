@@ -34,14 +34,14 @@ public static class ServiceCollectionExtensions
         // Register Identity
         services.AddIdentity<User, Role>(options =>
         {
-            options.Password.RequiredLength = 6;
-            options.Password.RequireNonAlphanumeric = false;
-            options.Password.RequireDigit = true;
-            options.Password.RequireLowercase = true;
-            options.Password.RequireUppercase = false;
+            options.Password.RequireDigit = false;            // no digit required
+            options.Password.RequiredLength = 6;             // minimum length
+            options.Password.RequireNonAlphanumeric = false; // no special character required
+            options.Password.RequireLowercase = false;       // no lowercase required
+            options.Password.RequireUppercase = false;       // no uppercase required
         })
-        .AddEntityFrameworkStores<ApplicationDbContext>()
-        .AddDefaultTokenProviders();
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
 
         services.AddHttpContextAccessor();
 

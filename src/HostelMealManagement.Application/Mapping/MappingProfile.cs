@@ -8,7 +8,7 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        
+        CreateMap<Member, MemberVm>().ReverseMap();
     }
 }
 
