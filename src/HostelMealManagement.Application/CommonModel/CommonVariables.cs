@@ -1,6 +1,6 @@
 ﻿namespace HostelMealManagement.Application.CommonModel;
 
-internal class CommonVariables
+public class CommonVariables
 {
     public const int pageIndex = 0;
     public const int pageSize = 10;

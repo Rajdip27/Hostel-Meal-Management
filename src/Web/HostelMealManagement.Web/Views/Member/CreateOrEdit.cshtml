@@ -1,4 +1,6 @@
-﻿@model HostelMealManagement.Application.ViewModel.MemberVm
+﻿@using HostelMealManagement.Application.CommonModel
+@using HostelMealManagement.Application.Helpers
+@model HostelMealManagement.Application.ViewModel.MemberVm
 
 @{
     ViewData["Title"] = Model.Id > 0 ? "Edit Member" : "Create Member";
@@ -152,7 +154,7 @@
             <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" onchange="previewImage(event)" />
             <span asp-validation-for="ImageFile" class="text-danger"></span>
 
-            <img id="imagePreview" src="@Model.Picture" alt="Image Preview" class="img-thumbnail mt-2" style="max-height:150px;" />
+            <img id="imagePreview" src="~/@UrlHelpers.GetEventImageUrl(Model.Picture, CommonVariables.ProfileLocation)" alt="Image Preview" class="img-thumbnail mt-2" style="max-height:150px;" />
         </div>
 
         <div class="col-md-6 mb-3">
