@@ -163,6 +163,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<long?>("MemberId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -217,7 +220,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7df63497-38dc-494a-aa0b-49b1514c9f89",
+                            ConcurrencyStamp = "56ee446f-b35f-408a-b38c-dcb3c6ad3cb9",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@localhost.com",
@@ -226,9 +229,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAECuGp+gsZ782LUaXDFgWZerhX/sEi16F5kXZdRPcYI2KOSsNXFnnoI6p2eTHiKErLQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBldgMVS+odxoI8nslMWuh+dtiBbG9ryMQecD/nuwQdDMY3jdohnJve+FtAAaULTvA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4b783480-d4fc-491b-bf93-e95b856eb338",
+                            SecurityStamp = "5e134bf6-2fec-4b16-b107-da8a28ebebc7",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -236,7 +239,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 2L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d9057670-7671-4e6c-b331-11fc26bfda01",
+                            ConcurrencyStamp = "19bbe0c7-696c-4d96-96e3-ba40910856c1",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "employee@localhost.com",
@@ -245,9 +248,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "EMPLOYEE@LOCALHOST.COM",
                             NormalizedUserName = "EMPLOYEE@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAAn9JSSvtm5p7j5JtX6fa+3ojABnj+RDayiyrMngoMHOvb0sh7leWpTExmphUb6Xg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMm6xceV16t28lDy4vqh1+TbJWY4q5Sq3IYCGUNQzYOs1XzfxIMz1nyQvqfKYQ9A6g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "95280c4b-aae9-4554-9c18-65435562109b",
+                            SecurityStamp = "bbaef947-be55-42b9-89ab-0339aeb02564",
                             TwoFactorEnabled = false,
                             UserName = "employee@localhost.com"
                         });
@@ -417,6 +420,130 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AuditLogs");
+                });
+
+            modelBuilder.Entity("HostelMealManagement.Core.Entities.Member", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("DateOfBirth")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("EmergencyContact")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmergencyName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FatherName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("HouseBill")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset>("JoiningDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("MaritalStatus")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("MealStatus")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MemberCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<long?>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("ModifiedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("MotherName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("OtherBill")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("PermanentAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Picture")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PresentAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Relationship")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Religion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("UtilityBill")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("MemberCode")
+                        .IsUnique();
+
+                    b.HasIndex("NID")
+                        .IsUnique();
+
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique();
+
+                    b.ToTable("Member", (string)null);
                 });
 
             modelBuilder.Entity("HostelMealManagement.Core.Entities.Auth.IdentityModel+RoleClaim", b =>

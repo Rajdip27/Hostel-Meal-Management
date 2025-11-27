@@ -1,0 +1,182 @@
+﻿@model HostelMealManagement.Application.ViewModel.MemberVm
+
+@{
+    ViewData["Title"] = Model.Id > 0 ? "Edit Member" : "Create Member";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="CreateOrEdit" asp-controller="Member"  method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+    <input type="hidden" asp-for="Id" />
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="MemberCode" class="form-label"></label>
+            <input asp-for="MemberCode" class="form-control" />
+            <span asp-validation-for="MemberCode" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="FatherName" class="form-label"></label>
+            <input asp-for="FatherName" class="form-control" />
+            <span asp-validation-for="FatherName" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="MotherName" class="form-label"></label>
+            <input asp-for="MotherName" class="form-control" />
+            <span asp-validation-for="MotherName" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="PermanentAddress" class="form-label"></label>
+            <input asp-for="PermanentAddress" class="form-control" />
+            <span asp-validation-for="PermanentAddress" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="PresentAddress" class="form-label"></label>
+            <input asp-for="PresentAddress" class="form-control" />
+            <span asp-validation-for="PresentAddress" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="JoiningDate" class="form-label"></label>
+            <input asp-for="JoiningDate" class="form-control" type="date" />
+            <span asp-validation-for="JoiningDate" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="DateOfBirth" class="form-label"></label>
+            <input asp-for="DateOfBirth" class="form-control" type="date" />
+            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="PhoneNumber" class="form-label"></label>
+            <input asp-for="PhoneNumber" class="form-control" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" type="email" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="EmergencyContact" class="form-label"></label>
+            <input asp-for="EmergencyContact" class="form-control" />
+            <span asp-validation-for="EmergencyContact" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="EmergencyName" class="form-label"></label>
+            <input asp-for="EmergencyName" class="form-control" />
+            <span asp-validation-for="EmergencyName" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="Relationship" class="form-label"></label>
+            <input asp-for="Relationship" class="form-control" />
+            <span asp-validation-for="Relationship" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="Religion" class="form-label"></label>
+            <select asp-for="Religion" class="form-select">
+                <option value="">Select Religion</option>
+                <option value="Buddhism">Buddhism</option>
+                <option value="Christianity">Christianity</option>
+                <option value="Hinduism">Hinduism</option>
+                <option value="Islam">Islam</option>
+                <option value="Jain">Jain</option>
+                <option value="OtherReligions">Other Religions</option>
+            </select>
+            <span asp-validation-for="Religion" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="Gender" class="form-label"></label>
+            <select asp-for="Gender" class="form-select">
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+            <span asp-validation-for="Gender" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="MaritalStatus" class="form-label"></label>
+            <input asp-for="MaritalStatus" type="checkbox" class="form-check-input" />
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="NID" class="form-label"></label>
+            <input asp-for="NID" class="form-control" />
+            <span asp-validation-for="NID" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="MealStatus" class="form-label"></label>
+            <input asp-for="MealStatus" type="checkbox" class="form-check-input" />
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label asp-for="HouseBill" class="form-label"></label>
+            <input asp-for="HouseBill" class="form-control" />
+            <span asp-validation-for="HouseBill" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label asp-for="UtilityBill" class="form-label"></label>
+            <input asp-for="UtilityBill" class="form-control" />
+            <span asp-validation-for="UtilityBill" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label asp-for="OtherBill" class="form-label"></label>
+            <input asp-for="OtherBill" class="form-control" />
+            <span asp-validation-for="OtherBill" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="ImageFile" class="form-label"></label>
+            <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" onchange="previewImage(event)" />
+            <span asp-validation-for="ImageFile" class="text-danger"></span>
+
+            <img id="imagePreview" src="@Model.Picture" alt="Image Preview" class="img-thumbnail mt-2" style="max-height:150px;" />
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="Password" class="form-label"></label>
+            <input asp-for="Password" type="password" class="form-control" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function () {
+                const output = document.getElementById('imagePreview');
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+}

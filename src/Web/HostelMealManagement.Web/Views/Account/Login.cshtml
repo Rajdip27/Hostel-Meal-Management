@@ -41,18 +41,15 @@
         }
 
         @@keyframes fadeIn {
-            from
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
 
-        {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Header */
@@ -144,11 +141,15 @@
 
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
+                <!-- Email -->
                 <label asp-for="Email" class="fw-semibold mb-1">Email</label>
-                <input asp-for="Email" class="form-control mb-3" placeholder="Enter your email" />
+                <input asp-for="Email" class="form-control mb-1" placeholder="Enter your email" />
+                <span asp-validation-for="Email" class="text-danger small mb-3 d-block"></span>
 
+                <!-- Password -->
                 <label asp-for="Password" class="fw-semibold mb-1">Password</label>
-                <input asp-for="Password" type="password" class="form-control mb-3" placeholder="Enter your password" />
+                <input asp-for="Password" type="password" class="form-control mb-1" placeholder="Enter your password" />
+                <span asp-validation-for="Password" class="text-danger small mb-3 d-block"></span>
 
                 <button type="submit" class="btn btn-login w-100 mt-2">
                     <i class="fas fa-sign-in-alt me-2"></i>Login
@@ -168,6 +169,11 @@
 
         </div>
     </div>
+
+    <!-- Validation Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
 
 </body>
 </html>

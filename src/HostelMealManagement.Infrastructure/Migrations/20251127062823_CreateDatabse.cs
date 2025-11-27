@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HostelMealManagement.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDatabase : Migration
+    public partial class CreateDatabse : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -44,6 +44,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     CreatedBy = table.Column<long>(type: "bigint", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedBy = table.Column<long>(type: "bigint", nullable: true),
+                    MemberId = table.Column<long>(type: "bigint", nullable: true),
                     UpdatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -88,6 +89,45 @@ namespace HostelMealManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AuditLogs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Member",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MemberCode = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FatherName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MotherName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PermanentAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PresentAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    JoiningDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    DateOfBirth = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    EmergencyContact = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EmergencyName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Relationship = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Religion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MaritalStatus = table.Column<bool>(type: "bit", nullable: false),
+                    NID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Picture = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MealStatus = table.Column<bool>(type: "bit", nullable: false),
+                    HouseBill = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    UtilityBill = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    OtherBill = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedBy = table.Column<long>(type: "bigint", nullable: false),
+                    ModifiedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    ModifiedBy = table.Column<long>(type: "bigint", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Member", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -215,11 +255,11 @@ namespace HostelMealManagement.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedBy", "CreatedDate", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "Name", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UpdatedBy", "UpdatedDate", "UserName" },
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedBy", "CreatedDate", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "MemberId", "Name", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UpdatedBy", "UpdatedDate", "UserName" },
                 values: new object[,]
                 {
-                    { 1L, 0, "7df63497-38dc-494a-aa0b-49b1514c9f89", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "admin@localhost.com", true, false, null, "", "ADMIN@LOCALHOST.COM", "ADMIN@LOCALHOST.COM", "AQAAAAIAAYagAAAAECuGp+gsZ782LUaXDFgWZerhX/sEi16F5kXZdRPcYI2KOSsNXFnnoI6p2eTHiKErLQ==", null, false, "4b783480-d4fc-491b-bf93-e95b856eb338", false, null, null, "admin@localhost.com" },
-                    { 2L, 0, "d9057670-7671-4e6c-b331-11fc26bfda01", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "employee@localhost.com", true, false, null, "", "EMPLOYEE@LOCALHOST.COM", "EMPLOYEE@LOCALHOST.COM", "AQAAAAIAAYagAAAAEAAn9JSSvtm5p7j5JtX6fa+3ojABnj+RDayiyrMngoMHOvb0sh7leWpTExmphUb6Xg==", null, false, "95280c4b-aae9-4554-9c18-65435562109b", false, null, null, "employee@localhost.com" }
+                    { 1L, 0, "56ee446f-b35f-408a-b38c-dcb3c6ad3cb9", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "admin@localhost.com", true, false, null, null, "", "ADMIN@LOCALHOST.COM", "ADMIN@LOCALHOST.COM", "AQAAAAIAAYagAAAAEBldgMVS+odxoI8nslMWuh+dtiBbG9ryMQecD/nuwQdDMY3jdohnJve+FtAAaULTvA==", null, false, "5e134bf6-2fec-4b16-b107-da8a28ebebc7", false, null, null, "admin@localhost.com" },
+                    { 2L, 0, "19bbe0c7-696c-4d96-96e3-ba40910856c1", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "employee@localhost.com", true, false, null, null, "", "EMPLOYEE@LOCALHOST.COM", "EMPLOYEE@LOCALHOST.COM", "AQAAAAIAAYagAAAAEMm6xceV16t28lDy4vqh1+TbJWY4q5Sq3IYCGUNQzYOs1XzfxIMz1nyQvqfKYQ9A6g==", null, false, "bbaef947-be55-42b9-89ab-0339aeb02564", false, null, null, "employee@localhost.com" }
                 });
 
             migrationBuilder.InsertData(
@@ -274,6 +314,30 @@ namespace HostelMealManagement.Infrastructure.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Member_Email",
+                table: "Member",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Member_MemberCode",
+                table: "Member",
+                column: "MemberCode",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Member_NID",
+                table: "Member",
+                column: "NID",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Member_PhoneNumber",
+                table: "Member",
+                column: "PhoneNumber",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -296,6 +360,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "AuditLogs");
+
+            migrationBuilder.DropTable(
+                name: "Member");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
