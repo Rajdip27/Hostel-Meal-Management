@@ -159,7 +159,10 @@
 
         <div class="col-md-6 mb-3">
             <label asp-for="Password" class="form-label"></label>
-            <input asp-for="Password" type="password" class="form-control" />
+            <div class="input-group">
+                <input asp-for="Password" type="password" class="form-control" id="Password" />
+                <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">Show</button>
+            </div>
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
     </div>
@@ -179,6 +182,17 @@
                 output.src = reader.result;
             };
             reader.readAsDataURL(event.target.files[0]);
+        }
+            function togglePassword() {
+            const passwordInput = document.getElementById('Password');
+            const btn = event.currentTarget;
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                btn.textContent = 'Hide';
+            } else {
+                passwordInput.type = 'password';
+                btn.textContent = 'Show';
+            }
         }
     </script>
 }
