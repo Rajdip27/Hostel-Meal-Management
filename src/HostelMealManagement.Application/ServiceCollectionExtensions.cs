@@ -5,6 +5,7 @@ using HostelMealManagement.Application.Logging;
 using HostelMealManagement.Application.Mapping;
 using HostelMealManagement.Application.Repositories;
 using HostelMealManagement.Application.Repositories.Auth;
+using HostelMealManagement.Application.Repositories.Base;
 using HostelMealManagement.Application.Services;
 using HostelMealManagement.Application.Services.Pdf;
 using Microsoft.Extensions.Configuration;
@@ -17,8 +18,10 @@ public static class ServiceCollectionExtensions
     public static void AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IAuthService, AuthService>();
-        services. AddScoped<IExcelUploadService, ExcelUploadService>();
+        services.AddScoped<IMemberRepository, MemberRepository>();
+        services.AddScoped<IExcelUploadService, ExcelUploadService>();
         services.AddScoped(typeof(IAppLogger<>), typeof(AppLogger<>));
+        services.AddTransient(typeof(IBaseService<>), typeof(BaseService<>));
         services.AddSingleton<IFileService, FileService>();
         services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
         // Register your PDF service

@@ -1,0 +1,54 @@
+﻿@using HostelMealManagement.Application.ViewModel
+@model IEnumerable<MemberVm>
+@{
+    ViewData["Title"] = "Members List";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+    <a class="btn btn-primary" asp-controller="Member" asp-action="CreateOrEdit">Add New Member</a>
+</p>
+
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Member Code</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Joining Date</th>
+            <th>Date of Birth</th>
+            <th>Meal Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var member in Model)
+        {
+            <tr>
+                <td>@member.MemberCode</td>
+                <td>@member.Name</td>
+                <td>@member.PhoneNumber</td>
+                <td>@member.Email</td>
+                <td>@member.JoiningDate.ToString("yyyy-MM-dd")</td>
+                <td>@member.DateOfBirth.ToString("yyyy-MM-dd")</td>
+                <td>
+                    @if (member.MealStatus)
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Inactive</span>
+                    }
+                </td>
+                <td>
+                    <a class="btn btn-sm btn-info" asp-action="CreateOrEdit" asp-route-id="@member.Id">Edit</a>
+                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@member.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
