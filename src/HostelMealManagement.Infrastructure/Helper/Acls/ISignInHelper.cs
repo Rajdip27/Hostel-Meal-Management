@@ -34,7 +34,7 @@ public class SignInHelper : ISignInHelper
     public DateTimeOffset JwtExpiresAt => DateTimeOffset.UtcNow; // calculate from token if needed
     public string RequestOrigin => _httpContextAccessor.HttpContext?.Request?.Headers["Origin"].ToString();
 
-    public string Fullname => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.GivenName);
+    public string Fullname => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
     public string MobileNumber => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.MobilePhone);
 
 }
