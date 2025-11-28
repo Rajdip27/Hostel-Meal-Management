@@ -109,8 +109,8 @@ public class MemberVm:BaseEntity
     [Display(Name = "Other Bill")]
     public decimal OtherBill { get; set; }
     [NotMapped]
-    public IFormFile ImageFile { get; set; }
+    public IFormFile? ImageFile { get; set; }
     [NotMapped]
-    public string Password { get; set; } = string.Empty;    
+    public string? Password { get; set; } = string.Empty;    
 
 }

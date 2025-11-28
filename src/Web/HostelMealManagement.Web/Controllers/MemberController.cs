@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using HostelMealManagement.Application.Logging;
 using HostelMealManagement.Application.ViewModel;
+using HostelMealManagement.Core.Entities;
+using HostelMealManagement.Infrastructure.Helper.Acls;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using static HostelMealManagement.Core.Entities.Auth.IdentityModel;
 
 namespace HostelMealManagement.Web.Controllers;
 
@@ -11,40 +15,60 @@ public class MemberController : Controller
     private readonly IMemberRepository _memberRepository;
     private readonly IMapper _mapper;
     private readonly IAppLogger<MemberController> _logger;
+    private ISignInHelper SignInHelper;
+    private readonly UserManager<User> _userManager;
 
-    public MemberController(IMemberRepository memberRepository, IMapper mapper, IAppLogger<MemberController> logger)
+    public MemberController(IMemberRepository memberRepository, IMapper mapper, IAppLogger<MemberController> logger, ISignInHelper signInHelper, UserManager<User> userManager)
     {
         _memberRepository = memberRepository;
         _mapper = mapper;
         _logger = logger;
+        SignInHelper = signInHelper;
+        _userManager = userManager;
     }
-
     [HttpGet("/Member")]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         try
         {
-            #if DEBUG
-            _logger.LogInfo("Start fetching members...");
-            var stopwatch = Stopwatch.StartNew();
-            #endif
-            // Fetch fresh data
-            var members = await _memberRepository.GetAllAsync();
-            var memberVmList = _mapper.Map<List<MemberVm>>(members);
+            var roles = SignInHelper.Roles;
+            var userId = SignInHelper.UserId;
 
-            #if DEBUG
-            stopwatch.Stop();
-            _logger.LogInfo($"Fetching members took {stopwatch.ElapsedMilliseconds}ms");
-            #endif
-            _logger.LogInfo($"Fetched {members.Count()} members");
+            IEnumerable<Member> members;
+
+            if (roles.Contains("Member") && userId.HasValue)
+            {
+                // Get the User record
+                var user = await _userManager.FindByIdAsync(userId.Value.ToString());
+
+                if (user?.MemberId != null)
+                {
+                    // Get the Member associated with this user
+                    var member = await _memberRepository.FindAsync(m => m.Id == user.MemberId.Value);
+                    members = member != null ? new List<Member> { member } : new List<Member>();
+                }
+                else
+                {
+                    members = new List<Member>();
+                }
+            }
+            else
+            {
+                // Admin/Manager → fetch all members
+                members = await _memberRepository.GetAllAsync();
+            }
+
+            var memberVmList = _mapper.Map<List<MemberVm>>(members);
             return View(memberVmList);
         }
         catch (Exception ex)
         {
-            _logger.LogError("Error while fetching members", ex);
+            _logger.LogError( "Error fetching members", ex);
             return StatusCode(500, "An error occurred while fetching members.");
         }
     }
+
+
 
     [HttpGet]
     [Route("Member/CreateOrEdit/{Id?}")]

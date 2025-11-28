@@ -1,7 +1,6 @@
 ﻿@inject HostelMealManagement.Infrastructure.Helper.Acls.ISignInHelper SignInHelper
 @{
-    var name = SignInHelper.Fullname;
-    var phone = SignInHelper.MobileNumber;
+    bool isMember = SignInHelper.Roles.Contains("Member");
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -9,7 +8,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Hostel Meal Management</title>
-
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
@@ -235,22 +233,35 @@
 
         <h3>Hostel Meal</h3>
 
-        <a href="/Dashboard" class="hmm-nav-link">
-            <i class="fas fa-home"></i>
-            <span class="hmm-sidebar-text">Dashboard</span>
-        </a>
-        <a href="#" class="hmm-nav-link">
-            <i class="fas fa-utensils"></i>
-            <span class="hmm-sidebar-text">Meal</span>
-        </a>
-        <a href="/Member" class="hmm-nav-link">
-            <i class="fas fa-users"></i>
-            <span class="hmm-sidebar-text">Members</span>
-        </a>
-        <a href="#" class="hmm-nav-link">
-            <i class="fas fa-chart-line"></i>
-            <span class="hmm-sidebar-text">Reports</span>
-        </a>
+        @if (isMember)
+        {
+            <!-- ONLY Member Menu -->
+            <a href="/Member" class="hmm-nav-link">
+                <i class="fas fa-users"></i>
+                <span class="hmm-sidebar-text">Members</span>
+            </a>
+        }
+        else
+        {
+            <!-- ALL OTHER MENUS -->
+            <a href="/Dashboard" class="hmm-nav-link">
+                <i class="fas fa-home"></i>
+                <span class="hmm-sidebar-text">Dashboard</span>
+            </a>
+            <a href="/Member" class="hmm-nav-link">
+                <i class="fas fa-users"></i>
+                <span class="hmm-sidebar-text">Members</span>
+            </a>
+            <a href="#" class="hmm-nav-link">
+                <i class="fas fa-utensils"></i>
+                <span class="hmm-sidebar-text">Meal</span>
+            </a>
+            <a href="#" class="hmm-nav-link">
+                <i class="fas fa-chart-line"></i>
+                <span class="hmm-sidebar-text">Reports</span>
+            </a>
+        }
+
         <a asp-action="Logout" asp-controller="Account" class="hmm-nav-link">
             <i class="fas fa-sign-out-alt"></i>
             <span class="hmm-sidebar-text">Logout</span>
