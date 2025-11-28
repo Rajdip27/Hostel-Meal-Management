@@ -35,7 +35,7 @@ public static class ServiceCollectionExtensions
         services.AddIdentity<User, Role>(options =>
         {
             options.Password.RequireDigit = false;            // no digit required
-            options.Password.RequiredLength = 6;             // minimum length
+            options.Password.RequiredLength = 1;             // minimum length
             options.Password.RequireNonAlphanumeric = false; // no special character required
             options.Password.RequireLowercase = false;       // no lowercase required
             options.Password.RequireUppercase = false;       // no uppercase required

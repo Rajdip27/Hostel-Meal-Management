@@ -1,6 +1,7 @@
 ﻿@using HostelMealManagement.Application.CommonModel
 @using HostelMealManagement.Application.Helpers
 @model HostelMealManagement.Application.ViewModel.MemberVm
+@inject HostelMealManagement.Infrastructure.Helper.Acls.ISignInHelper SignInHelper
 
 @{
     ViewData["Title"] = Model.Id > 0 ? "Edit Member" : "Create Member";
@@ -14,7 +15,9 @@
     <div class="row">
         <div class="col-md-6 mb-3">
             <label asp-for="MemberCode" class="form-label"></label>
-            <input asp-for="MemberCode" class="form-control" />
+            <input asp-for="MemberCode" class="form-control"
+                   readonly="@SignInHelper.ReadOnlyByRole("Admin", "Manager")" />
+
             <span asp-validation-for="MemberCode" class="text-danger"></span>
         </div>
 
