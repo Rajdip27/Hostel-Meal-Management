@@ -3,6 +3,7 @@ using HostelMealManagement.Application.Logging;
 using HostelMealManagement.Application.ViewModel;
 using HostelMealManagement.Core.Entities;
 using HostelMealManagement.Infrastructure.Helper.Acls;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -10,6 +11,7 @@ using static HostelMealManagement.Core.Entities.Auth.IdentityModel;
 
 namespace HostelMealManagement.Web.Controllers;
 
+[Authorize]
 public class MemberController : Controller
 {
     private readonly IMemberRepository _memberRepository;
