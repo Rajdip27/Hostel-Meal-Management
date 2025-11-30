@@ -13,6 +13,7 @@ using static HostelMealManagement.Core.Entities.Auth.IdentityModel;
 public interface IMemberRepository : IBaseService<Member>
 {
     Task<bool> CreateOrUpdateMemberWithUserAsync(MemberVm vm,CancellationToken cancellationToken);
+    Task<User?> GetUserByMemberIdAsync(long memberId, CancellationToken cancellationToken = default);
 }
 
 public class MemberRepository : BaseService<Member>, IMemberRepository
@@ -121,4 +122,9 @@ public class MemberRepository : BaseService<Member>, IMemberRepository
         }
     }
 
+    public async Task<User?> GetUserByMemberIdAsync(long memberId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Set<User>()
+                             .FirstOrDefaultAsync(u => u.MemberId == memberId, cancellationToken);
+    }
 }

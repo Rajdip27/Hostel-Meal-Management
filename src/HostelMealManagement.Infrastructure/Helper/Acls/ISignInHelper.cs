@@ -15,6 +15,7 @@ public interface ISignInHelper
     public string AccessToken { get; }
     public DateTimeOffset JwtExpiresAt { get; }
     public string RequestOrigin { get; }
+    public long? MemberId { get; }
 }
 public class SignInHelper : ISignInHelper
 {
@@ -36,5 +37,10 @@ public class SignInHelper : ISignInHelper
 
     public string Fullname => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
     public string MobileNumber => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.MobilePhone);
+
+    public long? MemberId =>
+    long.TryParse(_httpContextAccessor.HttpContext?.User?.FindFirst("MemberId")?.Value, out var id)
+        ? id
+        : null;
 
 }
