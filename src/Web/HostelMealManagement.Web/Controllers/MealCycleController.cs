@@ -10,13 +10,13 @@ using System.Diagnostics;
 
 namespace HostelMealManagement.Web.Controllers;
 
-[Authorize(Roles = Permissions.Admin)]
+[Authorize]
 public class MealCycleController(IMealCycleRepository mealCycleRepository, IAppLogger<MealCycleController> logger, IMapper mapper) : Controller
 {
     private readonly IMealCycleRepository _mealCycleRepository = mealCycleRepository;
     private readonly IAppLogger<MealCycleController> _logger = logger;
     private readonly IMapper _mapper = mapper;
-
+    [Route("mealcycle")]
     public async Task<IActionResult> Index()
     {
         try
@@ -26,11 +26,12 @@ public class MealCycleController(IMealCycleRepository mealCycleRepository, IAppL
             var stopwatch = Stopwatch.StartNew();
             #endif
             var mealCycles = await _mealCycleRepository.GetAllAsync();
+            
             #if DEBUG
             _logger.LogInfo($"GetAllAsync took {stopwatch.ElapsedMilliseconds}ms");
             #endif
             _logger.LogInfo("Fetched MealCycles");
-            return View(mealCycles);
+            return View(_mapper.Map<List<MealCycleVm>>(mealCycles));
         }
         catch (Exception ex)
         {
@@ -57,7 +58,7 @@ public class MealCycleController(IMealCycleRepository mealCycleRepository, IAppL
                     return RedirectToAction(nameof(Index));
                 }
 
-                return View(mealCycleVm);
+                return View(_mapper.Map<MealCycleVm>(mealCycleVm));
             }
 
             return View(new MealCycleVm());
