@@ -20,6 +20,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IMemberRepository, MemberRepository>();
         services.AddScoped<IMealCycleRepository, MealCycleRepository>();
+        services.AddScoped<IMealBazarRepository, MealBazarRepository>();
         services.AddScoped<IExcelUploadService, ExcelUploadService>();
         services.AddScoped(typeof(IAppLogger<>), typeof(AppLogger<>));
         services.AddTransient(typeof(IBaseService<>), typeof(BaseService<>));

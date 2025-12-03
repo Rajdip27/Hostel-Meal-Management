@@ -52,12 +52,45 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 
+    <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Date Range Example</title>
+    <!-- Make sure jQuery is loaded -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+    <label>Start Date:
+        <input type="date" id="StartDate">
+    </label>
+    <br><br>
+
+    <label>End Date:
+        <input type="date" id="EndDate" readonly>
+    </label>
+    <br><br>
+
+    <label>Total Days:
+        <input type="number" id="TotalDays" readonly>
+    </label>
+
     <script>
         $(function () {
 
             function parseDate(value) {
+                if (!value) return null;
                 let p = value.split("-");
-                return new Date(p[0], p[1] - 1, p[2]);  // local date, NOT UTC
+                // year, monthIndex (0–11), day
+                return new Date(p[0], p[1] - 1, p[2]);
+            }
+
+            function formatDateLocal(date) {
+                const y = date.getFullYear();
+                const m = String(date.getMonth() + 1).padStart(2, "0");
+                const d = String(date.getDate()).padStart(2, "0");
+                return `${y}-${m}-${d}`;
             }
 
             function setEndDate() {
@@ -65,14 +98,16 @@
                 if (!startVal) return;
 
                 let d = parseDate(startVal);
+                if (!d) return;
+
                 let y = d.getFullYear();
                 let m = d.getMonth();
 
-                // Last day of selected month
+                // Last day of selected month (local time)
                 let end = new Date(y, m + 1, 0);
 
-                // Format YYYY-MM-DD
-                let e = end.toISOString().slice(0, 10);
+                // Format as YYYY-MM-DD in local time (no UTC shift)
+                let e = formatDateLocal(end);
 
                 $("#EndDate").val(e);
 
@@ -82,11 +117,22 @@
             function calcDays() {
                 let s = parseDate($("#StartDate").val());
                 let e = parseDate($("#EndDate").val());
-                let days = ((e - s) / 86400000) + 1;
+                if (!s || !e) return;
+
+                // Difference in milliseconds, then convert to days
+                let diffMs = e - s;
+                let days = diffMs / 86400000 + 1; // +1 for inclusive range
+
                 $("#TotalDays").val(days);
             }
 
+            // When start date changes, auto-set end date and total days
             $("#StartDate").on("change", setEndDate);
+        });
+    </script>
+
+</body>
+</html>
 
 
 }
