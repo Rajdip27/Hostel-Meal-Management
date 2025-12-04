@@ -1,10 +1,8 @@
-﻿using AutoMapper;
-using HostelMealManagement.Application.Helpers;
+﻿using HostelMealManagement.Application.Helpers;
 using HostelMealManagement.Application.Logging;
 using HostelMealManagement.Application.Repositories;
 using HostelMealManagement.Application.ViewModel;
 using HostelMealManagement.Core.Entities;
-using HostelMealManagement.Infrastructure.Migrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -13,12 +11,10 @@ namespace HostelMealManagement.Web.Controllers;
 
 [Authorize]
 public class MealBazarController(IMealBazarRepository mealBazarRepository,
-                                IAppLogger<MealBazarController> logger,
-                                IMapper mapper) : Controller
+                                IAppLogger<MealBazarController> logger) : Controller
 {
     private readonly IMealBazarRepository _mealBazarRepository = mealBazarRepository;
     private readonly IAppLogger<MealBazarController> _logger = logger;
-    private readonly IMapper _mapper = mapper;
 
     // ===================== INDEX ============================
     [Route("mealbazar")]
@@ -37,7 +33,11 @@ public class MealBazarController(IMealBazarRepository mealBazarRepository,
 #endif
 
             _logger.LogInfo("Fetched MealBazars");
-            return View(_mapper.Map<List<MealBazarVm>>(mealBazars));
+
+    
+           
+
+            return View(mealBazars);
         }
         catch (Exception ex)
         {
@@ -64,8 +64,7 @@ public class MealBazarController(IMealBazarRepository mealBazarRepository,
                     TempData["AlertType"] = "Error";
                     return RedirectToAction(nameof(Index));
                 }
-
-                return View(_mapper.Map<MealBazarVm>(mealBazar));
+                return View(mealBazar);
             }
 
             return View(new MealBazarVm());
@@ -92,7 +91,21 @@ public class MealBazarController(IMealBazarRepository mealBazarRepository,
 
         try
         {
-            var mealBazarEntity = _mapper.Map<Core.Entities.MealBazar>(mealBazarVm);
+            // MANUAL MAP TO ENTITY
+            var mealBazarEntity = new MealBazar
+            {
+                Id = mealBazarVm.Id,
+                BazarDate = mealBazarVm.BazarDate,
+                BazarAmount = mealBazarVm.BazarAmount,
+                Description = mealBazarVm.Description,
+                Items = mealBazarVm.Items.Select(i => new MealBazarItem
+                {
+                    Id = i.Id,
+                    ProductName = i.ProductName,
+                    Quantity = i.Quantity,
+                    Price = i.Price
+                }).ToList()
+            };
 
             if (mealBazarVm.Id > 0)
             {
