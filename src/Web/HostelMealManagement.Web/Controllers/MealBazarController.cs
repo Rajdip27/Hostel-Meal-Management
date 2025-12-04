@@ -56,7 +56,7 @@ public class MealBazarController(IMealBazarRepository mealBazarRepository,
             if (id > 0)
             {
                 _logger.LogInfo($"Editing MealBazar Id={id}");
-                var mealBazar = await _mealBazarRepository.FindAsync(id);
+                var mealBazar = await _mealBazarRepository.GetByIdAsync(id);
 
                 if (mealBazar == null)
                 {
@@ -91,33 +91,18 @@ public class MealBazarController(IMealBazarRepository mealBazarRepository,
 
         try
         {
-            // MANUAL MAP TO ENTITY
-            var mealBazarEntity = new MealBazar
-            {
-                Id = mealBazarVm.Id,
-                BazarDate = mealBazarVm.BazarDate,
-                BazarAmount = mealBazarVm.BazarAmount,
-                Description = mealBazarVm.Description,
-                Items = mealBazarVm.Items.Select(i => new MealBazarItem
-                {
-                    Id = i.Id,
-                    ProductName = i.ProductName,
-                    Quantity = i.Quantity,
-                    Price = i.Price
-                }).ToList()
-            };
 
             if (mealBazarVm.Id > 0)
             {
                 _logger.LogInfo($"Updating MealBazar Id={mealBazarVm.Id}");
-                await _mealBazarRepository.UpdateAsync(mealBazarEntity);
+                await _mealBazarRepository.UpsertAsync(mealBazarVm);
 
                 TempData["AlertMessage"] = "MealBazar updated successfully!";
             }
             else
             {
                 _logger.LogInfo("Creating new MealBazar");
-                await _mealBazarRepository.InsertAsync(mealBazarEntity);
+                await _mealBazarRepository.UpsertAsync(mealBazarVm);
 
                 TempData["AlertMessage"] = "MealBazar created successfully!";
             }
@@ -141,7 +126,7 @@ public class MealBazarController(IMealBazarRepository mealBazarRepository,
     {
         try
         {
-            var mealBazar = await _mealBazarRepository.FindAsync(id);
+            var mealBazar = await _mealBazarRepository.GetByIdAsync(id);
 
             if (mealBazar == null)
             {
@@ -150,7 +135,7 @@ public class MealBazarController(IMealBazarRepository mealBazarRepository,
                 return NotFound();
             }
 
-            await _mealBazarRepository.DeleteAsync(mealBazar);
+            await _mealBazarRepository.DeleteAsync(id);
 
             TempData["AlertMessage"] = "MealBazar deleted successfully!";
             TempData["AlertType"] = "Success";

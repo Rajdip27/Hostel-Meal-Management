@@ -2,17 +2,12 @@
 
 @{
     ViewData["Title"] = "Meal Bazar List";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <h2>Meal Bazar List</h2>
 
 <a class="btn btn-primary mb-2" asp-action="CreateOrEdit">Add New Meal Bazar</a>
-
-@if (TempData["AlertMessage"] != null)
-{
-    <div class="alert alert-@TempData["AlertType"]">@TempData["AlertMessage"]</div>
-}
-
 <table class="table table-bordered table-striped">
     <thead>
         <tr>

@@ -18,73 +18,119 @@ public class MealBazarRepository(ApplicationDbContext context) : BaseService<Mea
     public async Task<bool> UpsertAsync(MealBazarVm vm)
     {
         using var trx = await context.Database.BeginTransactionAsync();
-
         try
         {
             MealBazar bazar;
 
             if (vm.Id == 0)
             {
-                // INSERT
+                // CREATE new master with children
                 bazar = new MealBazar
                 {
                     BazarDate = vm.BazarDate,
                     BazarAmount = vm.BazarAmount,
-                    Description = vm.Description
+                    Description = vm.Description,
+                    Items = vm.Items?.Select(i => new MealBazarItem
+                    {
+                        ProductName = i.ProductName,
+                        Quantity = i.Quantity,
+                        Price = i.Price
+                    }).ToList() ?? new List<MealBazarItem>()
                 };
 
                 context.Set<MealBazar>().Add(bazar);
-                await context.SaveChangesAsync();
-            }
-            else
-            {
-                // UPDATE
-                bazar = await context.Set<MealBazar>()
-                    .Include(x => x.Items)
-                    .FirstOrDefaultAsync(x => x.Id == vm.Id);
-
-                if (bazar == null) return false; // Record not found
-
-                bazar.BazarDate = vm.BazarDate;
-                bazar.BazarAmount = vm.BazarAmount;
-                bazar.Description = vm.Description;
-
-                context.Set<MealBazar>().Update(bazar);
-
-                // Remove old items
-                context.Set<MealBazarItem>().RemoveRange(bazar.Items);
+                await context.SaveChangesAsync(); // obtains bazar.Id
+                await trx.CommitAsync();
+                return true;
             }
 
-            // Insert items
-            var items = vm.Items.Select(itemVm => new MealBazarItem
+            // ===== UPDATE =====
+            // Load tracked entity including items
+            bazar = await context.Set<MealBazar>()
+                .Include(b => b.Items)
+                .FirstOrDefaultAsync(b => b.Id == vm.Id);
+
+            if (bazar == null) return false;
+
+            // Update master fields
+            bazar.BazarDate = vm.BazarDate;
+            bazar.BazarAmount = vm.BazarAmount;
+            bazar.Description = vm.Description;
+
+            // Make dictionary of DB items for quick lookup
+            var dbItemsById = bazar.Items.ToDictionary(x => x.Id);
+
+            // IDs sent from UI (existing ones)
+            var vmExistingIds = vm.Items?.Where(x => x.Id > 0).Select(x => x.Id).ToHashSet()
+                                ?? new HashSet<long>();
+
+            // 1) Update existing and add new
+            foreach (var itemVm in vm.Items ?? Enumerable.Empty<MealBazarItemVm>())
             {
-                MealBazarId = bazar.Id,
-                ProductName = itemVm.ProductName,
-                Quantity = itemVm.Quantity,
-                Price = itemVm.Price
-            }).ToList();
+                if (itemVm.Id > 0)
+                {
+                    // update existing
+                    if (dbItemsById.TryGetValue(itemVm.Id, out var dbItem))
+                    {
+                        dbItem.ProductName = itemVm.ProductName;
+                        dbItem.Quantity = itemVm.Quantity;
+                        dbItem.Price = itemVm.Price;
+                        // no explicit Update() required — it's tracked
+                        dbItemsById.Remove(itemVm.Id); // mark as processed
+                    }
+                    else
+                    {
+                        // edge: UI sent an Id but not present in DB -> treat as add
+                        var newItem = new MealBazarItem
+                        {
+                            MealBazarId = bazar.Id,
+                            ProductName = itemVm.ProductName,
+                            Quantity = itemVm.Quantity,
+                            Price = itemVm.Price
+                        };
+                        bazar.Items.Add(newItem);
+                    }
+                }
+                else
+                {
+                    // new item
+                    var newItem = new MealBazarItem
+                    {
+                        MealBazarId = bazar.Id,
+                        ProductName = itemVm.ProductName,
+                        Quantity = itemVm.Quantity,
+                        Price = itemVm.Price
+                    };
+                    bazar.Items.Add(newItem);
+                }
+            }
 
-            // Add all at once
-            context.Set<MealBazarItem>().AddRange(items);
+            // 2) Delete DB items that were not present in UI (remaining in dbItemsById)
+            if (dbItemsById.Any())
+            {
+                context.Set<MealBazarItem>().RemoveRange(dbItemsById.Values);
+            }
 
+            // Save once for all changes
             await context.SaveChangesAsync();
             await trx.CommitAsync();
-
-            return true; // Success
+            return true;
         }
         catch
         {
             await trx.RollbackAsync();
-            return false; // Failed
+            return false;
         }
     }
+
+
 
     /// <summary>
     /// Get MealBazar by Id including items
     /// </summary>
     public async Task<MealBazarVm> GetByIdAsync(long id)
     {
-        var entity = await context.Set<MealBazarVm>()
+        var entity = await context.Set<MealBazar>()
             .Include(x => x.Items)
             .FirstOrDefaultAsync(x => x.Id == id);
 
@@ -153,4 +199,9 @@ public class MealBazarRepository(ApplicationDbContext context) : BaseService<Mea
                 }).ToList()
             }).ToListAsync();
     }
+
+
+   
+
+
 }
