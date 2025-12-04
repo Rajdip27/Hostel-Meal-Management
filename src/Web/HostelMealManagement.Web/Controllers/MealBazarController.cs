@@ -1,10 +1,8 @@
-﻿using AutoMapper;
-using HostelMealManagement.Application.Helpers;
+﻿using HostelMealManagement.Application.Helpers;
 using HostelMealManagement.Application.Logging;
 using HostelMealManagement.Application.Repositories;
 using HostelMealManagement.Application.ViewModel;
 using HostelMealManagement.Core.Entities;
-using HostelMealManagement.Infrastructure.Migrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -13,12 +11,10 @@ namespace HostelMealManagement.Web.Controllers;
 
 [Authorize]
 public class MealBazarController(IMealBazarRepository mealBazarRepository,
-                                IAppLogger<MealBazarController> logger,
-                                IMapper mapper) : Controller
+                                IAppLogger<MealBazarController> logger) : Controller
 {
     private readonly IMealBazarRepository _mealBazarRepository = mealBazarRepository;
     private readonly IAppLogger<MealBazarController> _logger = logger;
-    private readonly IMapper _mapper = mapper;
 
     // ===================== INDEX ============================
     [Route("mealbazar")]
@@ -37,7 +33,11 @@ public class MealBazarController(IMealBazarRepository mealBazarRepository,
 #endif
 
             _logger.LogInfo("Fetched MealBazars");
-            return View(_mapper.Map<List<MealBazarVm>>(mealBazars));
+
+    
+           
+
+            return View(mealBazars);
         }
         catch (Exception ex)
         {
@@ -56,7 +56,7 @@ public class MealBazarController(IMealBazarRepository mealBazarRepository,
             if (id > 0)
             {
                 _logger.LogInfo($"Editing MealBazar Id={id}");
-                var mealBazar = await _mealBazarRepository.FindAsync(id);
+                var mealBazar = await _mealBazarRepository.GetByIdAsync(id);
 
                 if (mealBazar == null)
                 {
@@ -64,8 +64,7 @@ public class MealBazarController(IMealBazarRepository mealBazarRepository,
                     TempData["AlertType"] = "Error";
                     return RedirectToAction(nameof(Index));
                 }
-
-                return View(_mapper.Map<MealBazarVm>(mealBazar));
+                return View(mealBazar);
             }
 
             return View(new MealBazarVm());
@@ -92,19 +91,18 @@ public class MealBazarController(IMealBazarRepository mealBazarRepository,
 
         try
         {
-            var mealBazarEntity = _mapper.Map<Core.Entities.MealBazar>(mealBazarVm);
 
             if (mealBazarVm.Id > 0)
             {
                 _logger.LogInfo($"Updating MealBazar Id={mealBazarVm.Id}");
-                await _mealBazarRepository.UpdateAsync(mealBazarEntity);
+                await _mealBazarRepository.UpsertAsync(mealBazarVm);
 
                 TempData["AlertMessage"] = "MealBazar updated successfully!";
             }
             else
             {
                 _logger.LogInfo("Creating new MealBazar");
-                await _mealBazarRepository.InsertAsync(mealBazarEntity);
+                await _mealBazarRepository.UpsertAsync(mealBazarVm);
 
                 TempData["AlertMessage"] = "MealBazar created successfully!";
             }
@@ -128,7 +126,7 @@ public class MealBazarController(IMealBazarRepository mealBazarRepository,
     {
         try
         {
-            var mealBazar = await _mealBazarRepository.FindAsync(id);
+            var mealBazar = await _mealBazarRepository.GetByIdAsync(id);
 
             if (mealBazar == null)
             {
@@ -137,7 +135,7 @@ public class MealBazarController(IMealBazarRepository mealBazarRepository,
                 return NotFound();
             }
 
-            await _mealBazarRepository.DeleteAsync(mealBazar);
+            await _mealBazarRepository.DeleteAsync(id);
 
             TempData["AlertMessage"] = "MealBazar deleted successfully!";
             TempData["AlertType"] = "Success";

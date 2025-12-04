@@ -4,6 +4,7 @@ using HostelMealManagement.Infrastructure.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HostelMealManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251204101849_CreateItemTable")]
+    partial class CreateItemTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -220,7 +223,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9290228d-b8b9-4043-b1e3-e885e3717024",
+                            ConcurrencyStamp = "48d806c3-a5a3-4874-b749-747a3ccfd99c",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@localhost.com",
@@ -229,9 +232,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEL2YU8+J16eIq67VLCAWiBpACZXNq6WgT2FRQzbnqzsEvrkgkX2iH/TBdKixMtKCKA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEK5Uyy/MHMHuMSsdQObk1v8nK3127QxLSW+8jR9QojchVbHL1arc0U35bLCl1OU13w==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c3c3a0fa-a0ec-46d8-bd18-d11d7614c5f0",
+                            SecurityStamp = "5a4dec29-98a3-4add-8ba7-cbff8c44f1f9",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -239,7 +242,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 2L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "48b727c9-608b-478a-82dc-fbf2b13433d3",
+                            ConcurrencyStamp = "ceb5c26f-d349-4e59-930a-a8860d92a191",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "employee@localhost.com",
@@ -248,9 +251,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "EMPLOYEE@LOCALHOST.COM",
                             NormalizedUserName = "EMPLOYEE@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEEdv4ggInRIhs80i00g/fvz11Te0Xhf9Cp5qeAvDf/Q0bjeSbubmL9L2i8n8JHoJ0A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAED8uIV8HQoLEJ8ZUCS498HW74lftin/Z3VUwXGzury1229SLlhQlV3pTNJwZozypDQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "8aa070ed-dbcf-4ec8-afa3-ad92a6431fe8",
+                            SecurityStamp = "e7dd62cf-2ace-47b8-9905-8efedd143ead",
                             TwoFactorEnabled = false,
                             UserName = "employee@localhost.com"
                         });
@@ -420,74 +423,6 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AuditLogs");
-                });
-
-            modelBuilder.Entity("HostelMealManagement.Core.Entities.MealAttendance", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("GuestBreakfastQty")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GuestDinnerQty")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("GuestIsBreakfast")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("GuestIsDinner")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("GuestIsLunch")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("GuestLunchQty")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsBreakfast")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDinner")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsGuest")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsLunch")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset>("MealDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<long>("MemberId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasDefaultValueSql("0");
-
-                    b.Property<long?>("ModifiedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("ModifiedDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MemberId");
-
-                    b.ToTable("MealAttendances", (string)null);
                 });
 
             modelBuilder.Entity("HostelMealManagement.Core.Entities.MealBazar", b =>
@@ -801,17 +736,6 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("HostelMealManagement.Core.Entities.MealAttendance", b =>
-                {
-                    b.HasOne("HostelMealManagement.Core.Entities.Member", "Member")
-                        .WithMany("MealAttendances")
-                        .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Member");
-                });
-
             modelBuilder.Entity("HostelMealManagement.Core.Entities.MealBazarItem", b =>
                 {
                     b.HasOne("HostelMealManagement.Core.Entities.MealBazar", "MealBazar")
@@ -826,11 +750,6 @@ namespace HostelMealManagement.Infrastructure.Migrations
             modelBuilder.Entity("HostelMealManagement.Core.Entities.MealBazar", b =>
                 {
                     b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("HostelMealManagement.Core.Entities.Member", b =>
-                {
-                    b.Navigation("MealAttendances");
                 });
 #pragma warning restore 612, 618
         }

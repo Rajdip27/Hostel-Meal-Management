@@ -26,4 +26,6 @@ public class Member : AuditableEntity
     public decimal HouseBill { get; set; }
     public decimal UtilityBill { get; set; }
     public decimal OtherBill { get; set; }
+
+    public ICollection<MealAttendance> MealAttendances { get; set; }
 }

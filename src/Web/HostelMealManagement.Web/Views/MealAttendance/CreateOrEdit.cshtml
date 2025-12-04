@@ -1,0 +1,398 @@
+﻿@model HostelMealManagement.Application.ViewModel.MealAttendanceVm
+
+@{
+    ViewData["Title"] = Model.Id > 0 ? "Edit Meal Attendance" : "Create Meal Attendance";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    /* TITLE — Same clean style as picture #2 */
+    .page-title {
+        font-size: 32px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 6px;
+    }
+
+    .page-underline {
+        width: 100%;
+        height: 1px;
+        background: #d2d2d2;
+        margin-bottom: 25px;
+    }
+
+    /* MAIN FORM CARD */
+    .form-wrapper {
+        background: #fff;
+        padding: 35px;
+        border-radius: 14px;
+        border: 1px solid #e3e6ea;
+        box-shadow: 0 5px 22px rgba(0,0,0,0.07);
+        transition: 0.25s;
+    }
+
+        .form-wrapper:hover {
+            transform: translateY(-2px);
+            box-shadow: 0px 12px 32px rgba(0,0,0,0.12);
+        }
+
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .form-control,
+    .form-select {
+        padding: 12px 14px !important;
+        border-radius: 12px !important;
+        border: 1px solid #cfd3da;
+        font-size: 16px !important;
+        transition: 0.25s ease;
+    }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 2px rgba(13,110,253,.15);
+        }
+
+    /* SECTION HEADING */
+    h4.section-heading {
+        margin-top: 40px;
+        margin-bottom: 18px;
+        font-size: 24px;
+        font-weight: 700;
+        color: #222;
+        border-left: 5px solid #0d6efd;
+        padding-left: 10px;
+    }
+
+    /* SWITCH TOGGLE */
+    .switch-toggle {
+        position: relative;
+        width: 46px;
+        height: 24px;
+        appearance: none;
+        background: #c9ccd1;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: .3s;
+    }
+
+        .switch-toggle:checked {
+            background: #0d6efd;
+        }
+
+        .switch-toggle:before {
+            content: "";
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: .3s;
+        }
+
+        .switch-toggle:checked:before {
+            transform: translateX(22px);
+        }
+
+        .switch-toggle:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+    /* PREMIUM GUEST UI v2 */
+    .guest-card {
+        padding: 28px 32px;
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid #e6e7eb;
+        box-shadow: 0 8px 28px rgba(0,0,0,0.06);
+        position: relative;
+        transition: .25s;
+    }
+
+        .guest-card:hover {
+            box-shadow: 0 14px 40px rgba(0,0,0,0.12);
+        }
+
+    .guest-gradient {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 6px;
+        background: linear-gradient(180deg, #0d6efd, #6e60ff);
+        border-radius: 6px;
+        opacity: .9;
+    }
+
+    .guest-item-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 24px;
+        gap: 30px;
+    }
+
+    .guest-label {
+        font-size: 18px;
+        font-weight: 600;
+        width: 200px;
+        color: #333;
+    }
+
+    /* Floating input */
+    .floating-input-group {
+        position: relative;
+        width: 260px;
+    }
+
+        .floating-input-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #cfd3da;
+            border-radius: 12px;
+            outline: none;
+            font-size: 16px;
+            transition: .25s ease;
+        }
+
+        .floating-input-group label {
+            position: absolute;
+            top: 50%;
+            left: 14px;
+            font-size: 15px;
+            color: #777;
+            transform: translateY(-50%);
+            pointer-events: none;
+            transition: .25s;
+            background: white;
+            padding: 0 4px;
+        }
+
+        .floating-input-group input:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 2px rgba(13,110,253,.15);
+        }
+
+            .floating-input-group input:focus + label,
+            .floating-input-group input:not(:placeholder-shown) + label {
+                top: -8px;
+                font-size: 12px;
+                color: #0d6efd;
+            }
+
+    .qty-message {
+        font-size: 14px;
+        color: #0d6efd;
+        margin-top: 3px;
+        display: none;
+    }
+
+    .meal-closed {
+        color: #d9534f;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    /* BUTTONS */
+    .btn-save {
+        padding: 12px 28px;
+        font-size: 17px;
+        font-weight: 700;
+        border-radius: 10px;
+        background: #0d6efd;
+        border: none;
+        color: white;
+        transition: .3s;
+    }
+
+        .btn-save:hover {
+            background: #0056d6;
+        }
+
+    .btn-cancel {
+        padding: 12px 28px;
+        font-size: 17px;
+        border-radius: 10px;
+        font-weight: 700;
+        background: #f8f9fa;
+        color: #6c757d;
+        border: 2px solid #6c757d;
+    }
+
+        .btn-cancel:hover {
+            background: #6c757d;
+            color: white;
+        }
+
+</style>
+
+
+<div class="container-fluid px-4 py-4">
+
+    <h2 class="page-title">@ViewData["Title"]</h2>
+    <div class="page-underline"></div>
+
+    <div class="form-wrapper">
+
+        <form asp-action="CreateOrEdit" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <!-- MEMBER -->
+            <div class="mb-4">
+                <label class="form-label">Member</label>
+                <select asp-for="MemberId" asp-items="ViewBag.MemberList" class="form-select"></select>
+            </div>
+
+            <!-- MEAL DATE -->
+            <div class="mb-4">
+                <label class="form-label">Meal Date</label>
+                <input asp-for="MealDate" type="date" class="form-control" />
+            </div>
+
+            <!-- MEMBER MEALS -->
+            <h4 class="section-heading">Member Meal</h4>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Breakfast</label>
+                    <input asp-for="IsBreakfast" type="checkbox" class="switch-toggle meal-breakfast" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Lunch</label>
+                    <input asp-for="IsLunch" type="checkbox" class="switch-toggle meal-lunch" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Dinner</label>
+                    <input asp-for="IsDinner" type="checkbox" class="switch-toggle meal-dinner" />
+                </div>
+            </div>
+
+            <!-- TIME-LOCK MESSAGES -->
+            <div id="breakfastClosedMsg" class="meal-closed" style="display:none;">
+                ❌ Breakfast & Lunch ended at 7:00 AM
+            </div>
+            <div id="dinnerClosedMsg" class="meal-closed" style="display:none;">
+                ❌ Dinner ended at 6:00 PM
+            </div>
+
+            <!-- GUEST MEALS -->
+            <h4 class="section-heading">Guest Meal</h4>
+
+            <div class="mb-3">
+                <label class="form-label">Is Guest?</label>
+                <select asp-for="IsGuest" class="form-select w-25" id="guestToggle">
+                    <option value="false">No</option>
+                    <option value="true">Yes</option>
+                </select>
+            </div>
+
+            <!-- PREMIUM GUEST CARD -->
+            <div id="GuestSection" class="guest-card">
+                <div class="guest-gradient"></div>
+
+                <!-- BREAKFAST -->
+                <div class="guest-item-row">
+                    <label class="guest-label">Guest Breakfast</label>
+                    <input asp-for="GuestIsBreakfast" type="checkbox" class="switch-toggle guest-breakfast" />
+
+                    <div class="floating-input-group">
+                        <input asp-for="GuestBreakfastQty" class="guest-qty guest-breakfast-qty" placeholder=" " />
+                        <label>Breakfast Quantity</label>
+                        <div class="qty-message guest-breakfast-msg">Add Quantity</div>
+                    </div>
+                </div>
+
+                <!-- LUNCH -->
+                <div class="guest-item-row">
+                    <label class="guest-label">Guest Lunch</label>
+                    <input asp-for="GuestIsLunch" type="checkbox" class="switch-toggle guest-lunch" />
+
+                    <div class="floating-input-group">
+                        <input asp-for="GuestLunchQty" class="guest-qty guest-lunch-qty" placeholder=" " />
+                        <label>Lunch Quantity</label>
+                        <div class="qty-message guest-lunch-msg">Add Quantity</div>
+                    </div>
+                </div>
+
+                <!-- DINNER -->
+                <div class="guest-item-row">
+                    <label class="guest-label">Guest Dinner</label>
+                    <input asp-for="GuestIsDinner" type="checkbox" class="switch-toggle guest-dinner" />
+
+                    <div class="floating-input-group">
+                        <input asp-for="GuestDinnerQty" class="guest-qty guest-dinner-qty" placeholder=" " />
+                        <label>Dinner Quantity</label>
+                        <div class="qty-message guest-dinner-msg">Add Quantity</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn-save">Save</button>
+                <a asp-action="Index" class="btn-cancel">Cancel</a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+
+        function lockMealOptions() {
+            var now = new Date();
+            var hour = now.getHours();
+
+            if (hour >= 7) {
+                $(".meal-breakfast, .meal-lunch, .guest-breakfast, .guest-lunch").prop("disabled", true);
+                $("#breakfastClosedMsg").fadeIn();
+            }
+
+            if (hour >= 18) {
+                $(".meal-dinner, .guest-dinner").prop("disabled", true);
+                $("#dinnerClosedMsg").fadeIn();
+            }
+        }
+
+        function toggleGuest() {
+            if ($("#guestToggle").val() === "true") {
+                $("#GuestSection").slideDown();
+            } else {
+                $("#GuestSection").slideUp();
+            }
+        }
+
+        function showGuestQty() {
+            $(".guest-breakfast-qty").toggle($(".guest-breakfast").is(":checked"));
+            $(".guest-lunch-qty").toggle($(".guest-lunch").is(":checked"));
+            $(".guest-dinner-qty").toggle($(".guest-dinner").is(":checked"));
+            updateQtyMessages();
+        }
+
+        function updateQtyMessages() {
+            $(".guest-breakfast-msg").toggle($(".guest-breakfast-qty").is(":visible"));
+            $(".guest-lunch-msg").toggle($(".guest-lunch-qty").is(":visible"));
+            $(".guest-dinner-msg").toggle($(".guest-dinner-qty").is(":visible"));
+        }
+
+        $(document).ready(function () {
+            lockMealOptions();
+            toggleGuest();
+            showGuestQty();
+
+            $("#guestToggle").change(toggleGuest);
+            $(".guest-breakfast, .guest-lunch, .guest-dinner").change(showGuestQty);
+            $(".guest-breakfast-qty, .guest-lunch-qty, .guest-dinner-qty").on("input", updateQtyMessages);
+        });
+
+    </script>
+}

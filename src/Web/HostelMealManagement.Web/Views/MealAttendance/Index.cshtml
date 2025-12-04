@@ -1,0 +1,169 @@
+﻿@model List<HostelMealManagement.Application.ViewModel.MealAttendanceVm>
+
+@{
+    ViewData["Title"] = "Meal Attendance List";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    /* Black table header */
+    .table-dark-header thead th {
+        background: #000 !important;
+        color: #fff !important;
+        font-weight: 700;
+        border-color: #000 !important;
+        padding: 12px;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .table td {
+        vertical-align: middle !important;
+        padding: 10px;
+        font-size: 15px;
+        text-align: center;
+    }
+
+    .check-icon {
+        color: green;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .cross-icon {
+        color: red;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .action-buttons .btn {
+        margin-right: 4px;
+    }
+
+    .left-text {
+        text-align: left !important;
+    }
+</style>
+
+<h2 class="mb-3">Meal Attendance List</h2>
+
+<a class="btn btn-primary mb-3" asp-action="CreateOrEdit">Add Meal Attendance</a>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped table-dark-header">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Meal Date</th>
+                <th>Member</th>
+
+                <th>Breakfast</th>
+                <th>Lunch</th>
+                <th>Dinner</th>
+
+                <th>Guest</th>
+
+                <th>Guest Breakfast</th>
+                <th>B-Quantity</th>
+
+                <th>Guest Lunch</th>
+                <th>L-Quantity</th>
+
+                <th>Guest Dinner</th>
+                <th>D-Quantity</th>
+
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var a in Model)
+            {
+                <tr>
+                    <td>@a.Id</td>
+                    <td>@a.MealDate.ToString("yyyy-MM-dd")</td>
+                    <td class="left-text">@a.MemberName</td>
+
+                    <!-- Breakfast -->
+                    <td>
+                        @(a.IsBreakfast
+                                            ? "<span class='check-icon'>✔</span>"
+                                            : "<span class='cross-icon'>✘</span>"
+                                            ) @Html.Raw("")
+                    </td>
+
+                    <!-- Lunch -->
+                    <td>
+                        @(a.IsLunch
+                                            ? "<span class='check-icon'>✔</span>"
+                                            : "<span class='cross-icon'>✘</span>"
+                                            ) @Html.Raw("")
+                    </td>
+
+                    <!-- Dinner -->
+                    <td>
+                        @(a.IsDinner
+                                            ? "<span class='check-icon'>✔</span>"
+                                            : "<span class='cross-icon'>✘</span>"
+                                            ) @Html.Raw("")
+                    </td>
+
+                    <!-- Is Guest -->
+                    <td>
+                        @(a.IsGuest
+                                            ? "<span class='check-icon'>✔</span>"
+                                            : "<span class='cross-icon'>✘</span>"
+                                            ) @Html.Raw("")
+                    </td>
+
+                    <!-- Guest Breakfast -->
+                    <td>
+                        @(a.GuestIsBreakfast
+                                            ? "<span class='check-icon'>✔</span>"
+                                            : "<span class='cross-icon'>✘</span>"
+                                            ) @Html.Raw("")
+                    </td>
+                    <td>@a.GuestBreakfastQty</td>
+
+                    <!-- Guest Lunch -->
+                    <td>
+                        @(a.GuestIsLunch
+                                            ? "<span class='check-icon'>✔</span>"
+                                            : "<span class='cross-icon'>✘</span>"
+                                            ) @Html.Raw("")
+                    </td>
+                    <td>@a.GuestLunchQty</td>
+
+                    <!-- Guest Dinner -->
+                    <td>
+                        @(a.GuestIsDinner
+                                            ? "<span class='check-icon'>✔</span>"
+                                            : "<span class='cross-icon'>✘</span>"
+                                            ) @Html.Raw("")
+                    </td>
+                    <td>@a.GuestDinnerQty</td>
+
+                    <!-- Actions -->
+                    <td class="action-buttons">
+                        <a class="btn btn-sm btn-info"
+                           asp-action="CreateOrEdit"
+                           asp-route-id="@a.Id">
+                            Edit
+                        </a>
+
+                        <form asp-action="Delete"
+                              asp-route-id="@a.Id"
+                              method="post"
+                              style="display:inline"
+                              onsubmit="return confirm('Are you sure to delete this record?');">
+
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
