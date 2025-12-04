@@ -1,48 +1,46 @@
-﻿<table class="table table-striped table-bordered">
+﻿@model List<HostelMealManagement.Application.ViewModel.MealBazarVm>
+
+@{
+    ViewData["Title"] = "Meal Bazar List";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Meal Bazar List</h2>
+
+<a class="btn btn-primary mb-2" asp-action="CreateOrEdit">Add New Meal Bazar</a>
+<table class="table table-bordered table-striped">
     <thead>
         <tr>
-            <th>#</th>
-            <th>Bazar Date</th>
-            <th>Bazar Amount</th>
-            @* <th>Items (Product - Qty)</th> *@
+            <th>Date</th>
+            <th>Description</th>
+            <th>Total Amount</th>
+            <th>Items</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @if (Model != null)
+        @foreach (var bazar in Model)
         {
-            int i = 1;
-            foreach (var item in Model)
-            {
-                <tr>
-                    <td>@i</td>
-                    <td>@item.BazarDate.ToString("yyyy-MM-dd")</td>
-                    <td>@item.BazarAmount</td>
-
-                    <!-- 👇 NEW COLUMN HERE -->
-                    @* <td>
-                        @if (item.Items != null && item.Items.Count > 0)
+            <tr>
+                <td>@bazar.BazarDate.ToString("yyyy-MM-dd")</td>
+                <td>@bazar.Description</td>
+                <td>@bazar.BazarAmount</td>
+                <td>
+                    <ul>
+                        @foreach (var item in bazar.Items)
                         {
-                            <ul class="list-unstyled">
-                                @foreach (var p in item.Items)
-                                {
-                                    <li>@p.ProductName (@p.Quantity)</li>
-                                }
-                            </ul>
+                            <li>@item.ProductName - @item.Quantity × @item.Price = @(item.Quantity* item.Price)</li>
                         }
-                        else
-                        {
-                            <span class="text-muted">No items</span>
-                        }
-                    </td> *@
+                    </ul>
+                </td>
+                <td>
+                    <a class="btn btn-sm btn-info" asp-action="CreateOrEdit" asp-route-id="@bazar.Id">Edit</a>
 
-                    <td>
-                        <a asp-action="CreateOrEdit" asp-route-id="@item.Id" class="btn btn-info btn-sm">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
-                    </td>
-                </tr>
-                i++;
-            }
+                    <form asp-action="Delete" asp-route-id="@bazar.Id" method="post" style="display:inline" onsubmit="return confirm('Are you sure to delete this record?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
         }
     </tbody>
 </table>

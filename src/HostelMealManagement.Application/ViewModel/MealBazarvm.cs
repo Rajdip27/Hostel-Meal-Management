@@ -1,27 +1,21 @@
-﻿using AutoMapper;
-using HostelMealManagement.Core.Entities;
-using HostelMealManagement.Core.Entities.BaseEntities;
-using System.ComponentModel.DataAnnotations;
+﻿using HostelMealManagement.Core.Entities.BaseEntities;
 
 namespace HostelMealManagement.Application.ViewModel;
 
-[AutoMap(typeof(MealBazar),ReverseMap =true)]
+
 public class MealBazarVm:BaseEntity
 {
-    
-
-    [Required(ErrorMessage = "Bazar Date is required.")]
-    [DataType(DataType.Date)]
-    public DateTimeOffset BazarDate { get; set; }
-
-    [Required(ErrorMessage = "Bazar Amount is required.")]
-    [Range(0, double.MaxValue, ErrorMessage = "Amount must be a positive value.")]
-    public decimal BazarAmount { get; set; }
-
-    [Display(Name = "Description")]
-    [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters.")]
-    public string? Description { get; set; }
    
+    public DateTimeOffset BazarDate { get; set; }
+    public decimal BazarAmount { get; set; }
+    public string Description { get; set; } = string.Empty;
+    public List<MealBazarItemVm> Items { get; set; } = new();
+}
 
-
+public class MealBazarItemVm: BaseEntity
+{
+   
+    public string ProductName { get; set; } =string.Empty;
+    public decimal Quantity { get; set; }
+    public decimal Price { get; set; }
 }
