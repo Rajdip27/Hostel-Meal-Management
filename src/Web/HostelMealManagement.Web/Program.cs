@@ -1,4 +1,4 @@
-using HostelMealManagement.Infrastructure;
+﻿using HostelMealManagement.Infrastructure;
 using HostelMealManagement.Application;
 using Serilog;
 using HostelMealManagement.Web.Logging;

@@ -1,14 +1,109 @@
 ﻿@using HostelMealManagement.Application.ViewModel
 @inject HostelMealManagement.Infrastructure.Helper.Acls.ISignInHelper SignInHelper
 @model IEnumerable<MealCycleVm>
+
 @{
-    ViewData["Title"] = "Members List";
+    ViewData["Title"] = "Meal Cycle List";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     bool isMember = SignInHelper.Roles.Contains("Member");
-	int sl = 1;
+    int sl = 1;
 }
 
+<!-- ================= CORPORATE GLOSSY BLUE THEME ================= -->
+<style>
+
+    body {
+        background: #ffffff !important;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    h2 {
+        color: #1e3a8a;
+        font-weight: 700;
+        margin-bottom: 18px;
+    }
+
+    /* ===== Add Button ===== */
+    .btn-primary {
+        background: #3559a8 !important;
+        border: none !important;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 10px 20px;
+        box-shadow: 0 6px 18px rgba(53, 89, 168, 0.25);
+        transition: 0.25s ease;
+    }
+
+        .btn-primary:hover {
+            background: #2d4d8f !important;
+            box-shadow: 0 8px 25px rgba(53, 89, 168, 0.35);
+        }
+
+    /* ===== Table Container ===== */
+    .table {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #d7dce3 !important;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+    }
+
+        /* ===== Gradient Header ===== */
+        .table thead th {
+            background: linear-gradient(135deg, rgba(33, 71, 155, 0.9), rgba(38, 92, 170, 0.95)) !important;
+            color: #ffffff !important;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: .3px;
+            text-align: center;
+            border: none !important;
+        }
+
+        /* ===== Table Row Cells ===== */
+        .table td {
+            padding: 12px;
+            font-size: 15px;
+            color: #2b3340;
+            vertical-align: middle !important;
+        }
+
+    /* ===== Action Buttons ===== */
+    .btn-info {
+        background: #3b82f6 !important;
+        border: none !important;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 5px 12px;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+        transition: .25s ease;
+    }
+
+        .btn-info:hover {
+            background: #1e40af !important;
+            box-shadow: 0 6px 16px rgba(59,130,246,0.4);
+        }
+
+    .btn-danger {
+        background: #dc2626 !important;
+        border: none !important;
+        border-radius: 8px;
+        padding: 5px 12px;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(220,38,38,0.3);
+        transition: .25s ease;
+    }
+
+        .btn-danger:hover {
+            background: #b91c1c !important;
+            box-shadow: 0 6px 16px rgba(220,38,38,0.4);
+        }
+
+</style>
+
 <h2>@ViewData["Title"]</h2>
+
 @if (!isMember)
 {
     <p>
@@ -16,32 +111,33 @@
     </p>
 }
 
-
 <table class="table table-striped table-bordered">
-    <thead class="table-dark">
+    <thead>
         <tr>
-           <th>#</th>
-           <th>Meal Name</th>
+            <th>#</th>
+            <th>Member Name</th>
             <th>Start Date</th>
             <th>End Date</th>
             <th>Total Days</th>
-           <th>Actions</th>
+            <th>Actions</th>
         </tr>
     </thead>
+
     <tbody>
         @foreach (var member in Model)
         {
             <tr>
                 <td>@sl</td>
-				<td>@member.Name</td>
-				<td>@member.StartDate</td>
-				<td>@member.EndDate</td>
-				<td>@member.TotalDays</td>
+                <td>@member.Name</td>
+                <td>@member.StartDate</td>
+                <td>@member.EndDate</td>
+                <td>@member.TotalDays</td>
                 <td>
                     <a class="btn btn-sm btn-info" asp-action="createoredit" asp-route-id="@member.Id">Edit</a>
                     <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@member.Id">Delete</a>
                 </td>
             </tr>
+
             sl++;
         }
     </tbody>

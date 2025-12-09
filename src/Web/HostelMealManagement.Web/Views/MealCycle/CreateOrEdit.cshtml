@@ -1,8 +1,89 @@
 ﻿@model HostelMealManagement.Application.ViewModel.MealCycleVm
+
 @{
     ViewData["Title"] = Model.Id == 0 ? "Create Meal Cycle" : "Edit Meal Cycle";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
+
+<!-- ===================== CORPORATE GLOSSY BLUE THEME ====================== -->
+<style>
+    body {
+        background: #ffffff !important;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    /* ---------- Page Title ---------- */
+    h2 {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1e3a8a;
+        margin-bottom: 10px;
+    }
+
+    hr {
+        border-top: 2px solid #cbd5e1 !important;
+        opacity: 0.5;
+        margin-bottom: 25px;
+    }
+
+    /* ---------- Glossy Form Box ---------- */
+    form {
+        background: rgba(255,255,255,0.75);
+        padding: 30px;
+        border-radius: 16px;
+        border: 1px solid rgba(200,200,200,0.35);
+        box-shadow: 0 8px 28px rgba(0,0,0,0.08);
+    }
+
+    /* ---------- Labels ---------- */
+    .form-label {
+        font-weight: 600;
+        color: #203254;
+    }
+
+    /* ---------- Inputs ---------- */
+    .form-control {
+        height: 48px;
+        border-radius: 10px !important;
+        border: 1px solid #b6c1d1;
+        background: rgba(255,255,255,0.85);
+        transition: .25s ease;
+        font-size: 15px;
+    }
+
+        .form-control:focus {
+            border-color: #3559a8;
+            box-shadow: 0 0 0 2px rgba(53,89,168,0.25);
+        }
+
+    /* ---------- Save Button (Glossy Blue) ---------- */
+    .btn-primary {
+        background: #3559a8 !important;
+        border: none !important;
+        font-size: 17px;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 10px 26px;
+        box-shadow: 0 6px 18px rgba(53,89,168,0.25);
+        transition: .25s ease;
+    }
+
+        .btn-primary:hover {
+            background: #2d4d8f !important;
+            box-shadow: 0 8px 25px rgba(53,89,168,0.35);
+        }
+
+        .btn-primary:active {
+            background: #263f78 !important;
+            transform: scale(0.97);
+        }
+
+    .text-danger {
+        font-size: 13px;
+    }
+
+</style>
+
 
 <h2>@ViewData["Title"]</h2>
 <hr />
@@ -52,29 +133,8 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 
-    <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Date Range Example</title>
-    <!-- Make sure jQuery is loaded -->
+    <!-- jQuery for Date Logic -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-</head>
-<body>
-
-    <label>Start Date:
-        <input type="date" id="StartDate">
-    </label>
-    <br><br>
-
-    <label>End Date:
-        <input type="date" id="EndDate" readonly>
-    </label>
-    <br><br>
-
-    <label>Total Days:
-        <input type="number" id="TotalDays" readonly>
-    </label>
 
     <script>
         $(function () {
@@ -82,7 +142,6 @@
             function parseDate(value) {
                 if (!value) return null;
                 let p = value.split("-");
-                // year, monthIndex (0–11), day
                 return new Date(p[0], p[1] - 1, p[2]);
             }
 
@@ -106,11 +165,7 @@
                 // Last day of selected month (local time)
                 let end = new Date(y, m + 1, 0);
 
-                // Format as YYYY-MM-DD in local time (no UTC shift)
-                let e = formatDateLocal(end);
-
-                $("#EndDate").val(e);
-
+                $("#EndDate").val(formatDateLocal(end));
                 calcDays();
             }
 
@@ -119,20 +174,14 @@
                 let e = parseDate($("#EndDate").val());
                 if (!s || !e) return;
 
-                // Difference in milliseconds, then convert to days
                 let diffMs = e - s;
-                let days = diffMs / 86400000 + 1; // +1 for inclusive range
+                let days = diffMs / 86400000 + 1;
 
                 $("#TotalDays").val(days);
             }
 
-            // When start date changes, auto-set end date and total days
             $("#StartDate").on("change", setEndDate);
         });
     </script>
-
-</body>
-</html>
-
 
 }

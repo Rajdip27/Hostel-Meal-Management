@@ -8,31 +8,108 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     bool isMember = SignInHelper.Roles.Contains("Member");
 }
+
+
 <style>
-    /* SAVE BUTTON – White → Blue → Dark Blue */
+
+    body {
+        background: #ffffff !important;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    /* ======== FORM CONTAINER ======== */
+    form {
+        background: rgba(255, 255, 255, 0.7);
+        padding: 25px 25px 35px 25px;
+        border-radius: 16px;
+        border: 1px solid rgba(180, 180, 180, 0.35);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+    }
+
+    h2 {
+        font-weight: 700;
+        color: #1e3a8a;
+        margin-bottom: 18px;
+    }
+
+    /* ======== LABELS ======== */
+    .form-label {
+        font-weight: 600;
+        color: #22344d;
+    }
+
+    /* ======== INPUT FIELDS ======== */
+    .form-control, .form-select {
+        height: 48px;
+        border-radius: 10px;
+        border: 1px solid #b6c1d1;
+        background: rgba(255,255,255,0.85);
+        transition: .25s ease;
+        font-size: 15px;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #3559a8;
+            box-shadow: 0 0 0 2px rgba(53,89,168,0.25);
+        }
+
+    /* ======== CHECKBOX STYLE ======== */
+    .form-check-input {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        border: 2px solid #3559a8;
+    }
+
+        .form-check-input:checked {
+            background-color: #3559a8;
+            border-color: #1e3a8a;
+        }
+
+    /* ======== IMAGE PREVIEW ======== */
+    #imagePreview {
+        border-radius: 8px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+        border: 1px solid #d0d6e1;
+    }
+
+    /* ======== PASSWORD BUTTON ======== */
+    .btn-outline-secondary {
+        border-radius: 10px !important;
+        border-color: #a7b0b9 !important;
+    }
+
+        .btn-outline-secondary:hover {
+            background: #3559a8;
+            color: #fff !important;
+            border-color: #3559a8 !important;
+        }
+
+    /* ================== BUTTON: SAVE ================== */
     .btn-save {
-        background: white !important;
-        color: #0d6efd !important;
-        border: 2px solid #0d6efd !important;
-        padding: 10px 26px;
+        background: #3559a8 !important;
+        color: white !important;
+        border: none !important;
+        padding: 10px 28px;
         font-size: 17px;
         font-weight: 600;
         border-radius: 10px;
-        transition: 0.25s ease-in-out;
+        transition: 0.25s ease;
+        box-shadow: 0 6px 18px rgba(53, 89, 168, 0.25);
     }
 
         .btn-save:hover {
-            background: #0d6efd !important;
-            color: white !important;
+            background: #2d4d8f !important;
+            box-shadow: 0 8px 25px rgba(53, 89, 168, 0.35);
         }
 
         .btn-save:active {
-            background: #003c9e !important; /* Dark Blue */
-            color: white !important;
+            background: #263f78 !important;
             transform: scale(0.97);
         }
 
-    /* CANCEL BUTTON – White → Gray → Dark Gray */
+    /* ================== BUTTON: CANCEL ================== */
     .btn-cancel {
         background: white !important;
         color: #6c757d !important;
@@ -51,17 +128,19 @@
         }
 
         .btn-cancel:active {
-            background: #4f5458 !important; /* Dark Gray */
-            color: white !important;
+            background: #4f5458 !important;
             transform: scale(0.97);
         }
+
 </style>
+
 
 <h2>@ViewData["Title"]</h2>
 
 <form asp-action="CreateOrEdit" asp-controller="Member" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
     <input type="hidden" asp-for="Id" />
     <div class="row">
+
         @if (!isMember)
         {
             <div class="col-md-6 mb-3">
@@ -169,7 +248,7 @@
         </div>
 
         <div class="col-md-6 mb-3">
-            <label asp-for="MaritalStatus" class="form-label"></label>
+            <label asp-for="MaritalStatus" class="form-label"></label><br />
             <input asp-for="MaritalStatus" type="checkbox" class="form-check-input" />
         </div>
 
@@ -183,7 +262,7 @@
         }
 
         <div class="col-md-6 mb-3">
-            <label asp-for="MealStatus" class="form-label"></label>
+            <label asp-for="MealStatus" class="form-label"></label><br />
             <input asp-for="MealStatus" type="checkbox" class="form-check-input" />
         </div>
 
@@ -227,7 +306,7 @@
         </div>
     </div>
 
-    <!-- UPDATED BUTTONS -->
+    <!-- BUTTONS -->
     <button type="submit" class="btn-save">Save</button>
     <a asp-action="Index" class="btn-cancel">Cancel</a>
 </form>
@@ -258,4 +337,3 @@
         }
     </script>
 }
-
