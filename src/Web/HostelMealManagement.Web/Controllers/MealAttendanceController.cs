@@ -3,16 +3,19 @@ using HostelMealManagement.Application.Logging;
 using HostelMealManagement.Application.Repositories;
 using HostelMealManagement.Application.ViewModel;
 using HostelMealManagement.Core.Entities;
+using HostelMealManagement.Infrastructure.Helper.Acls;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using static HostelMealManagement.Core.Entities.Auth.IdentityModel;
 
 namespace HostelMealManagement.Web.Controllers;
 
 [Authorize]
 public class MealAttendanceController(IMealAttendanceRepository attendanceRepository,
                                       IAppLogger<MealAttendanceController> logger,
-                                      IMapper mapper) : Controller
+                                      IMapper mapper,ISignInHelper signInHelper,IMemberRepository memberRepository, UserManager<User> _userManager) : Controller
 {
     private readonly IMealAttendanceRepository _attendanceRepository = attendanceRepository;
     private readonly IAppLogger<MealAttendanceController> _logger = logger;
@@ -59,10 +62,24 @@ public class MealAttendanceController(IMealAttendanceRepository attendanceReposi
     {
         try
         {
+            var roles = signInHelper.Roles;
+            var userId = signInHelper.UserId;
+
+            if (roles.Contains("Member") && userId.HasValue)
+            {
+                var user = await _userManager.FindByIdAsync(userId.Value.ToString());
+                ViewBag.MemberId = memberRepository
+                                    .GetMemberList()
+                                    .Where(x => x.Value == user.MemberId.ToString())
+                                    .ToList();
+            }
+            else
+            {
+                ViewBag.MemberId = memberRepository.GetMemberList();
+            }
+
             if (id > 0)
             {
-                _logger.LogInfo($"Editing MealAttendance Id={id}");
-
                 var attendance = await _attendanceRepository.FindAsync(id);
                 if (attendance == null)
                 {
