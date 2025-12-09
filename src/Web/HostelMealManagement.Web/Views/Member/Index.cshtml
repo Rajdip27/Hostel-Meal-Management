@@ -1,6 +1,7 @@
 ﻿@using HostelMealManagement.Application.ViewModel
 @inject HostelMealManagement.Infrastructure.Helper.Acls.ISignInHelper SignInHelper
 @model IEnumerable<MemberVm>
+
 @{
     ViewData["Title"] = "Members List";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -8,6 +9,7 @@
 }
 
 <h2>@ViewData["Title"]</h2>
+
 @if (!isMember)
 {
     <p>
@@ -15,9 +17,20 @@
     </p>
 }
 
+<!-- GRADIENT DARK BLUE TABLE HEADER -->
+<style>
+    .custom-header th {
+        background: linear-gradient(135deg, #1E3A8A, #0F172A) !important; /* gradient dark blue */
+        color: #ffffff !important;
+        font-weight: bold;
+        text-align: center;
+        padding: 12px;
+        border-color: #0F172A !important;
+    }
+</style>
 
 <table class="table table-striped table-bordered">
-    <thead class="table-dark">
+    <thead class="custom-header">
         <tr>
             <th>Member Code</th>
             <th>Name</th>
@@ -50,8 +63,22 @@
                     }
                 </td>
                 <td>
-                    <a class="btn btn-sm btn-info" asp-action="CreateOrEdit" asp-route-id="@member.Id">Edit</a>
-                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@member.Id">Delete</a>
+                    <a class="btn btn-sm btn-info"
+                       asp-action="CreateOrEdit"
+                       asp-route-id="@member.Id">
+                        Edit
+                    </a>
+
+                    <form asp-action="Delete"
+                          asp-route-id="@member.Id"
+                          method="post"
+                          style="display:inline;"
+                          onsubmit="return confirm('Are you sure you want to delete this member?');">
+
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            Delete
+                        </button>
+                    </form>
                 </td>
             </tr>
         }

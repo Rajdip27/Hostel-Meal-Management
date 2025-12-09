@@ -6,34 +6,36 @@
 }
 
 <style>
-    /* Black table header */
+    /* Dark Header */
     .table-dark-header thead th {
         background: #000 !important;
         color: #fff !important;
         font-weight: 700;
         border-color: #000 !important;
         padding: 12px;
-        font-size: 16px;
         text-align: center;
+        font-size: 16px;
     }
 
     .table td {
         vertical-align: middle !important;
         padding: 10px;
-        font-size: 15px;
         text-align: center;
+        font-size: 15px;
     }
 
+    /* ✔️ Simple GREEN check emoji */
     .check-icon {
+        font-size: 22px;
         color: green;
         font-weight: bold;
-        font-size: 18px;
     }
 
+    /* ❌ Simple RED cross emoji */
     .cross-icon {
+        font-size: 22px;
         color: red;
         font-weight: bold;
-        font-size: 18px;
     }
 
     .action-buttons .btn {
@@ -44,6 +46,7 @@
         text-align: left !important;
     }
 </style>
+
 
 <h2 class="mb-3">Meal Attendance List</h2>
 
@@ -56,22 +59,16 @@
                 <th>ID</th>
                 <th>Meal Date</th>
                 <th>Member</th>
-
                 <th>Breakfast</th>
                 <th>Lunch</th>
                 <th>Dinner</th>
-
                 <th>Guest</th>
-
                 <th>Guest Breakfast</th>
-                <th>B-Quantity</th>
-
+                <th>B-Qty</th>
                 <th>Guest Lunch</th>
-                <th>L-Quantity</th>
-
+                <th>L-Qty</th>
                 <th>Guest Dinner</th>
-                <th>D-Quantity</th>
-
+                <th>D-Qty</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -79,91 +76,74 @@
         <tbody>
             @foreach (var a in Model)
             {
-                <tr>
-                    <td>@a.Id</td>
-                    <td>@a.MealDate.ToString("yyyy-MM-dd")</td>
-                    <td class="left-text">@a.MemberName</td>
+            <tr>
+                <td>@a.Id</td>
+                <td>@a.MealDate.ToString("yyyy-MM-dd")</td>
+                <td class="left-text">@a.MemberName</td>
 
-                    <!-- Breakfast -->
-                    <td>
-                        @(a.IsBreakfast
-                                            ? "<span class='check-icon'>✔</span>"
-                                            : "<span class='cross-icon'>✘</span>"
-                                            ) @Html.Raw("")
-                    </td>
+                <!-- Member Breakfast -->
+                <td>
+                    @Html.Raw(a.IsBreakfast
+                                        ? "<span class='check-icon'>✔️</span>"
+                                        : "<span class='cross-icon'>❌</span>")
+                </td>
 
-                    <!-- Lunch -->
-                    <td>
-                        @(a.IsLunch
-                                            ? "<span class='check-icon'>✔</span>"
-                                            : "<span class='cross-icon'>✘</span>"
-                                            ) @Html.Raw("")
-                    </td>
+                <!-- Member Lunch -->
+                <td>
+                    @Html.Raw(a.IsLunch
+                                        ? "<span class='check-icon'>✔️</span>"
+                                        : "<span class='cross-icon'>❌</span>")
+                </td>
 
-                    <!-- Dinner -->
-                    <td>
-                        @(a.IsDinner
-                                            ? "<span class='check-icon'>✔</span>"
-                                            : "<span class='cross-icon'>✘</span>"
-                                            ) @Html.Raw("")
-                    </td>
+                <!-- Member Dinner -->
+                <td>
+                    @Html.Raw(a.IsDinner
+                                        ? "<span class='check-icon'>✔️</span>"
+                                        : "<span class='cross-icon'>❌</span>")
+                </td>
 
-                    <!-- Is Guest -->
-                    <td>
-                        @(a.IsGuest
-                                            ? "<span class='check-icon'>✔</span>"
-                                            : "<span class='cross-icon'>✘</span>"
-                                            ) @Html.Raw("")
-                    </td>
+                <!-- Is Guest -->
+                <td>
+                    @Html.Raw(a.IsGuest
+                                        ? "<span class='check-icon'>✔️</span>"
+                                        : "<span class='cross-icon'>❌</span>")
+                </td>
 
-                    <!-- Guest Breakfast -->
-                    <td>
-                        @(a.GuestIsBreakfast
-                                            ? "<span class='check-icon'>✔</span>"
-                                            : "<span class='cross-icon'>✘</span>"
-                                            ) @Html.Raw("")
-                    </td>
-                    <td>@a.GuestBreakfastQty</td>
+                <!-- Guest Breakfast -->
+                <td>
+                    @Html.Raw(a.GuestIsBreakfast
+                                        ? "<span class='check-icon'>✔️</span>"
+                                        : "<span class='cross-icon'>❌</span>")
+                </td>
+                <td>@a.GuestBreakfastQty</td>
 
-                    <!-- Guest Lunch -->
-                    <td>
-                        @(a.GuestIsLunch
-                                            ? "<span class='check-icon'>✔</span>"
-                                            : "<span class='cross-icon'>✘</span>"
-                                            ) @Html.Raw("")
-                    </td>
-                    <td>@a.GuestLunchQty</td>
+                <!-- Guest Lunch -->
+                <td>
+                    @Html.Raw(a.GuestIsLunch
+                                        ? "<span class='check-icon'>✔️</span>"
+                                        : "<span class='cross-icon'>❌</span>")
+                </td>
+                <td>@a.GuestLunchQty</td>
 
-                    <!-- Guest Dinner -->
-                    <td>
-                        @(a.GuestIsDinner
-                                            ? "<span class='check-icon'>✔</span>"
-                                            : "<span class='cross-icon'>✘</span>"
-                                            ) @Html.Raw("")
-                    </td>
-                    <td>@a.GuestDinnerQty</td>
+                <!-- Guest Dinner -->
+                <td>
+                    @Html.Raw(a.GuestIsDinner
+                                        ? "<span class='check-icon'>✔️</span>"
+                                        : "<span class='cross-icon'>❌</span>")
+                </td>
+                <td>@a.GuestDinnerQty</td>
 
-                    <!-- Actions -->
-                    <td class="action-buttons">
-                        <a class="btn btn-sm btn-info"
-                           asp-action="CreateOrEdit"
-                           asp-route-id="@a.Id">
-                            Edit
-                        </a>
+                <!-- Actions -->
+                <td class="action-buttons">
+                    <a class="btn btn-sm btn-info" asp-action="CreateOrEdit" asp-route-id="@a.Id">Edit</a>
 
-                        <form asp-action="Delete"
-                              asp-route-id="@a.Id"
-                              method="post"
-                              style="display:inline"
-                              onsubmit="return confirm('Are you sure to delete this record?');">
-
-                            <button type="submit" class="btn btn-sm btn-danger">
-                                Delete
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            }
+                    <form asp-action="Delete" asp-route-id="@a.Id" method="post" style="display:inline"
+                          onsubmit="return confirm('Are you sure?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+                        }
         </tbody>
     </table>
 </div>

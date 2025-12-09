@@ -8,10 +8,58 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     bool isMember = SignInHelper.Roles.Contains("Member");
 }
+<style>
+    /* SAVE BUTTON – White → Blue → Dark Blue */
+    .btn-save {
+        background: white !important;
+        color: #0d6efd !important;
+        border: 2px solid #0d6efd !important;
+        padding: 10px 26px;
+        font-size: 17px;
+        font-weight: 600;
+        border-radius: 10px;
+        transition: 0.25s ease-in-out;
+    }
+
+        .btn-save:hover {
+            background: #0d6efd !important;
+            color: white !important;
+        }
+
+        .btn-save:active {
+            background: #003c9e !important; /* Dark Blue */
+            color: white !important;
+            transform: scale(0.97);
+        }
+
+    /* CANCEL BUTTON – White → Gray → Dark Gray */
+    .btn-cancel {
+        background: white !important;
+        color: #6c757d !important;
+        border: 2px solid #6c757d !important;
+        padding: 10px 26px;
+        font-size: 17px;
+        font-weight: 600;
+        border-radius: 10px;
+        margin-left: 10px;
+        transition: 0.25s ease-in-out;
+    }
+
+        .btn-cancel:hover {
+            background: #6c757d !important;
+            color: white !important;
+        }
+
+        .btn-cancel:active {
+            background: #4f5458 !important; /* Dark Gray */
+            color: white !important;
+            transform: scale(0.97);
+        }
+</style>
 
 <h2>@ViewData["Title"]</h2>
 
-<form asp-action="CreateOrEdit" asp-controller="Member"  method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+<form asp-action="CreateOrEdit" asp-controller="Member" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
     <input type="hidden" asp-for="Id" />
     <div class="row">
         @if (!isMember)
@@ -22,7 +70,6 @@
                 <span asp-validation-for="MemberCode" class="text-danger"></span>
             </div>
         }
-       
 
         <div class="col-md-6 mb-3">
             <label asp-for="Name" class="form-label"></label>
@@ -125,6 +172,7 @@
             <label asp-for="MaritalStatus" class="form-label"></label>
             <input asp-for="MaritalStatus" type="checkbox" class="form-check-input" />
         </div>
+
         @if (!isMember)
         {
             <div class="col-md-6 mb-3">
@@ -133,6 +181,7 @@
                 <span asp-validation-for="NID" class="text-danger"></span>
             </div>
         }
+
         <div class="col-md-6 mb-3">
             <label asp-for="MealStatus" class="form-label"></label>
             <input asp-for="MealStatus" type="checkbox" class="form-check-input" />
@@ -145,11 +194,13 @@
                 <input asp-for="HouseBill" class="form-control" />
                 <span asp-validation-for="HouseBill" class="text-danger"></span>
             </div>
+
             <div class="col-md-4 mb-3">
                 <label asp-for="UtilityBill" class="form-label"></label>
                 <input asp-for="UtilityBill" class="form-control" />
                 <span asp-validation-for="UtilityBill" class="text-danger"></span>
             </div>
+
             <div class="col-md-4 mb-3">
                 <label asp-for="OtherBill" class="form-label"></label>
                 <input asp-for="OtherBill" class="form-control" />
@@ -157,14 +208,13 @@
             </div>
         }
 
-        
-
         <div class="col-md-6 mb-3">
             <label asp-for="ImageFile" class="form-label"></label>
             <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" onchange="previewImage(event)" />
             <span asp-validation-for="ImageFile" class="text-danger"></span>
 
-            <img id="imagePreview" src="~/@UrlHelpers.GetEventImageUrl(Model.Picture, CommonVariables.ProfileLocation)" alt="Image Preview" class="img-thumbnail mt-2" style="max-height:150px;" />
+            <img id="imagePreview" src="~/@UrlHelpers.GetEventImageUrl(Model.Picture, CommonVariables.ProfileLocation)"
+                 class="img-thumbnail mt-2" style="max-height:150px;" />
         </div>
 
         <div class="col-md-6 mb-3">
@@ -177,8 +227,9 @@
         </div>
     </div>
 
-    <button type="submit" class="btn btn-success">Save</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    <!-- UPDATED BUTTONS -->
+    <button type="submit" class="btn-save">Save</button>
+    <a asp-action="Index" class="btn-cancel">Cancel</a>
 </form>
 
 @section Scripts {
@@ -188,14 +239,15 @@
         function previewImage(event) {
             const reader = new FileReader();
             reader.onload = function () {
-                const output = document.getElementById('imagePreview');
-                output.src = reader.result;
+                document.getElementById('imagePreview').src = reader.result;
             };
             reader.readAsDataURL(event.target.files[0]);
         }
-            function togglePassword() {
+
+        function togglePassword() {
             const passwordInput = document.getElementById('Password');
             const btn = event.currentTarget;
+
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 btn.textContent = 'Hide';
@@ -206,3 +258,4 @@
         }
     </script>
 }
+

@@ -10,6 +10,7 @@ public class MappingProfile : Profile
     {
         CreateMap<Member, MemberVm>().ReverseMap();
         CreateMap<MealBazar, MealBazarVm>().ReverseMap();
+        CreateMap<MealAttendance, MealAttendanceVm>().ReverseMap();
 
     }
 }

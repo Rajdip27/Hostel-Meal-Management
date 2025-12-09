@@ -7,13 +7,16 @@ using HostelMealManagement.Core.Entities;
 using HostelMealManagement.Infrastructure.DatabaseContext;
 using HostelMealManagement.Infrastructure.Helper.Acls;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using static HostelMealManagement.Core.Entities.Auth.IdentityModel;
+using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 public interface IMemberRepository : IBaseService<Member>
 {
     Task<bool> CreateOrUpdateMemberWithUserAsync(MemberVm vm,CancellationToken cancellationToken);
     Task<User?> GetUserByMemberIdAsync(long memberId, CancellationToken cancellationToken = default);
+    List<SelectListItem> GetMemberList();
 }
 
 public class MemberRepository : BaseService<Member>, IMemberRepository
@@ -120,6 +123,18 @@ public class MemberRepository : BaseService<Member>, IMemberRepository
             Console.WriteLine(ex.Message);
             return false; // Removed unreachable throw
         }
+    }
+
+    public List<SelectListItem> GetMemberList()
+    {
+        return _context.Set<Member>()   
+        .Where(x => !x.IsDelete)
+        .Select(x => new SelectListItem
+        {
+            Value = x.Id.ToString(),
+            Text = x.Name
+        })
+        .ToList();
     }
 
     public async Task<User?> GetUserByMemberIdAsync(long memberId, CancellationToken cancellationToken = default)

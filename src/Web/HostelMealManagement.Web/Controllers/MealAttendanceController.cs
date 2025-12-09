@@ -3,21 +3,28 @@ using HostelMealManagement.Application.Logging;
 using HostelMealManagement.Application.Repositories;
 using HostelMealManagement.Application.ViewModel;
 using HostelMealManagement.Core.Entities;
+using HostelMealManagement.Infrastructure.Helper.Acls;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using static HostelMealManagement.Core.Entities.Auth.IdentityModel;
 
 namespace HostelMealManagement.Web.Controllers;
 
 [Authorize]
-public class MealAttendanceController(IMealAttendanceRepository attendanceRepository,
-                                      IAppLogger<MealAttendanceController> logger,
-                                      IMapper mapper) : Controller
+public class MealAttendanceController(
+    IMealAttendanceRepository attendanceRepository,
+    IAppLogger<MealAttendanceController> logger,
+    IMapper mapper,
+    ISignInHelper signInHelper,
+    IMemberRepository memberRepository,
+    UserManager<User> _userManager
+) : Controller
 {
     private readonly IMealAttendanceRepository _attendanceRepository = attendanceRepository;
     private readonly IAppLogger<MealAttendanceController> _logger = logger;
     private readonly IMapper _mapper = mapper;
-
 
     // --------------------------------------------------------
     // INDEX
@@ -51,7 +58,7 @@ public class MealAttendanceController(IMealAttendanceRepository attendanceReposi
 
 
     // --------------------------------------------------------
-    // GET: CREATE OR EDIT
+    // GET: CREATE or EDIT
     // --------------------------------------------------------
     [HttpGet]
     [Route("mealattendance/createoredit/{id?}")]
@@ -59,11 +66,27 @@ public class MealAttendanceController(IMealAttendanceRepository attendanceReposi
     {
         try
         {
+            var roles = signInHelper.Roles;
+            var userId = signInHelper.UserId;
+
+            if (roles.Contains("Member") && userId.HasValue)
+            {
+                var user = await _userManager.FindByIdAsync(userId.Value.ToString());
+
+                ViewBag.MemberId = memberRepository
+                    .GetMemberList()
+                    .Where(x => x.Value == user.MemberId.ToString())
+                    .ToList();
+            }
+            else
+            {
+                ViewBag.MemberId = memberRepository.GetMemberList();
+            }
+
             if (id > 0)
             {
-                _logger.LogInfo($"Editing MealAttendance Id={id}");
+                var attendance = await _attendanceRepository.GetByIdAsync(id);
 
-                var attendance = await _attendanceRepository.FindAsync(id);
                 if (attendance == null)
                 {
                     TempData["AlertMessage"] = $"MealAttendance with Id {id} not found.";
@@ -71,7 +94,7 @@ public class MealAttendanceController(IMealAttendanceRepository attendanceReposi
                     return RedirectToAction(nameof(Index));
                 }
 
-                return View(_mapper.Map<MealAttendanceVm>(attendance));
+                return View(attendance);
             }
 
             return View(new MealAttendanceVm());
@@ -85,7 +108,7 @@ public class MealAttendanceController(IMealAttendanceRepository attendanceReposi
 
 
     // --------------------------------------------------------
-    // POST: CREATE OR EDIT
+    // POST: CREATE or EDIT
     // --------------------------------------------------------
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -101,27 +124,27 @@ public class MealAttendanceController(IMealAttendanceRepository attendanceReposi
 
         try
         {
-            var attendanceEntity = _mapper.Map<MealAttendance>(attendanceVm);
+            bool result = await _attendanceRepository.UpsertAsync(attendanceVm);
 
-            if (attendanceVm.Id > 0)
+            if (!result)
             {
-                _logger.LogInfo($"Updating MealAttendance Id={attendanceVm.Id}");
-                await _attendanceRepository.UpdateAsync(attendanceEntity);
-                TempData["AlertMessage"] = "Meal Attendance updated successfully!";
+                TempData["AlertMessage"] = "Saving Meal Attendance failed!";
+                TempData["AlertType"] = "Error";
+                return View(attendanceVm);
             }
-            else
-            {
-                _logger.LogInfo("Creating new MealAttendance");
-                await _attendanceRepository.InsertAsync(attendanceEntity);
-                TempData["AlertMessage"] = "Meal Attendance created successfully!";
-            }
+
+            TempData["AlertMessage"] =
+                attendanceVm.Id > 0
+                ? "Meal Attendance updated successfully!"
+                : "Meal Attendance created successfully!";
 
             TempData["AlertType"] = "Success";
+
             return RedirectToAction(nameof(Index));
         }
         catch (Exception ex)
         {
-            _logger.LogError("Error while creating/updating Meal Attendance", ex);
+            _logger.LogError("Error while saving Meal Attendance", ex);
             TempData["AlertMessage"] = "An error occurred while saving Meal Attendance.";
             TempData["AlertType"] = "Error";
 
@@ -139,16 +162,14 @@ public class MealAttendanceController(IMealAttendanceRepository attendanceReposi
     {
         try
         {
-            var attendance = await _attendanceRepository.FindAsync(id);
+            var success = await _attendanceRepository.DeleteAsync(id);
 
-            if (attendance == null)
+            if (!success)
             {
-                TempData["AlertMessage"] = $"MealAttendance with Id {id} not found.";
+                TempData["AlertMessage"] = $"MealAttendance with Id {id} not found!";
                 TempData["AlertType"] = "Error";
                 return NotFound();
             }
-
-            await _attendanceRepository.DeleteAsync(attendance);
 
             TempData["AlertMessage"] = "Meal Attendance deleted successfully!";
             TempData["AlertType"] = "Success";
