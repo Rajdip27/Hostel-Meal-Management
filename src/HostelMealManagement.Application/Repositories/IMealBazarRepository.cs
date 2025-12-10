@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HostelMealManagement.Application.Repositories;
 
-public interface IMealBazarRepository:IBaseService<MealBazar>
+public interface IMealBazarRepository : IBaseService<MealBazar>
 {
     Task<bool> UpsertAsync(MealBazarVm vm);
     Task<MealBazarVm> GetByIdAsync(long id);
@@ -199,9 +199,4 @@ public class MealBazarRepository(ApplicationDbContext context) : BaseService<Mea
                 }).ToList()
             }).ToListAsync();
     }
-
-
-   
-
-
 }

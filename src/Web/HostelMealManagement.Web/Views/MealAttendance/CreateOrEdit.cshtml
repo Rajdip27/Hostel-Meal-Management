@@ -78,7 +78,7 @@
         padding-left: 10px;
     }
 
-    /* ---------- TOGGLE SWITCH (Corporate Blue) ---------- */
+    /* ---------- TOGGLE SWITCH ---------- */
     .switch-toggle {
         width: 46px;
         height: 24px;
@@ -144,7 +144,6 @@
         border-radius: 4px;
     }
 
-    /* ---------- Guest Row ---------- */
     .guest-item-row {
         display: flex;
         align-items: center;
@@ -160,7 +159,7 @@
         color: #203254;
     }
 
-    /* ---------- Floating Input ---------- */
+    /* Floating input */
     .floating-input-group {
         width: 260px;
         position: relative;
@@ -264,8 +263,19 @@
             <!-- MEAL DATE -->
             <div class="mb-4">
                 <label class="form-label">Meal Date</label>
-                <input asp-for="MealDate" type="date" class="form-control" />
+                <input asp-for="MealDate" type="date" class="form-control" id="MealDate" />
             </div>
+
+            <!-- Auto-fill today date only when creating -->
+            @if (Model.Id == 0)
+            {
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        let today = new Date().toISOString().split("T")[0];
+                        document.getElementById("MealDate").value = today;
+                    });
+                </script>
+            }
 
             <!-- MEMBER MEALS -->
             <h4 class="section-heading">Member Meal</h4>
@@ -306,7 +316,6 @@
                 </select>
             </div>
 
-            <!-- GUEST CARD -->
             <div id="GuestSection" class="guest-card">
                 <div class="guest-gradient"></div>
 

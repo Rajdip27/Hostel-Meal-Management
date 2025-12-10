@@ -192,9 +192,20 @@
             <!-- Date -->
             <div class="mb-4">
                 <label asp-for="BazarDate" class="form-label"></label>
-                <input asp-for="BazarDate" type="date" class="form-control" />
+                <input asp-for="BazarDate" type="date" class="form-control" id="BazarDate" />
                 <span asp-validation-for="BazarDate" class="text-danger"></span>
             </div>
+
+            <!-- AUTO SET TODAY DATE (ONLY WHEN CREATING) -->
+            @if (Model.Id == 0)
+            {
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        let today = new Date().toISOString().split("T")[0];
+                        document.getElementById("BazarDate").value = today;
+                    });
+                </script>
+            }
 
             <!-- Description -->
             <div class="mb-4">

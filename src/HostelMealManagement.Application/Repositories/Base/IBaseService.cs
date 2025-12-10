@@ -1,4 +1,6 @@
-﻿using HostelMealManagement.Core.Entities.BaseEntities;
+﻿using HostelMealManagement.Application.CommonModel;
+using HostelMealManagement.Application.Filterl;
+using HostelMealManagement.Core.Entities.BaseEntities;
 using HostelMealManagement.Infrastructure.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -13,7 +15,7 @@ public interface IBaseService<T> where T : AuditableEntity
     Task<List<T>> GetAllAsync(params Expression<Func<T, Object>>[] includes);
     Task<T> FindAsync(long id);
     Task<T> FindAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes);
-
+    Task<PaginationModel<T>> GetAllPaginationAsync(Filter filter, CancellationToken ct);
     T Find(long id);
     T Find(Int64 id, params Expression<Func<T, Object>>[] includeProperties);
     void Insert(T entity);
@@ -149,5 +151,10 @@ public class BaseService<T> : IBaseService<T> where T : AuditableEntity
         entity.CreatedDate = DateTime.UtcNow;
         await entities.AddAsync(entity);
         await _context.SaveChangesAsync();
+    }
+
+    public Task<PaginationModel<T>> GetAllPaginationAsync(Filter filter, CancellationToken ct)
+    {
+        throw new NotImplementedException();
     }
 }
