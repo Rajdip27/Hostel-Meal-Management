@@ -32,10 +32,10 @@
             font-weight: 600;
             z-index: 9999;
             opacity: 1;
-            transition: opacity 0.9s ease;
+            transition: opacity 1s ease;
         }
 
-        /* ===== Minimal Corporate Background ===== */
+        /* ===== Page Background ===== */
         body {
             margin: 0;
             padding: 20px;
@@ -47,11 +47,10 @@
             background: linear-gradient(135deg, #eef0f4, #dfe2e6);
         }
 
-        /* ===== Glossy Blue Glass Login Card ===== */
+        /* ===== Glass Login Card ===== */
         .login-card {
             width: 100%;
             max-width: 420px;
-            /* Glossy blue glass effect */
             background: rgba(40, 90, 180, 0.35);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
@@ -61,86 +60,41 @@
             transform: translateY(40px);
             opacity: 0;
             transition: 0.8s ease;
-            padding-bottom: 5px;
-            overflow: hidden;
         }
 
-        /* ===== Card Header ===== */
         .card-header {
-            background: linear-gradient(135deg, rgba(33, 71, 155, 0.85), rgba(38, 92, 170, 0.9));
-            padding: 2rem 2rem 1.6rem;
+            background: linear-gradient(135deg, rgba(33,71,155,.85), rgba(38,92,170,.9));
             text-align: center;
+            padding: 2rem 2rem 1.6rem;
             color: white;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.25);
         }
 
         .logo-circle {
             width: 64px;
             height: 64px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.28);
+            background: rgba(255,255,255,0.28);
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 12px;
-            font-size: 28px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18), 0 0 20px rgba(255, 255, 255, 0.35);
         }
 
-        /* ===== Card Body ===== */
         .card-body {
             padding: 1.8rem;
-        }
-
-        /* ===== Labels & Inputs ===== */
-        label {
-            font-weight: 600;
-            color: #203254;
-            font-size: 0.9rem;
         }
 
         .form-control {
             height: 48px;
             border-radius: 10px;
-            border: 1px solid #b6c1d1;
-            background: rgba(255, 255, 255, 0.85);
-            transition: 0.25s ease;
+            background: rgba(255,255,255,0.85);
         }
 
-            .form-control:focus {
-                border-color: #3559a8;
-                box-shadow: 0 0 0 2px rgba(53, 89, 168, 0.25);
-            }
-
-        /* ===== Button ===== */
         .btn-login {
             background: #3559a8;
-            border: none;
-            height: 48px;
             border-radius: 10px;
-            font-size: 16px;
+            height: 48px;
             color: white;
-            font-weight: 600;
-            box-shadow: 0 6px 20px rgba(53, 89, 168, 0.25);
-            transition: 0.25s ease;
-        }
-
-            .btn-login:hover {
-                background: #2d4d8f;
-                box-shadow: 0 8px 25px rgba(53, 89, 168, 0.35);
-            }
-
-            .btn-login:active {
-                background: #263f78;
-                transform: scale(0.97);
-            }
-
-        /* ===== Footer ===== */
-        .login-footer {
-            font-size: 13px;
-            color: #6c757d;
-            text-align: center;
-            margin-top: 1rem;
         }
 
     </style>
@@ -148,16 +102,64 @@
 
 <body>
 
-    <!-- Intro Screen -->
-    <div id="intro-screen">Welcome to Hostel Meal Management</div>
+    <!-- ======================================== -->
+    <!--        ENHANCED INTRO SCREEN             -->
+    <!-- ======================================== -->
+    <div id="intro-screen">
 
-    <!-- LOGIN CARD -->
+        <div id="intro-content" style="text-align:center; padding:20px; opacity:0;">
+
+            <!-- Logo -->
+            <div id="intro-logo" style="
+                width:90px;
+                height:90px;
+                border-radius:50%;
+                background:rgba(255,255,255,0.25);
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                margin:0 auto 15px auto;
+                transform:scale(0.6);
+            ">
+                <i class="fas fa-utensils" style="font-size:36px; color:white;"></i>
+            </div>
+
+            <!-- Title -->
+            <div id="intro-title" style="font-size:32px; font-weight:700; margin-bottom:10px; opacity:0;">
+                Hostel Meal Management
+            </div>
+
+            <div id="intro-sub" style="font-size:18px; opacity:0; margin-bottom:20px;">
+                Smart • Fast • Efficient Meal Tracking
+            </div>
+
+            <!-- Feature list -->
+            <div id="intro-features" style="opacity:0; font-size:15px; line-height:1.6;">
+                <div><i class="fas fa-check-circle"></i> Daily Meal Records</div>
+                <div><i class="fas fa-check-circle"></i> Auto Meal Bill Calculation</div>
+                <div><i class="fas fa-check-circle"></i> Bazar & Expense Tracking</div>
+                <div><i class="fas fa-check-circle"></i> Member Profile System</div>
+                <div><i class="fas fa-check-circle"></i> Secure Access Control</div>
+            </div>
+
+            <div id="intro-tagline" style="margin-top:22px; opacity:0; font-size:14px;">
+                Empowering Hostels with Smart Technology
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================== -->
+    <!--              LOGIN CARD                  -->
+    <!-- ======================================== -->
     <div class="login-card" id="login-card">
         <div class="card-header">
             <div class="logo-circle">
                 <i class="fas fa-utensils"></i>
             </div>
-
             <h4 class="fw-bold mb-0">Hostel Meal</h4>
             <p class="small opacity-75 mb-0">Login to continue</p>
         </div>
@@ -170,33 +172,70 @@
                 <!-- Email -->
                 <label asp-for="Email" class="mb-1">Email</label>
                 <input asp-for="Email" class="form-control mb-1" placeholder="Enter your email" />
-                <span asp-validation-for="Email" class="text-danger small mb-3 d-block"></span>
 
                 <!-- Password -->
                 <label asp-for="Password" class="mb-1">Password</label>
                 <input asp-for="Password" type="password" class="form-control mb-1" placeholder="Enter your password" />
-                <span asp-validation-for="Password" class="text-danger small mb-3 d-block"></span>
 
-                <button type="submit" class="btn btn-login w-100 mt-2">
+                <button type="submit" class="btn btn-login w-100 mt-3">
                     <i class="fas fa-sign-in-alt me-2"></i>Login
                 </button>
-
-                <div class="login-footer mt-4">
-                    &copy; @DateTime.Now.Year Hostel Meal Management
-                </div>
 
             </form>
         </div>
     </div>
 
-    <!-- JavaScript for intro screen timing -->
+
+    <!-- ======================================== -->
+    <!-- ANIMATION SCRIPT (NO KEYFRAMES USED)     -->
+    <!-- ======================================== -->
     <script>
         window.onload = function () {
 
-            setTimeout(() => {
-                const intro = document.getElementById("intro-screen");
-                const card = document.getElementById("login-card");
+            const intro = document.getElementById("intro-screen");
+            const logo = document.getElementById("intro-logo");
+            const content = document.getElementById("intro-content");
+            const title = document.getElementById("intro-title");
+            const sub = document.getElementById("intro-sub");
+            const features = document.getElementById("intro-features");
+            const tagline = document.getElementById("intro-tagline");
+            const card = document.getElementById("login-card");
 
+            // Fade in intro content
+            setTimeout(() => content.style.opacity = "1", 300);
+
+            // Logo scale animation
+            setTimeout(() => {
+                logo.style.transition = "0.6s ease";
+                logo.style.transform = "scale(1)";
+            }, 500);
+
+            // Fade in title
+            setTimeout(() => {
+                title.style.transition = "0.6s ease";
+                title.style.opacity = "1";
+            }, 800);
+
+            // Fade subtitle
+            setTimeout(() => {
+                sub.style.transition = "0.6s ease";
+                sub.style.opacity = "1";
+            }, 1000);
+
+            // Fade features list
+            setTimeout(() => {
+                features.style.transition = "0.6s ease";
+                features.style.opacity = "1";
+            }, 1200);
+
+            // Fade tagline
+            setTimeout(() => {
+                tagline.style.transition = "0.6s ease";
+                tagline.style.opacity = "1";
+            }, 1400);
+
+            // Remove intro and show login card
+            setTimeout(() => {
                 intro.style.opacity = "0";
 
                 setTimeout(() => {
@@ -205,9 +244,10 @@
                     card.style.transform = "translateY(0)";
                 }, 900);
 
-            }, 2000); // Intro stays 2 seconds
-        }
+            }, 2800);
+        };
     </script>
+
 
     <!-- Validation Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
