@@ -26,6 +26,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IExcelUploadService, ExcelUploadService>();
         services.AddScoped(typeof(IAppLogger<>), typeof(AppLogger<>));
         services.AddTransient(typeof(IBaseService<>), typeof(BaseService<>));
+        services.AddScoped<IRolePermissionService, RolePermissionService>();
         services.AddSingleton<IFileService, FileService>();
         services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
         // Register your PDF service

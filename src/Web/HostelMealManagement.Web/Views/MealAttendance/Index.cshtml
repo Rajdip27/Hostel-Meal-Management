@@ -1,8 +1,14 @@
-﻿@model List<HostelMealManagement.Application.ViewModel.MealAttendanceVm>
+﻿@using HostelMealManagement.Application.Services
+@using HostelMealManagement.Infrastructure.Helper.Acls
+@inject IRolePermissionService Permission
+@inject ISignInHelper SignInHelper
+
+@model List<HostelMealManagement.Application.ViewModel.MealAttendanceVm>
 
 @{
     ViewData["Title"] = "Meal Attendance List";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var role = SignInHelper.Roles;
 }
 
 <!-- ================= CORPORATE GLOSSY BLUE THEME ================= -->
@@ -30,10 +36,10 @@
         transition: 0.25s ease;
     }
 
-    .btn-primary:hover {
-        background: #2d4d8f !important;
-        box-shadow: 0 8px 25px rgba(53, 89, 168, 0.35);
-    }
+        .btn-primary:hover {
+            background: #2d4d8f !important;
+            box-shadow: 0 8px 25px rgba(53, 89, 168, 0.35);
+        }
 
     /* ===== Table Container ===== */
     .table-responsive {
@@ -94,10 +100,10 @@
         transition: .25s ease;
     }
 
-    .btn-info:hover {
-        background: #1e40af !important;
-        box-shadow: 0 6px 16px rgba(59,130,246,0.4);
-    }
+        .btn-info:hover {
+            background: #1e40af !important;
+            box-shadow: 0 6px 16px rgba(59,130,246,0.4);
+        }
 
     .btn-danger {
         background: #dc2626 !important;
@@ -110,10 +116,10 @@
         transition: .25s ease;
     }
 
-    .btn-danger:hover {
-        background: #b91c1c !important;
-        box-shadow: 0 6px 16px rgba(220,38,38,0.4);
-    }
+        .btn-danger:hover {
+            background: #b91c1c !important;
+            box-shadow: 0 6px 16px rgba(220,38,38,0.4);
+        }
 
     .action-buttons .btn {
         margin-right: 4px;
@@ -149,74 +155,82 @@
         <tbody>
             @foreach (var a in Model)
             {
-                <tr>
-                    <td>@a.Id</td>
-                    <td>@a.MealDate.ToString("yyyy-MM-dd")</td>
-                    <td class="left-text">@a.MemberName</td>
+            <tr>
+                <td>@a.Id</td>
+                <td>@a.MealDate.ToString("yyyy-MM-dd")</td>
+                <td class="left-text">@a.MemberName</td>
 
-                    <!-- Member Breakfast -->
-                    <td>
-                        @Html.Raw(a.IsBreakfast
-                            ? "<span class='check-icon'>✔️</span>"
-                            : "<span class='cross-icon'>❌</span>")
-                    </td>
+                <!-- Member Breakfast -->
+                <td>
+                    @Html.Raw(a.IsBreakfast
+                                        ? "<span class='check-icon'>✔️</span>"
+                                        : "<span class='cross-icon'>❌</span>")
+                </td>
 
-                    <!-- Member Lunch -->
-                    <td>
-                        @Html.Raw(a.IsLunch
-                            ? "<span class='check-icon'>✔️</span>"
-                            : "<span class='cross-icon'>❌</span>")
-                    </td>
+                <!-- Member Lunch -->
+                <td>
+                    @Html.Raw(a.IsLunch
+                                        ? "<span class='check-icon'>✔️</span>"
+                                        : "<span class='cross-icon'>❌</span>")
+                </td>
 
-                    <!-- Member Dinner -->
-                    <td>
-                        @Html.Raw(a.IsDinner
-                            ? "<span class='check-icon'>✔️</span>"
-                            : "<span class='cross-icon'>❌</span>")
-                    </td>
+                <!-- Member Dinner -->
+                <td>
+                    @Html.Raw(a.IsDinner
+                                        ? "<span class='check-icon'>✔️</span>"
+                                        : "<span class='cross-icon'>❌</span>")
+                </td>
 
-                    <!-- Is Guest -->
-                    <td>
-                        @Html.Raw(a.IsGuest
-                            ? "<span class='check-icon'>✔️</span>"
-                            : "<span class='cross-icon'>❌</span>")
-                    </td>
+                <!-- Is Guest -->
+                <td>
+                    @Html.Raw(a.IsGuest
+                                        ? "<span class='check-icon'>✔️</span>"
+                                        : "<span class='cross-icon'>❌</span>")
+                </td>
 
-                    <!-- Guest Breakfast -->
-                    <td>
-                        @Html.Raw(a.GuestIsBreakfast
-                            ? "<span class='check-icon'>✔️</span>"
-                            : "<span class='cross-icon'>❌</span>")
-                    </td>
+                <!-- Guest Breakfast -->
+                <td>
+                    @Html.Raw(a.GuestIsBreakfast
+                                        ? "<span class='check-icon'>✔️</span>"
+                                        : "<span class='cross-icon'>❌</span>")
+                </td>
 
-                    <td>@a.GuestBreakfastQty</td>
+                <td>@a.GuestBreakfastQty</td>
 
-                    <!-- Guest Lunch -->
-                    <td>
-                        @Html.Raw(a.GuestIsLunch
-                            ? "<span class='check-icon'>✔️</span>"
-                            : "<span class='cross-icon'>❌</span>")
-                    </td>
+                <!-- Guest Lunch -->
+                <td>
+                    @Html.Raw(a.GuestIsLunch
+                                        ? "<span class='check-icon'>✔️</span>"
+                                        : "<span class='cross-icon'>❌</span>")
+                </td>
 
-                    <td>@a.GuestLunchQty</td>
+                <td>@a.GuestLunchQty</td>
 
-                    <!-- Guest Dinner -->
-                    <td>
-                        @Html.Raw(a.GuestIsDinner
-                            ? "<span class='check-icon'>✔️</span>"
-                            : "<span class='cross-icon'>❌</span>")
-                    </td>
+                <!-- Guest Dinner -->
+                <td>
+                    @Html.Raw(a.GuestIsDinner
+                                        ? "<span class='check-icon'>✔️</span>"
+                                        : "<span class='cross-icon'>❌</span>")
+                </td>
 
-                    <td>@a.GuestDinnerQty</td>
+                <td>@a.GuestDinnerQty</td>
 
-                    <!-- Actions -->
-                    <td class="action-buttons">
-                        <a class="btn btn-sm btn-info" asp-action="CreateOrEdit" asp-route-id="@a.Id">Edit</a>
+                <!-- Actions -->
+                <td class="action-buttons">
 
-                        <form asp-action="Delete" asp-route-id="@a.Id" method="post" style="display:inline"
-                              onsubmit="return confirm('Are you sure?');">
-                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                        </form>
+                    @if (Permission.CanEdit(role))
+                        {
+                            <a class="btn btn-sm btn-info" asp-action="CreateOrEdit" asp-route-id="@a.Id">Edit</a>
+                        }
+                        @if (Permission.CanDelete(role))
+                        {
+                            <form asp-action="Delete" asp-route-id="@a.Id" method="post" style="display:inline"
+                                  onsubmit="return confirm('Are you sure?');">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        }
+
+
                     </td>
                 </tr>
             }

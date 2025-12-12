@@ -1,12 +1,15 @@
 ﻿@using HostelMealManagement.Application.ViewModel
-@inject HostelMealManagement.Infrastructure.Helper.Acls.ISignInHelper SignInHelper
+@using HostelMealManagement.Application.Services
+@using HostelMealManagement.Infrastructure.Helper.Acls
+@inject IRolePermissionService Permission
+@inject ISignInHelper SignInHelper
 @model IEnumerable<MealMenuVm>
 
 @{
     ViewData["Title"] = "Meal Menu List";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    bool isMember = SignInHelper.Roles.Contains("Member");
     int sl = 1;
+    var role = SignInHelper.Roles;
 }
 
 <!-- ================= CORPORATE GLOSSY BLUE THEME ================= -->
@@ -83,12 +86,11 @@
 
 <h2>@ViewData["Title"]</h2>
 
-@if (!isMember)
-{
+
     <p>
         <a class="btn btn-primary" asp-controller="mealmenu" asp-action="createoredit">Add New</a>
     </p>
-}
+
 
 <!-- ========== FILTER BAR ========== -->
 <div class="row mb-3">
@@ -148,12 +150,20 @@
                 <td>@menu.MenuItems</td>
                 <td>@(menu.IsActive ? "Yes" : "No")</td>
                 <td class="action-buttons">
-                    <a class="btn btn-sm btn-info" asp-action="CreateOrEdit" asp-route-id="@menu.Id">Edit</a>
 
-                    <form asp-action="Delete" asp-route-id="@menu.Id" method="post" style="display:inline"
-                          onsubmit="return confirm('Are you sure?');">
-                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                    </form>
+    @if (Permission.CanEdit(role))
+                    {
+                        <a class="btn btn-sm btn-info" asp-action="CreateOrEdit" asp-route-id="@menu.Id">Edit</a>
+                    }
+                    @if (Permission.CanDelete(role))
+                    {
+                        <form asp-action="Delete" asp-route-id="@menu.Id" method="post" style="display:inline"
+                              onsubmit="return confirm('Are you sure?');">
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    }
+
+                   
                 </td>
             </tr>
             sl++;
