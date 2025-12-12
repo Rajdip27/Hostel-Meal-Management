@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HostelMealManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251202055353_MealBazar")]
-    partial class MealBazar
+    [Migration("20251212174610_CreateAllTable")]
+    partial class CreateAllTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -223,7 +223,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "372b60b1-f1d9-47da-ac9e-33fe84d389ea",
+                            ConcurrencyStamp = "2def778f-223b-4721-9e31-e194ac2ec24c",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@localhost.com",
@@ -232,9 +232,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKxGAd0lNK5f3hCBN9DBpSfaByZ8XnwZD8ryQ60tStM0NlK+frbXY4xygJRkDtIBqw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGpVtk1mbdKqZLQiH2iy8+li06n3lSDs8R+VkHD5/hM/CodvukukNZNwHT/HYwJptg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "18bae5ae-1331-4db8-a1e7-e67c35b34aaa",
+                            SecurityStamp = "4ca60af8-77e2-451a-9651-cf38afd9e72a",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -242,20 +242,20 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 2L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "047f2827-6453-4144-95e7-c2b960871fb6",
+                            ConcurrencyStamp = "62f2e35f-83bd-4301-a873-a2233b2740da",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "employee@localhost.com",
+                            Email = "Manager@localhost.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             Name = "",
-                            NormalizedEmail = "EMPLOYEE@LOCALHOST.COM",
-                            NormalizedUserName = "EMPLOYEE@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELN0nZBfzaf9KyTW6j3Ppo8lCi/tA+237Gpmgrl47v/Av13vDsrusmvfK/vJ1KDwzg==",
+                            NormalizedEmail = "MANAGER@LOCALHOST.COM",
+                            NormalizedUserName = "MANAGER@LOCALHOST.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEN8S2dngWTZAubwqSpwgQ4Ue0q+MSD9gCFRpaQKREVW6XCSK9KIuZy2U48zwAT4q1A==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "82492f03-3b9e-4b4c-9222-657795be1057",
+                            SecurityStamp = "5499778d-f44a-4419-ba07-c9969a8ad0a0",
                             TwoFactorEnabled = false,
-                            UserName = "employee@localhost.com"
+                            UserName = "Manager@localhost.com"
                         });
                 });
 
@@ -425,6 +425,74 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     b.ToTable("AuditLogs");
                 });
 
+            modelBuilder.Entity("HostelMealManagement.Core.Entities.MealAttendance", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("GuestBreakfastQty")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GuestDinnerQty")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("GuestIsBreakfast")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("GuestIsDinner")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("GuestIsLunch")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("GuestLunchQty")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsBreakfast")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDinner")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsGuest")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsLunch")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset>("MealDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<long>("MemberId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
+
+                    b.Property<long?>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("ModifiedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("MealAttendances", (string)null);
+                });
+
             modelBuilder.Entity("HostelMealManagement.Core.Entities.MealBazar", b =>
                 {
                     b.Property<long>("Id")
@@ -462,6 +530,53 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MealBazars", (string)null);
+                });
+
+            modelBuilder.Entity("HostelMealManagement.Core.Entities.MealBazarItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("MealBazarId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
+
+                    b.Property<long?>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("ModifiedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MealBazarId");
+
+                    b.ToTable("MealBazarItem", (string)null);
                 });
 
             modelBuilder.Entity("HostelMealManagement.Core.Entities.MealCycle", b =>
@@ -504,6 +619,50 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MealCycle", (string)null);
+                });
+
+            modelBuilder.Entity("HostelMealManagement.Core.Entities.MealMenu", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MealName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("MenuItems")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<long?>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("ModifiedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MealMenu", (string)null);
                 });
 
             modelBuilder.Entity("HostelMealManagement.Core.Entities.Member", b =>
@@ -687,6 +846,38 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HostelMealManagement.Core.Entities.MealAttendance", b =>
+                {
+                    b.HasOne("HostelMealManagement.Core.Entities.Member", "Member")
+                        .WithMany("MealAttendances")
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("HostelMealManagement.Core.Entities.MealBazarItem", b =>
+                {
+                    b.HasOne("HostelMealManagement.Core.Entities.MealBazar", "MealBazar")
+                        .WithMany("Items")
+                        .HasForeignKey("MealBazarId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("MealBazar");
+                });
+
+            modelBuilder.Entity("HostelMealManagement.Core.Entities.MealBazar", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("HostelMealManagement.Core.Entities.Member", b =>
+                {
+                    b.Navigation("MealAttendances");
                 });
 #pragma warning restore 612, 618
         }

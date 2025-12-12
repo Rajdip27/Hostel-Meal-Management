@@ -220,7 +220,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1f406c3c-1579-4496-b8eb-60edb0bcd908",
+                            ConcurrencyStamp = "2def778f-223b-4721-9e31-e194ac2ec24c",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@localhost.com",
@@ -229,9 +229,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEA07IxcqJzyj3xSj3PdB5E4k2cjt3NNehRft4Z8uX4/SX/foBEPjSgXbKWIQYcF2Ng==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGpVtk1mbdKqZLQiH2iy8+li06n3lSDs8R+VkHD5/hM/CodvukukNZNwHT/HYwJptg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "cdc34853-10f1-471c-a42a-c11a5a69639a",
+                            SecurityStamp = "4ca60af8-77e2-451a-9651-cf38afd9e72a",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -239,7 +239,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 2L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c3f896fe-3c23-425f-80f3-38284961e2da",
+                            ConcurrencyStamp = "62f2e35f-83bd-4301-a873-a2233b2740da",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "Manager@localhost.com",
@@ -248,9 +248,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "MANAGER@LOCALHOST.COM",
                             NormalizedUserName = "MANAGER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBTyX72cV1BCPUg634lr1M2pG3TNFZcdEusKIDG36l4yMneHh9TOxYeOdBO5rY0msw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEN8S2dngWTZAubwqSpwgQ4Ue0q+MSD9gCFRpaQKREVW6XCSK9KIuZy2U48zwAT4q1A==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "0ac7e589-0091-461d-a0fd-d759d16777bb",
+                            SecurityStamp = "5499778d-f44a-4419-ba07-c9969a8ad0a0",
                             TwoFactorEnabled = false,
                             UserName = "Manager@localhost.com"
                         });

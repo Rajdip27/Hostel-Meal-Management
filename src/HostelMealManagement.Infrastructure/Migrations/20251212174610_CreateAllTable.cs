@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HostelMealManagement.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDatabse : Migration
+    public partial class CreateAllTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -89,6 +89,68 @@ namespace HostelMealManagement.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AuditLogs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MealBazars",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BazarDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    BazarAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedBy = table.Column<long>(type: "bigint", nullable: false),
+                    ModifiedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    ModifiedBy = table.Column<long>(type: "bigint", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MealBazars", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MealCycle",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    StartDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    EndDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    TotalDays = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedBy = table.Column<long>(type: "bigint", nullable: false),
+                    ModifiedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    ModifiedBy = table.Column<long>(type: "bigint", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MealCycle", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MealMenu",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DayOfWeek = table.Column<int>(type: "int", nullable: false),
+                    MealName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    MenuItems = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedBy = table.Column<long>(type: "bigint", nullable: false),
+                    ModifiedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    ModifiedBy = table.Column<long>(type: "bigint", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MealMenu", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -243,6 +305,68 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "MealBazarItem",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MealBazarId = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
+                    ProductName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Quantity = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedBy = table.Column<long>(type: "bigint", nullable: false),
+                    ModifiedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    ModifiedBy = table.Column<long>(type: "bigint", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MealBazarItem", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MealBazarItem_MealBazars_MealBazarId",
+                        column: x => x.MealBazarId,
+                        principalTable: "MealBazars",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MealAttendances",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MemberId = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
+                    MealDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    IsBreakfast = table.Column<bool>(type: "bit", nullable: false),
+                    IsLunch = table.Column<bool>(type: "bit", nullable: false),
+                    IsDinner = table.Column<bool>(type: "bit", nullable: false),
+                    IsGuest = table.Column<bool>(type: "bit", nullable: false),
+                    GuestIsBreakfast = table.Column<bool>(type: "bit", nullable: false),
+                    GuestBreakfastQty = table.Column<int>(type: "int", nullable: false),
+                    GuestIsLunch = table.Column<bool>(type: "bit", nullable: false),
+                    GuestLunchQty = table.Column<int>(type: "int", nullable: false),
+                    GuestIsDinner = table.Column<bool>(type: "bit", nullable: false),
+                    GuestDinnerQty = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedBy = table.Column<long>(type: "bigint", nullable: false),
+                    ModifiedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    ModifiedBy = table.Column<long>(type: "bigint", nullable: true),
+                    IsDelete = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MealAttendances", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MealAttendances_Member_MemberId",
+                        column: x => x.MemberId,
+                        principalTable: "Member",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "CreatedBy", "CreatedDateUtc", "Description", "Name", "NormalizedName", "StatusId", "UpdatedBy", "UpdatedDateUtc" },
@@ -258,8 +382,8 @@ namespace HostelMealManagement.Infrastructure.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedBy", "CreatedDate", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "MemberId", "Name", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UpdatedBy", "UpdatedDate", "UserName" },
                 values: new object[,]
                 {
-                    { 1L, 0, "56ee446f-b35f-408a-b38c-dcb3c6ad3cb9", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "admin@localhost.com", true, false, null, null, "", "ADMIN@LOCALHOST.COM", "ADMIN@LOCALHOST.COM", "AQAAAAIAAYagAAAAEBldgMVS+odxoI8nslMWuh+dtiBbG9ryMQecD/nuwQdDMY3jdohnJve+FtAAaULTvA==", null, false, "5e134bf6-2fec-4b16-b107-da8a28ebebc7", false, null, null, "admin@localhost.com" },
-                    { 2L, 0, "19bbe0c7-696c-4d96-96e3-ba40910856c1", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "employee@localhost.com", true, false, null, null, "", "EMPLOYEE@LOCALHOST.COM", "EMPLOYEE@LOCALHOST.COM", "AQAAAAIAAYagAAAAEMm6xceV16t28lDy4vqh1+TbJWY4q5Sq3IYCGUNQzYOs1XzfxIMz1nyQvqfKYQ9A6g==", null, false, "bbaef947-be55-42b9-89ab-0339aeb02564", false, null, null, "employee@localhost.com" }
+                    { 1L, 0, "2def778f-223b-4721-9e31-e194ac2ec24c", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "admin@localhost.com", true, false, null, null, "", "ADMIN@LOCALHOST.COM", "ADMIN@LOCALHOST.COM", "AQAAAAIAAYagAAAAEGpVtk1mbdKqZLQiH2iy8+li06n3lSDs8R+VkHD5/hM/CodvukukNZNwHT/HYwJptg==", null, false, "4ca60af8-77e2-451a-9651-cf38afd9e72a", false, null, null, "admin@localhost.com" },
+                    { 2L, 0, "62f2e35f-83bd-4301-a873-a2233b2740da", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "Manager@localhost.com", true, false, null, null, "", "MANAGER@LOCALHOST.COM", "MANAGER@LOCALHOST.COM", "AQAAAAIAAYagAAAAEN8S2dngWTZAubwqSpwgQ4Ue0q+MSD9gCFRpaQKREVW6XCSK9KIuZy2U48zwAT4q1A==", null, false, "5499778d-f44a-4419-ba07-c9969a8ad0a0", false, null, null, "Manager@localhost.com" }
                 });
 
             migrationBuilder.InsertData(
@@ -316,6 +440,16 @@ namespace HostelMealManagement.Infrastructure.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MealAttendances_MemberId",
+                table: "MealAttendances",
+                column: "MemberId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MealBazarItem_MealBazarId",
+                table: "MealBazarItem",
+                column: "MealBazarId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Member_Email",
                 table: "Member",
                 column: "Email",
@@ -362,13 +496,28 @@ namespace HostelMealManagement.Infrastructure.Migrations
                 name: "AuditLogs");
 
             migrationBuilder.DropTable(
-                name: "Member");
+                name: "MealAttendances");
+
+            migrationBuilder.DropTable(
+                name: "MealBazarItem");
+
+            migrationBuilder.DropTable(
+                name: "MealCycle");
+
+            migrationBuilder.DropTable(
+                name: "MealMenu");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Member");
+
+            migrationBuilder.DropTable(
+                name: "MealBazars");
         }
     }
 }
