@@ -13,9 +13,9 @@ public class RolePermissionService : IRolePermissionService
     private readonly Dictionary<string, (bool Create, bool Edit, bool Delete, bool View)> _rules =
         new()
         {
-            { "Admin",   (true, true, true, true) },
+            { "Administrator",   (true, true, true, true) },
             { "Manager", (true, true, false, true) },
-            { "User",    (false, false, false, true) }
+            { "User",    (true, false, false, true) }
         };
 
     private bool HasPermission(List<string> roles, Func<(bool Create, bool Edit, bool Delete, bool View), bool> selector)
