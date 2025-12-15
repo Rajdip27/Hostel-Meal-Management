@@ -162,7 +162,9 @@
                     }
                 </select>
 
+                <!-- IMPORTANT: no asp-for -->
                 <input type="hidden" id="MemberIds" name="MemberIds" />
+
                 <div id="selectedMembers" class="mt-2"></div>
             </div>
 
@@ -220,12 +222,13 @@
     <script>
         let selectedMembers = [];
 
-        // -------- ADD --------
+        // ADD MEMBER
         $("#memberSelect").on("change", function () {
             const id = $(this).val();
             const name = $("#memberSelect option:selected").text();
 
             if (!id) return;
+
             if (selectedMembers.some(x => x.id === id)) {
                 $(this).val("");
                 return;
@@ -236,7 +239,7 @@
             $(this).val("");
         });
 
-        // -------- RENDER --------
+        // RENDER TAGS
         function renderMembers() {
             let html = "";
             selectedMembers.forEach((m, i) => {
@@ -249,16 +252,18 @@
             });
 
             $("#selectedMembers").html(html);
+
+            // send as comma string
             $("#MemberIds").val(selectedMembers.map(x => x.id).join(","));
         }
 
-        // -------- REMOVE --------
+        // REMOVE
         function removeMember(index) {
             selectedMembers.splice(index, 1);
             renderMembers();
         }
 
-        // -------- EDIT MODE PRELOAD --------
+        // EDIT MODE LOAD
         @if (Model.MemberIds.Any())
         {
                 <text>
@@ -266,14 +271,13 @@
                         @foreach (var id in Model.MemberIds)
                         {
                                 var name = (ViewBag.Members as List<SelectListItem>)
-                                                      .First(x => x.Value == id.ToString()).Text;
+                                        .First(x => x.Value == id.ToString()).Text;
                                 <text>{ id: "@id", name: "@name" },</text>
                         }
                     ];
                     renderMembers();
                 </text>
         }
-   
     // ================= DATE LOGIC =================
     function calculateDays() {
         const start = new Date($("#StartDate").val());

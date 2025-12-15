@@ -42,8 +42,8 @@ public class MealBazarRepository(ApplicationDbContext context)
                     BazarDate = vm.BazarDate,
                     StartDate = vm.StartDate,
                     EndDate = vm.EndDate,
-                    //TotalDays = vm.TotalDays,
-                    //MealMemberId = vm.MealMemberId,
+                    TotalDays = vm.TotalDays,
+                    MealMemberId = vm.MemberIds,
                     BazarAmount = vm.BazarAmount,
                     Description = vm.Description
                 };
@@ -64,8 +64,8 @@ public class MealBazarRepository(ApplicationDbContext context)
             entity.BazarDate = vm.BazarDate;
             entity.StartDate = vm.StartDate;
             entity.EndDate = vm.EndDate;
-            //entity.TotalDays = vm.TotalDays;
-            //entity.MealMemberId = vm.MealMemberId;
+            entity.TotalDays = vm.TotalDays;
+            entity.MealMemberId = vm.MemberIds;
             entity.BazarAmount = vm.BazarAmount;
             entity.Description = vm.Description;
 
@@ -97,7 +97,7 @@ public class MealBazarRepository(ApplicationDbContext context)
             BazarDate = entity.BazarDate,
             StartDate = entity.StartDate,
             EndDate = entity.EndDate,
-            //TotalDays = entity.TotalDays,
+            
             //MealMemberId = entity.MealMemberId,
             BazarAmount = entity.BazarAmount,
             Description = entity.Description
@@ -152,6 +152,9 @@ public class MealBazarRepository(ApplicationDbContext context)
             })
             .ToListAsync();
     }
+
+
+
 }
 
 #endregion
