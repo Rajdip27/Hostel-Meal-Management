@@ -4,6 +4,7 @@ using HostelMealManagement.Infrastructure.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HostelMealManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251214092327_AddMealBazarAndItems")]
+    partial class AddMealBazarAndItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -220,11 +223,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-
-                            ConcurrencyStamp = "995b8e07-3dab-46ab-b724-daeb48b590b0",
-
                             ConcurrencyStamp = "3ca494be-904f-4a90-a5d7-1fe855eb5f54",
-
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@localhost.com",
@@ -233,15 +232,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-
-                            PasswordHash = "AQAAAAIAAYagAAAAEFB8KeQB1jmg6OsWi2JOJt76NojBbEGowZifL0XcGZVaE8oXOYqpYSus3s9zVtFKmQ==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "54b2a03c-9f1e-4c9f-aa3d-9a66e32209c2",
-
                             PasswordHash = "AQAAAAIAAYagAAAAEOc16F89bZeZpvpxGDkioOWaT0VYAlz0VDpHurXWv/aTM1KULs60rheaWm72BfRXNA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "9205aa0c-e585-46de-bdad-c91e9d98aa77",
-
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -249,11 +242,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 2L,
                             AccessFailedCount = 0,
-
-                            ConcurrencyStamp = "547408f7-8bc4-48d0-8499-12063536e6de",
-
                             ConcurrencyStamp = "be717eb8-3c8b-40fa-8d66-fa8971080317",
-
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "Manager@localhost.com",
@@ -262,15 +251,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "MANAGER@LOCALHOST.COM",
                             NormalizedUserName = "MANAGER@LOCALHOST.COM",
-
-                            PasswordHash = "AQAAAAIAAYagAAAAEBHVvfdbA1unbdfpkvCRzdOolXrgM1kMKANr87I8OQhkJI5RAjPU4VDbx4eeNF2Z4Q==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "803c541e-c0e9-41d5-9ee3-f7840d2be886",
-
                             PasswordHash = "AQAAAAIAAYagAAAAEMll7wI1ok9nBHEvp5de93HYjkTn6it8FptvZNYSTgRlzW/AfQ+tOT5DHrztfj7yHQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "16e0a2fb-2833-43c2-b7b9-d85c0d9838d4",
-
                             TwoFactorEnabled = false,
                             UserName = "Manager@localhost.com"
                         });
