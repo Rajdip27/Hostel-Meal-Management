@@ -15,6 +15,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor" Version="2.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.RazorPages" Version="2.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.3.0" />
+		<PackageReference Include="NodaTime" Version="3.2.3" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\HostelMealManagement.Core\HostelMealManagement.Core.csproj" />
