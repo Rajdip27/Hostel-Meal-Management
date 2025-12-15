@@ -1,21 +1,25 @@
-﻿using HostelMealManagement.Core.Entities.BaseEntities;
+﻿using HostelMealManagement.Core.Entities;
 
 namespace HostelMealManagement.Application.ViewModel;
 
-
-public class MealBazarVm:BaseEntity
+public class MealBazarVm
 {
-   
+    public long Id { get; set; }
+
     public DateTimeOffset BazarDate { get; set; }
+    public DateTimeOffset StartDate { get; set; }
+    public DateTimeOffset EndDate { get; set; }
+
+    public int TotalDays { get; set; }
+
+    // 🔹 This will store "1,2,3,4"
+    public string MealMemberId { get; set; } = string.Empty;
+
     public decimal BazarAmount { get; set; }
     public string Description { get; set; } = string.Empty;
-    public List<MealBazarItemVm> Items { get; set; } = new();
-}
 
-public class MealBazarItemVm: BaseEntity
-{
-   
-    public string ProductName { get; set; } =string.Empty;
-    public decimal Quantity { get; set; }
-    public decimal Price { get; set; }
+    public List<MealBazarItemVm> Items { get; set; } = new();
+
+    // 🔹 UI only (NOT stored in DB)
+    public List<MemberLookupVm> Members { get; set; } = new();
 }

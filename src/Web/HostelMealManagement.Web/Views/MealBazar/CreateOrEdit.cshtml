@@ -5,9 +5,7 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<!-- ================= CORPORATE GLOSSY BLUE THEME ================= -->
 <style>
-
     body {
         background: #ffffff !important;
         font-family: "Segoe UI", sans-serif;
@@ -17,167 +15,85 @@
         font-size: 32px;
         font-weight: 700;
         color: #1e3a8a;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
     }
 
     .page-underline {
-        width: 100%;
         height: 2px;
-        background: #c7d0dd;
+        width: 100%;
+        background: #cbd5e1;
+        opacity: 0.7;
         margin-bottom: 25px;
     }
 
-    /* ======= FORM CONTAINER (Glass + Shadow) ======= */
     .form-wrapper {
-        background: rgba(255,255,255,0.7);
-        padding: 30px;
+        background: rgba(255,255,255,0.8);
+        padding: 35px;
         border-radius: 16px;
         border: 1px solid rgba(200,200,200,0.35);
         box-shadow: 0 8px 28px rgba(0,0,0,0.08);
-        margin-bottom: 35px;
     }
 
-    /* ======= Labels ======= */
     .form-label {
         font-weight: 600;
-        color: #22344d;
+        color: #203254;
     }
 
-    /* ======= Inputs ======= */
     .form-control,
     .form-select {
+        padding: 12px 14px !important;
         height: 48px;
         border-radius: 10px !important;
         border: 1px solid #b6c1d1;
         background: rgba(255,255,255,0.9);
-        padding: 12px 14px !important;
-        font-size: 16px !important;
-        transition: .25s ease;
+        font-size: 15px;
     }
 
-        .form-control:focus,
-        .form-select:focus {
-            border-color: #3559a8;
-            box-shadow: 0 0 0 2px rgba(53,89,168,0.25);
-        }
-
-    h4.section-heading {
-        color: #1e3a8a;
-        font-weight: 700;
+    .section-heading {
         margin-top: 35px;
         margin-bottom: 15px;
         font-size: 22px;
-    }
-
-    /* ====== Table Styling ====== */
-    #itemsTable {
-        background: white;
-        border-radius: 10px;
-        overflow: hidden;
-        border: 1px solid #d7dce3;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.05);
-    }
-
-        #itemsTable thead th {
-            background: linear-gradient(135deg, rgba(33,71,155,0.9), rgba(38,92,170,0.95));
-            color: #fff !important;
-            border: none !important;
-            padding: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            letter-spacing: .3px;
-            text-align: center;
-        }
-
-        #itemsTable td {
-            vertical-align: middle;
-            font-size: 15px;
-            padding: 12px;
-            color: #2b3340;
-        }
-
-    .quantity, .price {
-        border-radius: 8px !important;
-    }
-
-    .item-total {
-        font-weight: 600;
+        font-weight: 700;
         color: #1e3a8a;
+        border-left: 5px solid #3559a8;
+        padding-left: 10px;
     }
 
-    /* ====== Add Item Button ====== */
-    #addItem {
-        border-radius: 10px;
-        padding: 8px 16px;
-        font-weight: 600;
-        border-color: #3559a8 !important;
-        color: #3559a8 !important;
+    #itemsTable thead th {
+        background: #3559a8;
+        color: white;
+        text-align: center;
     }
 
-        #addItem:hover {
-            background: #3559a8 !important;
-            color: white !important;
-        }
-
-    /* ===== Remove Button ===== */
     .btn-remove {
-        background: #dc2626 !important;
-        color: #ffffff !important;
-        border: none !important;
+        background: #dc2626;
+        color: white;
         border-radius: 8px;
-        padding: 6px 14px !important;
-        font-weight: 600;
-        transition: .25s ease;
+        padding: 6px 14px;
+        border: none;
     }
 
-        .btn-remove:hover {
-            background: #b91c1c !important;
-            box-shadow: 0 6px 16px rgba(220,38,38,0.45);
-        }
-
-    /* ================== BUTTON: SAVE ================== */
     .btn-save {
         background: #3559a8 !important;
         color: white !important;
-        border: none !important;
-        padding: 10px 26px;
-        font-size: 17px;
-        font-weight: 600;
+        padding: 12px 28px;
         border-radius: 10px;
-        transition: 0.25s ease;
-        box-shadow: 0 6px 18px rgba(53,89,168,0.25);
+        font-size: 17px;
+        font-weight: 700;
+        border: none;
     }
 
-        .btn-save:hover {
-            background: #2d4d8f !important;
-            box-shadow: 0 8px 25px rgba(53,89,168,0.35);
-        }
-
-        .btn-save:active {
-            background: #263f78 !important;
-            transform: scale(0.97);
-        }
-
-    /* ================== BUTTON: CANCEL ================== */
     .btn-cancel {
-        background: white !important;
-        color: #6c757d !important;
-        border: 2px solid #6c757d !important;
-        padding: 10px 26px;
+        padding: 12px 28px;
         font-size: 17px;
         border-radius: 10px;
-        transition: 0.3s ease-in-out;
-        font-weight: 600;
-        margin-left: 10px;
+        font-weight: 700;
+        background: #ffffff;
+        color: #6c757d;
+        border: 2px solid #6c757d;
+        margin-left: 8px;
     }
-
-        .btn-cancel:hover {
-            background: #6c757d !important;
-            color: white !important;
-        }
-
 </style>
-
 
 <div class="container-fluid px-4 py-4">
 
@@ -189,137 +105,183 @@
         <form asp-action="CreateOrEdit" method="post">
             <input type="hidden" asp-for="Id" />
 
-            <!-- Date -->
+            <!-- ================= BAZAR DATE ================= -->
             <div class="mb-4">
                 <label asp-for="BazarDate" class="form-label"></label>
                 <input asp-for="BazarDate" type="date" class="form-control" id="BazarDate" />
-                <span asp-validation-for="BazarDate" class="text-danger"></span>
             </div>
 
-            <!-- AUTO SET TODAY DATE (ONLY WHEN CREATING) -->
-            @if (Model.Id == 0)
-            {
-                <script>
-                    document.addEventListener("DOMContentLoaded", function () {
-                        let today = new Date().toISOString().split("T")[0];
-                        document.getElementById("BazarDate").value = today;
-                    });
-                </script>
-            }
-
-            <!-- Description -->
+            <!-- ================= START DATE ================= -->
             <div class="mb-4">
-                <label asp-for="Description" class="form-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <label asp-for="StartDate" class="form-label"></label>
+                <input asp-for="StartDate" type="date" class="form-control bg-light" id="StartDate" readonly />
             </div>
 
-            <!-- Total Amount -->
+            <!-- ================= END DATE ================= -->
             <div class="mb-4">
-                <label class="form-label">Total Amount</label>
-                <input asp-for="BazarAmount" readonly class="form-control bg-light" />
+                <label asp-for="EndDate" class="form-label"></label>
+                <input asp-for="EndDate" type="date" class="form-control" id="EndDate" />
+                <small id="dateError" class="text-danger" style="display:none;">
+                    End date must be greater than or equal to start date
+                </small>
             </div>
 
-            <!-- Items Title -->
-            <h4 class="section-heading">Items</h4>
+            <!-- ================= TOTAL DAYS ================= -->
+            <div class="mb-4">
+                <label asp-for="TotalDays" class="form-label"></label>
+                <input asp-for="TotalDays" class="form-control bg-light" readonly id="TotalDays" />
+            </div>
 
-            <!-- Items Table -->
-            <div class="table-responsive">
-                <table class="table table-bordered" id="itemsTable">
-                    <thead>
+            <!-- ================= MEMBERS ================= -->
+            <div class="mb-4">
+                <label class="form-label">Member(s)</label>
+                <select id="memberSelect" class="form-select" multiple>
+                    @foreach (var m in Model.Members)
+                    {
+                        <option value="@m.Id">@m.Name</option>
+                    }
+                </select>
+                <input type="hidden" asp-for="MealMemberId" id="MealMemberId" />
+            </div>
+
+            <!-- ================= ITEMS ================= -->
+            <h4 class="section-heading">Bazar Items</h4>
+
+            <table class="table table-bordered" id="itemsTable">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th width="120">Qty</th>
+                        <th width="140">Price</th>
+                        <th width="140">Total</th>
+                        <th width="80">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Items.Count; i++)
+                    {
                         <tr>
-                            <th>Product Name</th>
-                            <th width="120">Quantity</th>
-                            <th width="140">Price</th>
-                            <th width="120">Total</th>
-                            <th width="80">Action</th>
+                            <td><input asp-for="Items[@i].ProductName" class="form-control" /></td>
+                            <td><input asp-for="Items[@i].Quantity" class="form-control quantity" /></td>
+                            <td><input asp-for="Items[@i].Price" class="form-control price" /></td>
+                            <td class="item-total">0.00</td>
+                            <td><button type="button" class="btn-remove remove-item">Remove</button></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model.Items != null && Model.Items.Any())
-                        {
-                            for (int i = 0; i < Model.Items.Count; i++)
-                            {
-                                <tr>
-                                    <td><input asp-for="Items[@i].ProductName" class="form-control" /></td>
+                    }
+                </tbody>
+            </table>
 
-                                    <td><input asp-for="Items[@i].Quantity" type="number" step="0.01" class="form-control quantity" /></td>
-
-                                    <td><input asp-for="Items[@i].Price" type="number" step="0.01" class="form-control price" /></td>
-
-                                    <td><span class="item-total">@(@Model.Items[i].Quantity * @Model.Items[i].Price)</span></td>
-
-                                    <td><button type="button" class="btn-remove remove-item">Remove</button></td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Add Item -->
-            <button type="button" class="btn btn-outline-primary btn-sm mb-4" id="addItem">
+            <button type="button" class="btn btn-outline-primary btn-sm mt-3" id="addItem">
                 Add Item
             </button>
 
-            <!-- Save / Cancel -->
+            <!-- ================= TOTAL AMOUNT ================= -->
+            <div class="mb-4 mt-4">
+                <label asp-for="BazarAmount" class="form-label"></label>
+                <input asp-for="BazarAmount" class="form-control bg-light" readonly id="BazarAmount" />
+            </div>
+
+            <!-- ================= ACTIONS ================= -->
             <div class="mt-4">
                 <button type="submit" class="btn-save">Save</button>
                 <a asp-action="Index" class="btn-cancel">Cancel</a>
             </div>
 
         </form>
-
     </div>
 </div>
 
 @section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script>
-        function recalcTotal() {
-            let total = 0;
+<script>
+    // ================= DATE LOGIC =================
+    function calculateDays() {
+        const start = new Date($("#StartDate").val());
+        const end = new Date($("#EndDate").val());
 
-            $('#itemsTable tbody tr').each(function () {
-                const qty = parseFloat($(this).find('.quantity').val()) || 0;
-                const price = parseFloat($(this).find('.price').val()) || 0;
-
-                const itemTotal = qty * price;
-                $(this).find('.item-total').text(itemTotal.toFixed(2));
-
-                total += itemTotal;
-            });
-
-            $('input[name="BazarAmount"]').val(total.toFixed(2));
+        if (end < start) {
+            $("#dateError").show();
+            $("#TotalDays").val(0);
+            return;
         }
 
-        $(document).ready(function () {
+        $("#dateError").hide();
+        const days = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
+        $("#TotalDays").val(days);
+    }
 
-            $('#addItem').click(function () {
-                const index = $('#itemsTable tbody tr').length;
+    // ================= MEMBER MULTI SELECT =================
+    function updateMembers() {
+        const ids = $("#memberSelect option:selected")
+            .map(function () { return this.value; }).get().join(",");
+        $("#MealMemberId").val(ids);
+    }
 
-                const row = `
-                    <tr>
-                        <td><input name="Items[${index}].ProductName" class="form-control" /></td>
-                        <td><input name="Items[${index}].Quantity" type="number" step="0.01" class="form-control quantity" /></td>
-                        <td><input name="Items[${index}].Price" type="number" step="0.01" class="form-control price" /></td>
-                        <td><span class="item-total">0.00</span></td>
-                        <td><button type="button" class="btn-remove remove-item">Remove</button></td>
-                    </tr>`;
+    // ================= ITEM TOTAL =================
+    function recalcAmount() {
+        let total = 0;
 
-                $('#itemsTable tbody').append(row);
-            });
-
-            $(document).on('click', '.remove-item', function () {
-                $(this).closest('tr').remove();
-                recalcTotal();
-            });
-
-            $(document).on('input', '.quantity, .price', function () {
-                recalcTotal();
-            });
-
-            recalcTotal();
+        $("#itemsTable tbody tr").each(function () {
+            const qty = parseFloat($(this).find(".quantity").val()) || 0;
+            const price = parseFloat($(this).find(".price").val()) || 0;
+            const rowTotal = qty * price;
+            $(this).find(".item-total").text(rowTotal.toFixed(2));
+            total += rowTotal;
         });
-    </script>
+
+        $("#BazarAmount").val(total.toFixed(2));
+    }
+
+    // ================= INIT =================
+    $(document).ready(function () {
+
+        // ---- Today date (CREATE ONLY) ----
+        if (@Model.Id === 0) {
+            const today = new Date().toISOString().split("T")[0];
+            $("#BazarDate").val(today);
+            $("#StartDate").val(today);
+        }
+
+        // Sync StartDate with BazarDate
+        $("#BazarDate").on("change", function () {
+            $("#StartDate").val(this.value);
+            calculateDays();
+        });
+
+        $("#EndDate").on("change", calculateDays);
+
+        // Preselect members (edit)
+        if ($("#MealMemberId").val()) {
+            $("#MealMemberId").val().split(",").forEach(id => {
+                $(`#memberSelect option[value='${id}']`).prop("selected", true);
+            });
+        }
+
+        $("#memberSelect").on("change", updateMembers);
+        updateMembers();
+
+        $("#addItem").click(function () {
+            const index = $("#itemsTable tbody tr").length;
+            $("#itemsTable tbody").append(`
+                <tr>
+                    <td><input name="Items[${index}].ProductName" class="form-control" /></td>
+                    <td><input name="Items[${index}].Quantity" class="form-control quantity" /></td>
+                    <td><input name="Items[${index}].Price" class="form-control price" /></td>
+                    <td class="item-total">0.00</td>
+                    <td><button type="button" class="btn-remove remove-item">Remove</button></td>
+                </tr>
+            `);
+        });
+
+        $(document).on("input", ".quantity, .price", recalcAmount);
+        $(document).on("click", ".remove-item", function () {
+            $(this).closest("tr").remove();
+            recalcAmount();
+        });
+
+        recalcAmount();
+        calculateDays();
+    });
+</script>
 }
