@@ -51,7 +51,7 @@ public class MealBazarController(
         try
         {
             // 🔹 Load members for dropdown
-            ViewBag.MemberId = memberRepository.GetMemberList();
+            ViewBag.Members = memberRepository.GetMemberList();
 
             if (id > 0)
             {
