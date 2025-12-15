@@ -98,8 +98,12 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BazarDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    StartDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    EndDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    TotalDays = table.Column<int>(type: "int", nullable: false),
+                    MealMemberId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     BazarAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreatedBy = table.Column<long>(type: "bigint", nullable: false),
                     ModifiedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -382,8 +386,8 @@ namespace HostelMealManagement.Infrastructure.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedBy", "CreatedDate", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "MemberId", "Name", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UpdatedBy", "UpdatedDate", "UserName" },
                 values: new object[,]
                 {
-                    { 1L, 0, "995b8e07-3dab-46ab-b724-daeb48b590b0", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "admin@localhost.com", true, false, null, null, "", "ADMIN@LOCALHOST.COM", "ADMIN@LOCALHOST.COM", "AQAAAAIAAYagAAAAEFB8KeQB1jmg6OsWi2JOJt76NojBbEGowZifL0XcGZVaE8oXOYqpYSus3s9zVtFKmQ==", null, false, "54b2a03c-9f1e-4c9f-aa3d-9a66e32209c2", false, null, null, "admin@localhost.com" },
-                    { 2L, 0, "547408f7-8bc4-48d0-8499-12063536e6de", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "Manager@localhost.com", true, false, null, null, "", "MANAGER@LOCALHOST.COM", "MANAGER@LOCALHOST.COM", "AQAAAAIAAYagAAAAEBHVvfdbA1unbdfpkvCRzdOolXrgM1kMKANr87I8OQhkJI5RAjPU4VDbx4eeNF2Z4Q==", null, false, "803c541e-c0e9-41d5-9ee3-f7840d2be886", false, null, null, "Manager@localhost.com" }
+                    { 1L, 0, "a4ebbd31-b34c-49de-b1af-c08f4d73b55f", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "admin@localhost.com", true, false, null, null, "", "ADMIN@LOCALHOST.COM", "ADMIN@LOCALHOST.COM", "AQAAAAIAAYagAAAAEHTo52o1emeS3kqvXIBC+Av8VyN1orTdvKFPD8gYxlgWcPWL6y7Lsq19TbEPygAO1Q==", null, false, "be9eb30f-f33a-48d8-918d-e0f57c493b3c", false, null, null, "admin@localhost.com" },
+                    { 2L, 0, "0db59817-15e5-4510-85d7-9be2d49c0e2b", 0L, new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)), "Manager@localhost.com", true, false, null, null, "", "MANAGER@LOCALHOST.COM", "MANAGER@LOCALHOST.COM", "AQAAAAIAAYagAAAAEBBI03bxmAjs+2LHPMw733XV5bn/aMlCqJxwyCf86NPqBoW79WSapk5neUNs3nd+Xg==", null, false, "34c1c455-9ef0-48ca-a58d-33f7ed532ba0", false, null, null, "Manager@localhost.com" }
                 });
 
             migrationBuilder.InsertData(

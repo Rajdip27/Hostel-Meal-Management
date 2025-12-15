@@ -9,17 +9,12 @@ public class MealBazarVm
     public DateTimeOffset BazarDate { get; set; }
     public DateTimeOffset StartDate { get; set; }
     public DateTimeOffset EndDate { get; set; }
+    public int TotalDays => (EndDate - StartDate).Days + 1;
 
-    public int TotalDays { get; set; }
-
-    // 🔹 This will store "1,2,3,4"
-    public string MealMemberId { get; set; } = string.Empty;
-
+    public List<long> MemberIds { get; set; } = new();
     public decimal BazarAmount { get; set; }
     public string Description { get; set; } = string.Empty;
 
     public List<MealBazarItemVm> Items { get; set; } = new();
-
-    // 🔹 UI only (NOT stored in DB)
-    public List<MemberLookupVm> Members { get; set; } = new();
+   
 }

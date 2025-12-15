@@ -93,6 +93,24 @@
         border: 2px solid #6c757d;
         margin-left: 8px;
     }
+
+    .member-tag {
+        display: inline-block;
+        background: #3559a8;
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 18px;
+        margin-right: 6px;
+        margin-bottom: 6px;
+        font-size: 14px;
+    }
+
+        .member-tag span {
+            margin-left: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
 </style>
 
 <div class="container-fluid px-4 py-4">
@@ -120,7 +138,7 @@
             <!-- ================= END DATE ================= -->
             <div class="mb-4">
                 <label asp-for="EndDate" class="form-label"></label>
-                <input asp-for="EndDate" type="date" class="form-control" id="EndDate" />
+                <input asp-for="EndDate" value="" type="date" class="form-control" id="EndDate" />
                 <small id="dateError" class="text-danger" style="display:none;">
                     End date must be greater than or equal to start date
                 </small>
@@ -135,14 +153,19 @@
             <!-- ================= MEMBERS ================= -->
             <div class="mb-4">
                 <label class="form-label">Member(s)</label>
-                <select id="memberSelect" class="form-select" multiple>
-                    @foreach (var m in Model.Members)
+
+                <select id="memberSelect" class="form-control">
+                    <option value="">-- Select Member --</option>
+                    @foreach (var item in ViewBag.Members as List<SelectListItem>)
                     {
-                        <option value="@m.Id">@m.Name</option>
+                        <option value="@item.Value">@item.Text</option>
                     }
                 </select>
-                <input type="hidden" asp-for="MealMemberId" id="MealMemberId" />
+
+                <input type="hidden" id="MemberIds" name="MemberIds" />
+                <div id="selectedMembers" class="mt-2"></div>
             </div>
+
 
             <!-- ================= ITEMS ================= -->
             <h4 class="section-heading">Bazar Items</h4>
@@ -194,7 +217,63 @@
 @section Scripts {
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<script>
+    <script>
+        let selectedMembers = [];
+
+        // -------- ADD --------
+        $("#memberSelect").on("change", function () {
+            const id = $(this).val();
+            const name = $("#memberSelect option:selected").text();
+
+            if (!id) return;
+            if (selectedMembers.some(x => x.id === id)) {
+                $(this).val("");
+                return;
+            }
+
+            selectedMembers.push({ id, name });
+            renderMembers();
+            $(this).val("");
+        });
+
+        // -------- RENDER --------
+        function renderMembers() {
+            let html = "";
+            selectedMembers.forEach((m, i) => {
+                html += `
+                    <span class="member-tag">
+                        ${m.name}
+                        <span onclick="removeMember(${i})">✖</span>
+                    </span>
+                `;
+            });
+
+            $("#selectedMembers").html(html);
+            $("#MemberIds").val(selectedMembers.map(x => x.id).join(","));
+        }
+
+        // -------- REMOVE --------
+        function removeMember(index) {
+            selectedMembers.splice(index, 1);
+            renderMembers();
+        }
+
+        // -------- EDIT MODE PRELOAD --------
+        @if (Model.MemberIds.Any())
+        {
+                <text>
+                    selectedMembers = [
+                        @foreach (var id in Model.MemberIds)
+                        {
+                                var name = (ViewBag.Members as List<SelectListItem>)
+                                                      .First(x => x.Value == id.ToString()).Text;
+                                <text>{ id: "@id", name: "@name" },</text>
+                        }
+                    ];
+                    renderMembers();
+                </text>
+        }
+   
     // ================= DATE LOGIC =================
     function calculateDays() {
         const start = new Date($("#StartDate").val());
