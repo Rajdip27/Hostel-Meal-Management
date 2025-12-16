@@ -24,51 +24,60 @@ public interface IMealBazarRepository : IBaseService<MealBazar>
 public class MealBazarRepository(ApplicationDbContext context)
     : BaseService<MealBazar>(context), IMealBazarRepository
 {
-    // ----------------------------------------------------------------------
-    // UPSERT
-    // ----------------------------------------------------------------------
     public async Task<bool> UpsertAsync(MealBazarVm vm)
     {
         using var trx = await context.Database.BeginTransactionAsync();
-
         try
         {
-            MealBazar entity;
+            var isNew = vm.Id == 0;
 
-            // ========== CREATE ==========
-            if (vm.Id == 0)
+            var bazar = isNew
+                ? new MealBazar()
+                : await context.Set<MealBazar>()
+                    .Include(x => x.Items)
+                    .FirstOrDefaultAsync(x => x.Id == vm.Id);
+
+            if (bazar == null) return false;
+
+            // ===== MASTER =====
+            bazar.BazarDate = vm.BazarDate;
+            bazar.BazarAmount = vm.BazarAmount;
+            bazar.Description = vm.Description;
+            bazar.StartDate = vm.StartDate;
+            bazar.EndDate = vm.EndDate;
+            bazar.TotalDays = vm.TotalDays;
+            bazar.MealMemberId = vm.MemberIds;
+
+            // ===== ITEMS =====
+            var dbItems = bazar.Items?.ToDictionary(x => x.Id) ?? new();
+
+            foreach (var item in vm.Items ?? Enumerable.Empty<MealBazarItemVm>())
             {
-                entity = new MealBazar
+                if (item.Id > 0 && dbItems.TryGetValue(item.Id, out var dbItem))
                 {
-                    BazarDate = vm.BazarDate.ToUtc(),
-                    StartDate = vm.StartDate.ToUtc(),
-                    EndDate = vm.EndDate.ToUtc(),
-                    TotalDays = vm.TotalDays,
-                    MealMemberId = vm.MemberIds,
-                    BazarAmount = vm.BazarAmount,
-                    Description = vm.Description
-                };
-
-                context.Set<MealBazar>().Add(entity);
-                await context.SaveChangesAsync();
-                await trx.CommitAsync();
-                return true;
+                    dbItem.ProductName = item.ProductName;
+                    dbItem.Quantity = item.Quantity;
+                    dbItem.Price = item.Price;
+                    dbItems.Remove(item.Id);
+                }
+                else
+                {
+                    bazar.Items ??= new();
+                    bazar.Items.Add(new MealBazarItem
+                    {
+                        ProductName = item.ProductName,
+                        Quantity = item.Quantity,
+                        Price = item.Price
+                    });
+                }
             }
 
-            // ========== UPDATE ==========
-            entity = await context.Set<MealBazar>()
-                .FirstOrDefaultAsync(x => x.Id == vm.Id);
+            // delete removed items
+            if (dbItems.Any())
+                context.RemoveRange(dbItems.Values);
 
-            if (entity == null)
-                return false;
-
-            entity.BazarDate = vm.BazarDate.ToUtc();
-            entity.StartDate = vm.StartDate.ToUtc();
-            entity.EndDate = vm.EndDate.ToUtc();
-            entity.TotalDays = vm.TotalDays;
-            entity.MealMemberId = vm.MemberIds;
-            entity.BazarAmount = vm.BazarAmount;
-            entity.Description = vm.Description;
+            if (isNew)
+                context.Add(bazar);
 
             await context.SaveChangesAsync();
             await trx.CommitAsync();
@@ -81,33 +90,39 @@ public class MealBazarRepository(ApplicationDbContext context)
         }
     }
 
-    // ----------------------------------------------------------------------
-    // GET BY ID
-    // ----------------------------------------------------------------------
-    public async Task<MealBazarVm?> GetByIdAsync(long id)
+
+
+    /// <summary>
+    /// Get MealBazar by Id including items
+    /// </summary>
+    public async Task<MealBazarVm> GetByIdAsync(long id)
     {
         var entity = await context.Set<MealBazar>()
+            .Include(x => x.Items)
             .FirstOrDefaultAsync(x => x.Id == id);
 
-        if (entity == null)
-            return null;
+        if (entity == null) return null;
 
         return new MealBazarVm
         {
             Id = entity.Id,
             BazarDate = entity.BazarDate,
+            BazarAmount = entity.BazarAmount,
+            Description = entity.Description,
             StartDate = entity.StartDate,
             EndDate = entity.EndDate,
-            
-            //MealMemberId = entity.MealMemberId,
-            BazarAmount = entity.BazarAmount,
-            Description = entity.Description
+            TotalDays = entity.TotalDays,
+            MemberIds = entity.MealMemberId,
+            Items = entity.Items.Select(i => new MealBazarItemVm
+            {
+                Id = i.Id,
+                ProductName = i.ProductName,
+                Quantity = i.Quantity,
+                Price = i.Price
+            }).ToList()
         };
     }
 
-    // ----------------------------------------------------------------------
-    // DELETE
-    // ----------------------------------------------------------------------
     public async Task<bool> DeleteAsync(long id)
     {
         using var trx = await context.Database.BeginTransactionAsync();
@@ -115,15 +130,17 @@ public class MealBazarRepository(ApplicationDbContext context)
         try
         {
             var entity = await context.Set<MealBazar>()
+                .Include(x => x.Items)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
-            if (entity == null)
-                return false;
+            if (entity == null) return false;
 
+            context.Set<MealBazarItem>().RemoveRange(entity.Items);
             context.Set<MealBazar>().Remove(entity);
-            await context.SaveChangesAsync();
 
+            await context.SaveChangesAsync();
             await trx.CommitAsync();
+
             return true;
         }
         catch
@@ -133,26 +150,27 @@ public class MealBazarRepository(ApplicationDbContext context)
         }
     }
 
-    // ----------------------------------------------------------------------
-    // GET ALL
-    // ----------------------------------------------------------------------
     public async Task<List<MealBazarVm>> GetAllAsync()
     {
         return await context.Set<MealBazar>()
+            .Include(x => x.Items)
             .OrderByDescending(x => x.BazarDate)
-            .Select(x => new MealBazarVm
+            .Select(entity => new MealBazarVm
             {
-                Id = x.Id,
-                BazarDate = x.BazarDate,
-                StartDate = x.StartDate,
-                EndDate = x.EndDate,
-                //TotalDays = x.TotalDays,
-                //MealMemberId = x.MealMemberId,
-                BazarAmount = x.BazarAmount,
-                Description = x.Description
-            })
-            .ToListAsync();
+                Id = entity.Id,
+                BazarDate = entity.BazarDate,
+                BazarAmount = entity.BazarAmount,
+                Description = entity.Description,
+                Items = entity.Items.Select(i => new MealBazarItemVm
+                {
+                    Id = i.Id,
+                    ProductName = i.ProductName,
+                    Quantity = i.Quantity,
+                    Price = i.Price
+                }).ToList()
+            }).ToListAsync();
     }
+
 
 
 

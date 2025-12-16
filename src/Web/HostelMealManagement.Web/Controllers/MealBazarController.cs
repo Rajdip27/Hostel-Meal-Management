@@ -23,16 +23,7 @@ public class MealBazarController(
     {
         try
         {
-#if DEBUG
-            _logger.LogInfo("Start Watch");
-            var stopwatch = Stopwatch.StartNew();
-#endif
             var mealBazars = await _mealBazarRepository.GetAllAsync();
-
-#if DEBUG
-            _logger.LogInfo($"GetAllAsync took {stopwatch.ElapsedMilliseconds}ms");
-#endif
-
             _logger.LogInfo("Fetched MealBazars");
             return View(mealBazars);
         }

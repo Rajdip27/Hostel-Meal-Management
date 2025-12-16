@@ -9,7 +9,7 @@ public class MealBazarVm
     public DateTimeOffset BazarDate { get; set; }
     public DateTimeOffset StartDate { get; set; }
     public DateTimeOffset EndDate { get; set; }
-    public int TotalDays => (EndDate - StartDate).Days + 1;
+    public int TotalDays { get; set; }
 
     public string MemberIds { get; set; } =string.Empty;
     public decimal BazarAmount { get; set; }

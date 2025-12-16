@@ -4,115 +4,7 @@
     ViewData["Title"] = Model.Id > 0 ? "Edit Meal Bazar" : "Create Meal Bazar";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-
-<style>
-    body {
-        background: #ffffff !important;
-        font-family: "Segoe UI", sans-serif;
-    }
-
-    .page-title {
-        font-size: 32px;
-        font-weight: 700;
-        color: #1e3a8a;
-        margin-bottom: 8px;
-    }
-
-    .page-underline {
-        height: 2px;
-        width: 100%;
-        background: #cbd5e1;
-        opacity: 0.7;
-        margin-bottom: 25px;
-    }
-
-    .form-wrapper {
-        background: rgba(255,255,255,0.8);
-        padding: 35px;
-        border-radius: 16px;
-        border: 1px solid rgba(200,200,200,0.35);
-        box-shadow: 0 8px 28px rgba(0,0,0,0.08);
-    }
-
-    .form-label {
-        font-weight: 600;
-        color: #203254;
-    }
-
-    .form-control,
-    .form-select {
-        padding: 12px 14px !important;
-        height: 48px;
-        border-radius: 10px !important;
-        border: 1px solid #b6c1d1;
-        background: rgba(255,255,255,0.9);
-        font-size: 15px;
-    }
-
-    .section-heading {
-        margin-top: 35px;
-        margin-bottom: 15px;
-        font-size: 22px;
-        font-weight: 700;
-        color: #1e3a8a;
-        border-left: 5px solid #3559a8;
-        padding-left: 10px;
-    }
-
-    #itemsTable thead th {
-        background: #3559a8;
-        color: white;
-        text-align: center;
-    }
-
-    .btn-remove {
-        background: #dc2626;
-        color: white;
-        border-radius: 8px;
-        padding: 6px 14px;
-        border: none;
-    }
-
-    .btn-save {
-        background: #3559a8 !important;
-        color: white !important;
-        padding: 12px 28px;
-        border-radius: 10px;
-        font-size: 17px;
-        font-weight: 700;
-        border: none;
-    }
-
-    .btn-cancel {
-        padding: 12px 28px;
-        font-size: 17px;
-        border-radius: 10px;
-        font-weight: 700;
-        background: #ffffff;
-        color: #6c757d;
-        border: 2px solid #6c757d;
-        margin-left: 8px;
-    }
-
-    .member-tag {
-        display: inline-block;
-        background: #3559a8;
-        color: #fff;
-        padding: 6px 12px;
-        border-radius: 18px;
-        margin-right: 6px;
-        margin-bottom: 6px;
-        font-size: 14px;
-    }
-
-        .member-tag span {
-            margin-left: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-</style>
-
+<link href="~/css/mealbazar.css" rel="stylesheet" />
 <div class="container-fluid px-4 py-4">
 
     <h2 class="page-title">@ViewData["Title"]</h2>
@@ -138,7 +30,7 @@
             <!-- ================= END DATE ================= -->
             <div class="mb-4">
                 <label asp-for="EndDate" class="form-label"></label>
-                <input asp-for="EndDate" value="" type="date" class="form-control" id="EndDate" />
+                <input asp-for="EndDate" asp-format="{0:yyyy-MM-dd}" type="date" class="form-control" id="EndDate" />
                 <small id="dateError" class="text-danger" style="display:none;">
                     End date must be greater than or equal to start date
                 </small>
@@ -206,6 +98,11 @@
                 <input asp-for="BazarAmount" class="form-control bg-light" readonly id="BazarAmount" />
             </div>
 
+            <div class="mb-4 mt-4">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control bg-light" rows="4"></textarea>
+            </div>
+
             <!-- ================= ACTIONS ================= -->
             <div class="mt-4">
                 <button type="submit" class="btn-save">Save</button>
@@ -217,154 +114,26 @@
 </div>
 
 @section Scripts {
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/mealbazar.js"></script>
 
     <script>
-        let selectedMembers = [];
+        window.pageData = {
+            isNew: @(Model.Id == 0 ? "true" : "false"),
+            members: [
+                @foreach (var id in Model.MemberIds)
+                {
+                        var member = (ViewBag.Members as List<SelectListItem>)
+                                .FirstOrDefault(x => x.Value == id.ToString());
 
-        // ADD MEMBER
-        $("#memberSelect").on("change", function () {
-            const id = $(this).val();
-            const name = $("#memberSelect option:selected").text();
-
-            if (!id) return;
-
-            if (selectedMembers.some(x => x.id === id)) {
-                $(this).val("");
-                return;
-            }
-
-            selectedMembers.push({ id, name });
-            renderMembers();
-            $(this).val("");
-        });
-
-        // RENDER TAGS
-        function renderMembers() {
-            let html = "";
-            selectedMembers.forEach((m, i) => {
-                html += `
-                    <span class="member-tag">
-                        ${m.name}
-                        <span onclick="removeMember(${i})">✖</span>
-                    </span>
-                `;
-            });
-
-            $("#selectedMembers").html(html);
-
-            // send as comma string
-            $("#MemberIds").val(selectedMembers.map(x => x.id).join(","));
-        }
-
-        // REMOVE
-        function removeMember(index) {
-            selectedMembers.splice(index, 1);
-            renderMembers();
-        }
-
-        // EDIT MODE LOAD
-        @if (Model.MemberIds.Any())
-        {
-                <text>
-                    selectedMembers = [
-                        @foreach (var id in Model.MemberIds)
+                        if (member != null)
                         {
-                                var name = (ViewBag.Members as List<SelectListItem>)
-                                        .First(x => x.Value == id.ToString()).Text;
-                                <text>{ id: "@id", name: "@name" },</text>
+                                <text>{ id: "@id", name: "@member.Text" },</text>
                         }
-                    ];
-                    renderMembers();
-                </text>
-        }
-    // ================= DATE LOGIC =================
-    function calculateDays() {
-        const start = new Date($("#StartDate").val());
-        const end = new Date($("#EndDate").val());
+                }
+            ]
+        };
+    </script>
 
-        if (end < start) {
-            $("#dateError").show();
-            $("#TotalDays").val(0);
-            return;
-        }
-
-        $("#dateError").hide();
-        const days = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
-        $("#TotalDays").val(days);
-    }
-
-    // ================= MEMBER MULTI SELECT =================
-    function updateMembers() {
-        const ids = $("#memberSelect option:selected")
-            .map(function () { return this.value; }).get().join(",");
-        $("#MealMemberId").val(ids);
-    }
-
-    // ================= ITEM TOTAL =================
-    function recalcAmount() {
-        let total = 0;
-
-        $("#itemsTable tbody tr").each(function () {
-            const qty = parseFloat($(this).find(".quantity").val()) || 0;
-            const price = parseFloat($(this).find(".price").val()) || 0;
-            const rowTotal = qty * price;
-            $(this).find(".item-total").text(rowTotal.toFixed(2));
-            total += rowTotal;
-        });
-
-        $("#BazarAmount").val(total.toFixed(2));
-    }
-
-    // ================= INIT =================
-    $(document).ready(function () {
-
-        // ---- Today date (CREATE ONLY) ----
-        if (@Model.Id === 0) {
-            const today = new Date().toISOString().split("T")[0];
-            $("#BazarDate").val(today);
-            $("#StartDate").val(today);
-        }
-
-        // Sync StartDate with BazarDate
-        $("#BazarDate").on("change", function () {
-            $("#StartDate").val(this.value);
-            calculateDays();
-        });
-
-        $("#EndDate").on("change", calculateDays);
-
-        // Preselect members (edit)
-        if ($("#MealMemberId").val()) {
-            $("#MealMemberId").val().split(",").forEach(id => {
-                $(`#memberSelect option[value='${id}']`).prop("selected", true);
-            });
-        }
-
-        $("#memberSelect").on("change", updateMembers);
-        updateMembers();
-
-        $("#addItem").click(function () {
-            const index = $("#itemsTable tbody tr").length;
-            $("#itemsTable tbody").append(`
-                <tr>
-                    <td><input name="Items[${index}].ProductName" class="form-control" /></td>
-                    <td><input name="Items[${index}].Quantity" class="form-control quantity" /></td>
-                    <td><input name="Items[${index}].Price" class="form-control price" /></td>
-                    <td class="item-total">0.00</td>
-                    <td><button type="button" class="btn-remove remove-item">Remove</button></td>
-                </tr>
-            `);
-        });
-
-        $(document).on("input", ".quantity, .price", recalcAmount);
-        $(document).on("click", ".remove-item", function () {
-            $(this).closest("tr").remove();
-            recalcAmount();
-        });
-
-        recalcAmount();
-        calculateDays();
-    });
-</script>
+    
 }
