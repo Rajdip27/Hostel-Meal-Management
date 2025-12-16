@@ -1,4 +1,5 @@
-﻿using HostelMealManagement.Application.Repositories.Base;
+﻿using HostelMealManagement.Application.Extensions;
+using HostelMealManagement.Application.Repositories.Base;
 using HostelMealManagement.Application.ViewModel;
 using HostelMealManagement.Core.Entities;
 using HostelMealManagement.Infrastructure.DatabaseContext;
@@ -39,9 +40,9 @@ public class MealBazarRepository(ApplicationDbContext context)
             {
                 entity = new MealBazar
                 {
-                    BazarDate = vm.BazarDate,
-                    StartDate = vm.StartDate,
-                    EndDate = vm.EndDate,
+                    BazarDate = vm.BazarDate.ToUtc(),
+                    StartDate = vm.StartDate.ToUtc(),
+                    EndDate = vm.EndDate.ToUtc(),
                     TotalDays = vm.TotalDays,
                     MealMemberId = vm.MemberIds,
                     BazarAmount = vm.BazarAmount,
@@ -61,9 +62,9 @@ public class MealBazarRepository(ApplicationDbContext context)
             if (entity == null)
                 return false;
 
-            entity.BazarDate = vm.BazarDate;
-            entity.StartDate = vm.StartDate;
-            entity.EndDate = vm.EndDate;
+            entity.BazarDate = vm.BazarDate.ToUtc();
+            entity.StartDate = vm.StartDate.ToUtc();
+            entity.EndDate = vm.EndDate.ToUtc();
             entity.TotalDays = vm.TotalDays;
             entity.MealMemberId = vm.MemberIds;
             entity.BazarAmount = vm.BazarAmount;

@@ -15,7 +15,7 @@ public class MealBazarVm
     public decimal BazarAmount { get; set; }
     public string Description { get; set; } = string.Empty;
 
-    public string MemberName { get; set; }
+    public string MemberName { get; set; } = string.Empty;
 
     public List<MealBazarItemVm> Items { get; set; } = new();
    
