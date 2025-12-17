@@ -5,97 +5,10 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<!-- ===================== CORPORATE GLOSSY BLUE THEME ====================== -->
-<style>
-    body {
-        background: #ffffff !important;
-        font-family: "Segoe UI", sans-serif;
-    }
-
-    /* ---------- Page Title ---------- */
-    h2 {
-        font-size: 32px;
-        font-weight: 700;
-        color: #1e3a8a;
-        margin-bottom: 10px;
-    }
-
-    hr {
-        border-top: 2px solid #cbd5e1 !important;
-        opacity: 0.5;
-        margin-bottom: 25px;
-    }
-
-    /* ---------- Glossy Form Box ---------- */
-    form {
-        background: rgba(255,255,255,0.75);
-        padding: 30px;
-        border-radius: 16px;
-        border: 1px solid rgba(200,200,200,0.35);
-        box-shadow: 0 8px 28px rgba(0,0,0,0.08);
-    }
-
-    /* ---------- Labels ---------- */
-    .form-label {
-        font-weight: 600;
-        color: #203254;
-    }
-
-    /* ---------- Inputs ---------- */
-    .form-control {
-        height: 48px;
-        border-radius: 10px !important;
-        border: 1px solid #b6c1d1;
-        background: rgba(255,255,255,0.85);
-        transition: .25s ease;
-        font-size: 15px;
-    }
-
-        .form-control:focus {
-            border-color: #3559a8;
-            box-shadow: 0 0 0 2px rgba(53,89,168,0.25);
-        }
-
-    textarea.form-control {
-        height: auto !important;
-        min-height: 110px;
-        padding-top: 12px;
-    }
-
-    /* ---------- Save Button (Glossy Blue) ---------- */
-    .btn-primary {
-        background: #3559a8 !important;
-        border: none !important;
-        font-size: 17px;
-        font-weight: 600;
-        border-radius: 10px;
-        padding: 10px 26px;
-        box-shadow: 0 6px 18px rgba(53,89,168,0.25);
-        transition: .25s ease;
-    }
-
-        .btn-primary:hover {
-            background: #2d4d8f !important;
-            box-shadow: 0 8px 25px rgba(53,89,168,0.35);
-        }
-
-        .btn-primary:active {
-            background: #263f78 !important;
-            transform: scale(0.97);
-        }
-
-    .text-danger {
-        font-size: 13px;
-    }
-
-</style>
-
-
 <h2>@ViewData["Title"]</h2>
 <hr />
 
-<form asp-action="createoredit" asp-controller="mealmenu" method="post">
-
+<form asp-action="CreateOrEdit" asp-controller="MealMenu" method="post">
     <input type="hidden" asp-for="Id" />
 
     <div class="row">
@@ -116,19 +29,29 @@
         <!-- Meal Name -->
         <div class="col-md-6 mb-3">
             <label asp-for="MealName" class="form-label"></label>
-            <select asp-for="MealName" class="form-control">
-                <option value="">-- Select Meal --</option>
-                <option value="Breakfast">Breakfast</option>
-                <option value="Lunch">Lunch</option>
-                <option value="Dinner">Dinner</option>
-            </select>
+
+            @if (Model.Id == 0)
+            {
+                <select asp-for="MealName" class="form-control">
+                    <option value="">-- Select Meal --</option>
+                    <option value="Breakfast">Breakfast</option>
+                    <option value="Lunch">Lunch</option>
+                    <option value="Dinner">Dinner</option>
+                </select>
+            }
+            else
+            {
+                <input class="form-control" value="@Model.MealName" readonly />
+                <input type="hidden" asp-for="MealName" />
+            }
+
             <span asp-validation-for="MealName" class="text-danger"></span>
         </div>
 
         <!-- Menu Items -->
         <div class="col-md-12 mb-3">
             <label asp-for="MenuItems" class="form-label"></label>
-            <textarea asp-for="MenuItems" class="form-control" placeholder="Example: Rice, Chicken, Salad"></textarea>
+            <textarea asp-for="MenuItems" class="form-control"></textarea>
             <span asp-validation-for="MenuItems" class="text-danger"></span>
         </div>
 
@@ -146,7 +69,6 @@
     <button type="submit" class="btn btn-primary">
         @(Model.Id == 0 ? "Create" : "Update")
     </button>
-
 </form>
 
 @section Scripts {

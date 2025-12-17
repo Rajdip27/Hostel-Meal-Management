@@ -10,12 +10,16 @@ using System.Diagnostics;
 namespace HostelMealManagement.Web.Controllers;
 
 [Authorize]
-public class MealMenuController(IMealMenuRepository mealMenuRepository, IAppLogger<MealMenuController> logger, IMapper mapper) : Controller
+public class MealMenuController(
+    IMealMenuRepository mealMenuRepository,
+    IAppLogger<MealMenuController> logger,
+    IMapper mapper) : Controller
 {
     private readonly IMealMenuRepository _mealMenuRepository = mealMenuRepository;
     private readonly IAppLogger<MealMenuController> _logger = logger;
     private readonly IMapper _mapper = mapper;
 
+    // ========================= INDEX =========================
     [Route("mealmenu")]
     public async Task<IActionResult> Index()
     {
@@ -25,24 +29,20 @@ public class MealMenuController(IMealMenuRepository mealMenuRepository, IAppLogg
             _logger.LogInfo("Start Watch");
             var stopwatch = Stopwatch.StartNew();
 #endif
-
             var menus = await _mealMenuRepository.GetAllAsync();
-
 #if DEBUG
             _logger.LogInfo($"GetAllAsync took {stopwatch.ElapsedMilliseconds}ms");
 #endif
-
-            _logger.LogInfo("Fetched MealMenus");
-
             return View(_mapper.Map<List<MealMenuVm>>(menus));
         }
         catch (Exception ex)
         {
             _logger.LogError("Error while fetching MealMenus", ex);
-            return StatusCode(500, "An error occurred while fetching MealMenus.");
+            return StatusCode(500);
         }
     }
 
+    // ========================= GET CREATE / EDIT =========================
     [HttpGet]
     [Route("mealmenu/createoredit/{id?}")]
     public async Task<IActionResult> CreateOrEdit(long id = 0)
@@ -51,13 +51,19 @@ public class MealMenuController(IMealMenuRepository mealMenuRepository, IAppLogg
         {
             if (id > 0)
             {
-                _logger.LogInfo($"Editing MealMenu Id={id}");
                 var entity = await _mealMenuRepository.FindAsync(id);
-
                 if (entity == null)
                 {
-                    TempData["AlertMessage"] = $"MealMenu with Id {id} not found.";
+                    TempData["AlertMessage"] = "Meal menu not found.";
                     TempData["AlertType"] = "Error";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // 🔒 Block edit if inactive
+                if (!entity.IsActive)
+                {
+                    TempData["AlertMessage"] = "This meal menu is locked. Please unlock it first.";
+                    TempData["AlertType"] = "Warning";
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -68,40 +74,50 @@ public class MealMenuController(IMealMenuRepository mealMenuRepository, IAppLogg
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error in CreateOrEdit for Id={id}", ex);
-            return StatusCode(500, "An error occurred while opening the form.");
+            _logger.LogError("Error opening CreateOrEdit", ex);
+            return StatusCode(500);
         }
     }
 
+    // ========================= POST CREATE / EDIT =========================
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Route("mealmenu/createoredit/{id?}")]
     public async Task<IActionResult> CreateOrEdit(MealMenuVm menuVm)
     {
         if (!ModelState.IsValid)
-        {
-            TempData["AlertMessage"] = "Please fix validation errors.";
-            TempData["AlertType"] = "Warning";
             return View(menuVm);
-        }
 
         try
         {
-            var entity = _mapper.Map<MealMenu>(menuVm);
-
             if (menuVm.Id > 0)
             {
-                _logger.LogInfo($"Updating MealMenu Id={menuVm.Id}");
+                var existing = await _mealMenuRepository.FindAsync(menuVm.Id);
+                if (existing == null)
+                    return NotFound();
+
+                // 🔒 Block update if inactive
+                if (!existing.IsActive)
+                {
+                    TempData["AlertMessage"] = "Inactive meal menu cannot be updated.";
+                    TempData["AlertType"] = "Error";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // 🔒 Preserve fixed MealName
+                menuVm.MealName = existing.MealName;
+
+                var entity = _mapper.Map(menuVm, existing);
                 await _mealMenuRepository.UpdateAsync(entity);
 
-                TempData["AlertMessage"] = "MealMenu updated successfully!";
+                TempData["AlertMessage"] = "Meal menu updated successfully!";
             }
             else
             {
-                _logger.LogInfo("Creating new MealMenu");
+                var entity = _mapper.Map<MealMenu>(menuVm);
                 await _mealMenuRepository.InsertAsync(entity);
 
-                TempData["AlertMessage"] = "MealMenu created successfully!";
+                TempData["AlertMessage"] = "Meal menu created successfully!";
             }
 
             TempData["AlertType"] = "Success";
@@ -109,13 +125,14 @@ public class MealMenuController(IMealMenuRepository mealMenuRepository, IAppLogg
         }
         catch (Exception ex)
         {
-            _logger.LogError("Error while creating/updating MealMenu", ex);
-            TempData["AlertMessage"] = "An error occurred while saving the MealMenu.";
+            _logger.LogError("Error saving MealMenu", ex);
+            TempData["AlertMessage"] = "An error occurred while saving.";
             TempData["AlertType"] = "Error";
             return StatusCode(500);
         }
     }
 
+    // ========================= DELETE =========================
     [HttpPost]
     [Route("mealmenu/delete/{id}")]
     public async Task<IActionResult> Delete(long id)
@@ -124,23 +141,58 @@ public class MealMenuController(IMealMenuRepository mealMenuRepository, IAppLogg
         {
             var entity = await _mealMenuRepository.FindAsync(id);
             if (entity == null)
-            {
-                TempData["AlertMessage"] = $"MealMenu with Id {id} not found.";
-                TempData["AlertType"] = "Error";
                 return NotFound();
+
+            // 🔒 Block delete if inactive
+            if (!entity.IsActive)
+            {
+                TempData["AlertMessage"] = "Inactive meal menu cannot be deleted.";
+                TempData["AlertType"] = "Error";
+                return RedirectToAction(nameof(Index));
             }
 
             await _mealMenuRepository.DeleteAsync(entity);
 
-            TempData["AlertMessage"] = "MealMenu deleted successfully!";
+            TempData["AlertMessage"] = "Meal menu deleted successfully!";
+            TempData["AlertType"] = "Success";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Error deleting MealMenu", ex);
+            TempData["AlertMessage"] = "Error deleting meal menu.";
+            TempData["AlertType"] = "Error";
+            return StatusCode(500);
+        }
+    }
+
+    // ========================= UNLOCK =========================
+    [HttpPost]
+    [Route("mealmenu/unlock/{id}")]
+    public async Task<IActionResult> Unlock(long id)
+    {
+        try
+        {
+            var entity = await _mealMenuRepository.FindAsync(id);
+            if (entity == null)
+            {
+                TempData["AlertMessage"] = "Meal menu not found.";
+                TempData["AlertType"] = "Error";
+                return RedirectToAction(nameof(Index));
+            }
+
+            entity.IsActive = true;
+            await _mealMenuRepository.UpdateAsync(entity);
+
+            TempData["AlertMessage"] = "Meal menu unlocked successfully!";
             TempData["AlertType"] = "Success";
 
             return RedirectToAction(nameof(Index));
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error while deleting MealMenu Id={id}", ex);
-            TempData["AlertMessage"] = "An error occurred while deleting the MealMenu.";
+            _logger.LogError("Error unlocking MealMenu", ex);
+            TempData["AlertMessage"] = "Error unlocking meal menu.";
             TempData["AlertType"] = "Error";
             return StatusCode(500);
         }
