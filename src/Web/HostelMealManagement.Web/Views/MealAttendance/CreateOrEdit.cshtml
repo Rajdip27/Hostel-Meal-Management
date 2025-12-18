@@ -378,12 +378,12 @@
             var now = new Date();
             var hour = now.getHours();
 
-            if (hour >= 7) {
+            if (hour >= 13) {
                 $(".meal-breakfast, .meal-lunch, .guest-breakfast, .guest-lunch").prop("disabled", true);
                 $("#breakfastClosedMsg").fadeIn();
             }
 
-            if (hour >= 18) {
+            if (hour >= 20) {
                 $(".meal-dinner, .guest-dinner").prop("disabled", true);
                 $("#dinnerClosedMsg").fadeIn();
             }
