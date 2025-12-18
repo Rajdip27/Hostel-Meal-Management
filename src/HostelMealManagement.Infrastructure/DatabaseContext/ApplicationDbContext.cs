@@ -45,6 +45,7 @@ public class ApplicationDbContext:IdentityDbContext<IdentityModel.User, Identity
     }
 
     public DbSet<AuditLog> AuditLogs { get; set; }
+    public IEnumerable<object> MealCycle { get; set; }
 
     public override int SaveChanges()
     {

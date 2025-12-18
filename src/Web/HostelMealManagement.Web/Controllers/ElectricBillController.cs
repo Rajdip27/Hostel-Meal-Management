@@ -2,9 +2,9 @@
 using HostelMealManagement.Application.Logging;
 using HostelMealManagement.Application.Repositories;
 using HostelMealManagement.Application.ViewModel;
-using HostelMealManagement.Infrastructure.Helper.Acls;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
 
 namespace HostelMealManagement.Web.Controllers;
@@ -14,8 +14,7 @@ public class ElectricBillController(
     IElectricBillRepository electricBillRepository,
     IMealCycleRepository mealCycleRepository,
     IAppLogger<ElectricBillController> logger,
-    IMapper mapper,
-    ISignInHelper signInHelper
+    IMapper mapper
 ) : Controller
 {
     private readonly IElectricBillRepository _electricBillRepository = electricBillRepository;
@@ -23,26 +22,23 @@ public class ElectricBillController(
     private readonly IAppLogger<ElectricBillController> _logger = logger;
     private readonly IMapper _mapper = mapper;
 
-    // =====================================================
+    // =========================================================
     // INDEX
-    // =====================================================
+    // =========================================================
     [Route("electricbill")]
     public async Task<IActionResult> Index()
     {
         try
         {
 #if DEBUG
-            _logger.LogInfo("Start Watch");
-            var stopwatch = Stopwatch.StartNew();
+            var sw = Stopwatch.StartNew();
 #endif
 
             var bills = await _electricBillRepository.GetAllAsync();
 
 #if DEBUG
-            _logger.LogInfo($"GetAllAsync took {stopwatch.ElapsedMilliseconds}ms");
+            _logger.LogInfo($"ElectricBill GetAllAsync took {sw.ElapsedMilliseconds}ms");
 #endif
-
-            _logger.LogInfo("Fetched Electric Bills");
 
             return View(bills);
         }
@@ -53,16 +49,16 @@ public class ElectricBillController(
         }
     }
 
-    // =====================================================
-    // GET: CREATE OR EDIT
-    // =====================================================
+    // =========================================================
+    // GET: CREATE / EDIT
+    // =========================================================
     [HttpGet]
     [Route("electricbill/createoredit/{id?}")]
     public async Task<IActionResult> CreateOrEdit(long id = 0)
     {
         try
         {
-            ViewBag.MealCycleId = await _mealCycleRepository.GetAllAsync();
+            await BindMealCycles(); // ✅ FIX
 
             if (id > 0)
             {
@@ -87,14 +83,16 @@ public class ElectricBillController(
         }
     }
 
-    // =====================================================
-    // POST: CREATE OR EDIT
-    // =====================================================
+    // =========================================================
+    // POST: CREATE / EDIT
+    // =========================================================
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Route("electricbill/createoredit/{id?}")]
     public async Task<IActionResult> CreateOrEdit(ElectricBillVm vm)
     {
+        await BindMealCycles(); // ✅ FIX (VERY IMPORTANT)
+
         if (!ModelState.IsValid)
         {
             TempData["AlertMessage"] = "Please fix validation errors.";
@@ -104,11 +102,11 @@ public class ElectricBillController(
 
         try
         {
-            // 🔹 CALCULATIONS
+            // 🔢 AUTO CALCULATION
             vm.TotalUnit = vm.CurrentUnit - vm.PreviousUnit;
             vm.TotalAmount = vm.TotalUnit * vm.PerUnitRate;
 
-            var result = await _electricBillRepository.UpsertAsync(vm);
+            bool result = await _electricBillRepository.UpsertAsync(vm);
 
             if (!result)
             {
@@ -131,13 +129,14 @@ public class ElectricBillController(
             _logger.LogError("Error while saving Electric Bill", ex);
             TempData["AlertMessage"] = "An error occurred while saving Electric Bill.";
             TempData["AlertType"] = "Error";
+
             return StatusCode(500);
         }
     }
 
-    // =====================================================
+    // =========================================================
     // DELETE
-    // =====================================================
+    // =========================================================
     [HttpPost]
     [Route("electricbill/delete/{id}")]
     public async Task<IActionResult> Delete(long id)
@@ -163,7 +162,25 @@ public class ElectricBillController(
             _logger.LogError($"Error deleting Electric Bill Id={id}", ex);
             TempData["AlertMessage"] = "An error occurred while deleting Electric Bill.";
             TempData["AlertType"] = "Error";
+
             return StatusCode(500);
         }
+    }
+
+    // =========================================================
+    // SHARED DROPDOWN BINDER (THE KEY FIX)
+    // =========================================================
+    private async Task BindMealCycles()
+    {
+        var cycles = await _mealCycleRepository.GetAllAsync();
+
+        ViewBag.MealCycleId = cycles
+            .Where(x => !x.IsDelete)
+            .Select(x => new SelectListItem
+            {
+                Value = x.Id.ToString(),
+                Text = x.Name
+            })
+            .ToList();
     }
 }
