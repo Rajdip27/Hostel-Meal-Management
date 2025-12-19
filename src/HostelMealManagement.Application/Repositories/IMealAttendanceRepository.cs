@@ -11,6 +11,7 @@ namespace HostelMealManagement.Application.Repositories;
 public interface IMealAttendanceRepository : IBaseService<MealAttendance>
 {
     Task<bool> GenerateMealBillAsync(long mealCycleId, long createdBy);
+    Task<List<MealBill>> GetMealBillsWithMemberAsync(long mealCycleId);
 }
 
 public class MealAttendanceRepository : BaseService<MealAttendance>, IMealAttendanceRepository
@@ -67,6 +68,8 @@ public class MealAttendanceRepository : BaseService<MealAttendance>, IMealAttend
                             THEN @TotalBazarsAmount / @GrandTotalMeals 
                             ELSE 0 
                         END;
+                        DELETE FROM MealBill
+                        WHERE MealCycleId = @MealCycleId;   
                         
                         ;WITH MemberMeals AS
                         (
@@ -87,6 +90,7 @@ public class MealAttendanceRepository : BaseService<MealAttendance>, IMealAttend
                               AND MA.IsDelete = 0
                             GROUP BY MA.MemberId
                         )
+                        
                         INSERT INTO MealBill
                         (
                             MemberId, TotalBazar, TotalMemberMeal, TotalMeal, TotalGuestMeal, 
@@ -120,10 +124,18 @@ public class MealAttendanceRepository : BaseService<MealAttendance>, IMealAttend
 
             return affectedRows > 0;
         }
-        catch
+        catch(Exception ex)
         {
             throw;
         }
+    }
+
+    public async Task<List<MealBill>> GetMealBillsWithMemberAsync(long mealCycleId)
+    {
+        return await _context.Set<MealBill>()
+        .Include(mb => mb.Member)   // join with Member table
+        .Where(mb => mb.MealCycleId == mealCycleId && !mb.IsDelete)
+        .ToListAsync();
     }
 }
 
