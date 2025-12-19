@@ -29,8 +29,8 @@ public interface IBaseService<T> where T : AuditableEntity
 }
 public class BaseService<T> : IBaseService<T> where T : AuditableEntity
 {
-    private readonly ApplicationDbContext _context;
-    private DbSet<T> entities;
+    protected readonly ApplicationDbContext _context;
+    protected DbSet<T> entities;
     public BaseService(ApplicationDbContext context)
     {
         _context = context;
