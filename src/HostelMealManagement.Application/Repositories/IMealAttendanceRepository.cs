@@ -2,141 +2,180 @@
 using HostelMealManagement.Application.ViewModel;
 using HostelMealManagement.Core.Entities;
 using HostelMealManagement.Infrastructure.DatabaseContext;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 namespace HostelMealManagement.Application.Repositories;
 
 public interface IMealAttendanceRepository : IBaseService<MealAttendance>
 {
-    Task<bool> GenerateMealBillAsync(long mealCycleId, long createdBy);
-    Task<List<MealBill>> GetMealBillsWithMemberAsync(long mealCycleId);
+    Task<bool> UpsertAsync(MealAttendanceVm vm);
+    Task<MealAttendanceVm?> GetByIdAsync(long id);
+    Task<List<MealAttendanceVm>> GetAllAsync();
+    Task<bool> DeleteAsync(long id);
 }
 
-public class MealAttendanceRepository : BaseService<MealAttendance>, IMealAttendanceRepository
+public class MealAttendanceRepository(ApplicationDbContext context)
+    : BaseService<MealAttendance>(context), IMealAttendanceRepository
 {
-    public MealAttendanceRepository(ApplicationDbContext dbContext) : base(dbContext)
+    // ----------------------------------------------------------------------
+    // UPSERT
+    // ----------------------------------------------------------------------
+    public async Task<bool> UpsertAsync(MealAttendanceVm vm)
     {
-    }
+        using var trx = await context.Database.BeginTransactionAsync();
 
-    public async Task<bool> GenerateMealBillAsync(long mealCycleId, long createdBy)
-    {
         try
         {
-            var sql = @"
-                        DECLARE
-                            @MealCycleId BIGINT = @MealCycleIdParam,
-                            @StartDate DATETIMEOFFSET,
-                            @EndDate DATETIMEOFFSET,
-                            @TotalBazarsAmount DECIMAL(18,2),
-                            @TotalMeals INT,
-                            @TotalGuestMeals INT,
-                            @GrandTotalMeals INT,
-                            @MealRate DECIMAL(18,2),
-                            @CreatedBy BIGINT = @CreatedByParam;
-                        
-                        SELECT 
-                            @StartDate = StartDate,
-                            @EndDate   = EndDate
-                        FROM MealCycle
-                        WHERE Id = @MealCycleId;
-                        
-                        SELECT 
-                            @TotalBazarsAmount = ISNULL(SUM(BazarAmount),0)
-                        FROM MealBazars
-                        WHERE BazarDate BETWEEN @StartDate AND @EndDate;
-                        
-                        SELECT
-                            @TotalMeals = ISNULL(SUM(
-                                CASE WHEN IsBreakfast=1 THEN 1 ELSE 0 END +
-                                CASE WHEN IsLunch=1 THEN 1 ELSE 0 END +
-                                CASE WHEN IsDinner=1 THEN 1 ELSE 0 END
-                            ),0),
-                            @TotalGuestMeals = ISNULL(SUM(
-                                ISNULL(GuestBreakfastQty,0) +
-                                ISNULL(GuestLunchQty,0) +
-                                ISNULL(GuestDinnerQty,0)
-                            ),0)
-                        FROM MealAttendances
-                        WHERE MealDate BETWEEN @StartDate AND @EndDate
-                          AND IsDelete = 0;
-                        
-                        SET @GrandTotalMeals = @TotalMeals + @TotalGuestMeals;
-                        SET @MealRate = CASE 
-                            WHEN @GrandTotalMeals > 0 
-                            THEN @TotalBazarsAmount / @GrandTotalMeals 
-                            ELSE 0 
-                        END;
-                        DELETE FROM MealBill
-                        WHERE MealCycleId = @MealCycleId;   
-                        
-                        ;WITH MemberMeals AS
-                        (
-                            SELECT
-                                MA.MemberId,
-                                TotalMemberMeal = SUM(
-                                    CASE WHEN MA.IsBreakfast=1 THEN 1 ELSE 0 END +
-                                    CASE WHEN MA.IsLunch=1 THEN 1 ELSE 0 END +
-                                    CASE WHEN MA.IsDinner=1 THEN 1 ELSE 0 END
-                                ),
-                                TotalGuestMeal = SUM(
-                                    ISNULL(MA.GuestBreakfastQty,0) +
-                                    ISNULL(MA.GuestLunchQty,0) +
-                                    ISNULL(MA.GuestDinnerQty,0)
-                                )
-                            FROM MealAttendances MA
-                            WHERE MA.MealDate BETWEEN @StartDate AND @EndDate
-                              AND MA.IsDelete = 0
-                            GROUP BY MA.MemberId
-                        )
-                        
-                        INSERT INTO MealBill
-                        (
-                            MemberId, TotalBazar, TotalMemberMeal, TotalMeal, TotalGuestMeal, 
-                            MealRate, MealAmount, HouseBill, UtilityBill, OtherBill, TotalPayable, 
-                            MealCycleId, CreatedDate, CreatedBy, IsDelete
-                        )
-                        SELECT
-                            MM.MemberId,
-                            @TotalBazarsAmount,
-                            MM.TotalMemberMeal,
-                            MM.TotalMemberMeal + MM.TotalGuestMeal,
-                            MM.TotalGuestMeal,
-                            @MealRate,
-                            (MM.TotalMemberMeal + MM.TotalGuestMeal) * @MealRate,
-                            ISNULL(M.HouseBill,0),
-                            ISNULL(M.UtilityBill,0),
-                            ISNULL(M.OtherBill,0),
-                            (MM.TotalMemberMeal + MM.TotalGuestMeal) * @MealRate + ISNULL(M.HouseBill,0) + ISNULL(M.UtilityBill,0) + ISNULL(M.OtherBill,0),
-                            @MealCycleId,
-                            SYSDATETIMEOFFSET(),
-                            @CreatedBy,
-                            0
-                        FROM MemberMeals MM
-                        INNER JOIN Member M ON M.Id = MM.MemberId";
+            MealAttendance entity;
 
-            int affectedRows = await _context.Database.ExecuteSqlRawAsync(
-                sql,
-                new SqlParameter("@MealCycleIdParam", mealCycleId),
-                new SqlParameter("@CreatedByParam", createdBy)
-            );
+            // ========== CREATE ==========
+            if (vm.Id == 0)
+            {
+                entity = new MealAttendance
+                {
+                    MemberId = vm.MemberId,
+                    MealDate = vm.MealDate,
 
-            return affectedRows > 0;
+                    IsBreakfast = vm.IsBreakfast,
+                    IsLunch = vm.IsLunch,
+                    IsDinner = vm.IsDinner,
+
+                    IsGuest = vm.IsGuest,
+                    GuestIsBreakfast = vm.GuestIsBreakfast,
+                    GuestBreakfastQty = vm.GuestBreakfastQty,
+                    GuestIsLunch = vm.GuestIsLunch,
+                    GuestLunchQty = vm.GuestLunchQty,
+                    GuestIsDinner = vm.GuestIsDinner,
+                    GuestDinnerQty = vm.GuestDinnerQty
+                };
+
+                context.Set<MealAttendance>().Add(entity);
+                await context.SaveChangesAsync();
+                await trx.CommitAsync();
+                return true;
+            }
+
+            // ========== UPDATE ==========
+            entity = await context.Set<MealAttendance>()
+                .FirstOrDefaultAsync(a => a.Id == vm.Id);
+
+            if (entity == null)
+                return false;
+
+            entity.MemberId = vm.MemberId;
+            entity.MealDate = vm.MealDate;
+
+            entity.IsBreakfast = vm.IsBreakfast;
+            entity.IsLunch = vm.IsLunch;
+            entity.IsDinner = vm.IsDinner;
+
+            entity.IsGuest = vm.IsGuest;
+            entity.GuestIsBreakfast = vm.GuestIsBreakfast;
+            entity.GuestBreakfastQty = vm.GuestBreakfastQty;
+            entity.GuestIsLunch = vm.GuestIsLunch;
+            entity.GuestLunchQty = vm.GuestLunchQty;
+            entity.GuestIsDinner = vm.GuestIsDinner;
+            entity.GuestDinnerQty = vm.GuestDinnerQty;
+
+            await context.SaveChangesAsync();
+            await trx.CommitAsync();
+            return true;
         }
-        catch(Exception ex)
+        catch
         {
-            throw;
+            await trx.RollbackAsync();
+            return false;
         }
     }
 
-    public async Task<List<MealBill>> GetMealBillsWithMemberAsync(long mealCycleId)
+    // ----------------------------------------------------------------------
+    // GET BY ID
+    // ----------------------------------------------------------------------
+    public async Task<MealAttendanceVm?> GetByIdAsync(long id)
     {
-        return await _context.Set<MealBill>()
-        .Include(mb => mb.Member)   // join with Member table
-        .Where(mb => mb.MealCycleId == mealCycleId && !mb.IsDelete)
-        .ToListAsync();
+        var entity = await context.Set<MealAttendance>()
+            .Include(a => a.Member)
+            .FirstOrDefaultAsync(a => a.Id == id);
+
+        if (entity == null)
+            return null;
+
+        return new MealAttendanceVm
+        {
+            Id = entity.Id,
+            MemberId = entity.MemberId,
+            MemberName = entity.Member?.Name,
+            MealDate = entity.MealDate,
+
+            IsBreakfast = entity.IsBreakfast,
+            IsLunch = entity.IsLunch,
+            IsDinner = entity.IsDinner,
+
+            IsGuest = entity.IsGuest,
+            GuestIsBreakfast = entity.GuestIsBreakfast,
+            GuestBreakfastQty = entity.GuestBreakfastQty,
+            GuestIsLunch = entity.GuestIsLunch,
+            GuestLunchQty = entity.GuestLunchQty,
+            GuestIsDinner = entity.GuestIsDinner,
+            GuestDinnerQty = entity.GuestDinnerQty
+        };
+    }
+
+    // ----------------------------------------------------------------------
+    // DELETE
+    // ----------------------------------------------------------------------
+    public async Task<bool> DeleteAsync(long id)
+    {
+        using var trx = await context.Database.BeginTransactionAsync();
+
+        try
+        {
+            var entity = await context.Set<MealAttendance>()
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (entity == null)
+                return false;
+
+            context.Set<MealAttendance>().Remove(entity);
+            await context.SaveChangesAsync();
+
+            await trx.CommitAsync();
+            return true;
+        }
+        catch
+        {
+            await trx.RollbackAsync();
+            return false;
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // GET ALL
+    // ----------------------------------------------------------------------
+    public async Task<List<MealAttendanceVm>> GetAllAsync()
+    {
+        return await context.Set<MealAttendance>()
+            .Include(a => a.Member)
+            .OrderByDescending(a => a.MealDate)
+            .Select(a => new MealAttendanceVm
+            {
+                Id = a.Id,
+                MemberId = a.MemberId,
+                MemberName = a.Member.Name,
+                MealDate = a.MealDate,
+
+                IsBreakfast = a.IsBreakfast,
+                IsLunch = a.IsLunch,
+                IsDinner = a.IsDinner,
+
+                IsGuest = a.IsGuest,
+                GuestIsBreakfast = a.GuestIsBreakfast,
+                GuestBreakfastQty = a.GuestBreakfastQty,
+                GuestIsLunch = a.GuestIsLunch,
+                GuestLunchQty = a.GuestLunchQty,
+                GuestIsDinner = a.GuestIsDinner,
+                GuestDinnerQty = a.GuestDinnerQty
+            })
+            .ToListAsync();
     }
 }
-
-

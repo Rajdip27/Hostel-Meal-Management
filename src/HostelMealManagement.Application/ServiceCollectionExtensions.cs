@@ -19,6 +19,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IMemberRepository, MemberRepository>();
+        services.AddScoped<IMealBillRepository, MealBillRepository>();
         services.AddScoped<IMealCycleRepository, MealCycleRepository>();
         services.AddScoped<IMealBazarRepository, MealBazarRepository>();
         services.AddScoped<IMealMenuRepository, MealMenuRepository>();

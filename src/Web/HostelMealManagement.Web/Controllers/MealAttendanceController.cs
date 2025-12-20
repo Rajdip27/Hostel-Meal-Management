@@ -1,110 +1,188 @@
-﻿using HostelMealManagement.Application.CommonModel;
-using HostelMealManagement.Application.Filterl;
+﻿using AutoMapper;
 using HostelMealManagement.Application.Logging;
 using HostelMealManagement.Application.Repositories;
+using HostelMealManagement.Application.ViewModel;
+using HostelMealManagement.Core.Entities;
 using HostelMealManagement.Infrastructure.Helper.Acls;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using static HostelMealManagement.Core.Entities.Auth.IdentityModel;
 
 namespace HostelMealManagement.Web.Controllers;
 
-public class MealAttendanceController : Controller
+[Authorize]
+public class MealAttendanceController(
+    IMealAttendanceRepository attendanceRepository,
+    IAppLogger<MealAttendanceController> logger,
+    IMapper mapper,
+    ISignInHelper signInHelper,
+    IMemberRepository memberRepository,
+    UserManager<User> _userManager
+) : Controller
 {
-    private readonly IMemberRepository _memberRepository;
-    private readonly IMealCycleRepository _mealCycleRepository;
-    private readonly IMealAttendanceRepository _mealAttendanceRepository;
-    private ISignInHelper SignInHelper;
-    private readonly IAppLogger<MealAttendanceController> _logger;
+    private readonly IMealAttendanceRepository _attendanceRepository = attendanceRepository;
+    private readonly IAppLogger<MealAttendanceController> _logger = logger;
+    private readonly IMapper _mapper = mapper;
 
-    public MealAttendanceController(
-        IMemberRepository memberRepository,
-        IMealCycleRepository mealCycleRepository,
-        IAppLogger<MealAttendanceController> logger,
-        IMealAttendanceRepository mealAttendanceRepository,
-        ISignInHelper signInHelper)
-    {
-        _memberRepository = memberRepository;
-        _mealCycleRepository = mealCycleRepository;
-        _logger = logger;
-        _mealAttendanceRepository = mealAttendanceRepository;
-        SignInHelper = signInHelper;
-    }
-
-    
-    [HttpGet]
+    // --------------------------------------------------------
+    // INDEX
+    // --------------------------------------------------------
     [Route("mealattendance")]
-    public IActionResult MealAttendanceProcess()
-    {
-        ViewBag.Members = _memberRepository.GetMemberList();
-        ViewBag.MealCycle = _mealCycleRepository.GetMealCycleList();
-        return View();
-    }
-
-   
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Process(FilterViewModel filter)
+    public async Task<IActionResult> Index()
     {
         try
         {
-            bool result = await _mealAttendanceRepository.GenerateMealBillAsync(filter.MealCycleId, SignInHelper.UserId ?? 0);
+#if DEBUG
+            _logger.LogInfo("Start Watch");
+            var stopwatch = Stopwatch.StartNew();
+#endif
 
-            if (result)
-            {
-                _logger.LogInfo($"Meal bill generated successfully for MealCycleId={filter.MealCycleId}");
-                TempData["AlertMessage"] = "Meal bill generated successfully!";
-                TempData["AlertType"] = "Success";
-            }
-            else
-            {
-                _logger.LogWarning($"Meal bill generation failed for MealCycleId={filter.MealCycleId}");
-                TempData["AlertMessage"] = "Meal bill generation failed.";
-                TempData["AlertType"] = "Warning";
-            }
+            var attendances = await _attendanceRepository.GetAllAsync();
 
-            return RedirectToAction(nameof(MealAttendanceProcess));
+#if DEBUG
+            _logger.LogInfo($"GetAllAsync took {stopwatch.ElapsedMilliseconds}ms");
+#endif
+
+            _logger.LogInfo("Fetched MealAttendances");
+
+            return View(_mapper.Map<List<MealAttendanceVm>>(attendances));
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error while generating meal bill for MealCycleId={filter.MealCycleId}", ex);
-            TempData["AlertMessage"] = "An error occurred while generating the meal bill.";
+            _logger.LogError("Error while fetching Meal Attendances", ex);
+            return StatusCode(500, "An error occurred while fetching Meal Attendance records.");
+        }
+    }
+
+
+    // --------------------------------------------------------
+    // GET: CREATE or EDIT
+    // --------------------------------------------------------
+    [HttpGet]
+    [Route("mealattendance/createoredit/{id?}")]
+    public async Task<IActionResult> CreateOrEdit(long id = 0)
+    {
+        try
+        {
+            var roles = signInHelper.Roles;
+            var userId = signInHelper.UserId;
+
+            if (roles.Contains("Member") && userId.HasValue)
+            {
+                var user = await _userManager.FindByIdAsync(userId.Value.ToString());
+
+                ViewBag.MemberId = memberRepository
+                    .GetMemberList()
+                    .Where(x => x.Value == user.MemberId.ToString())
+                    .ToList();
+            }
+            else
+            {
+                ViewBag.MemberId = memberRepository.GetMemberList();
+            }
+
+            if (id > 0)
+            {
+                var attendance = await _attendanceRepository.GetByIdAsync(id);
+
+                if (attendance == null)
+                {
+                    TempData["AlertMessage"] = $"MealAttendance with Id {id} not found.";
+                    TempData["AlertType"] = "Error";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                return View(attendance);
+            }
+
+            return View(new MealAttendanceVm());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error opening CreateOrEdit for Id={id}", ex);
+            return StatusCode(500, "An error occurred while opening the form.");
+        }
+    }
+
+
+    // --------------------------------------------------------
+    // POST: CREATE or EDIT
+    // --------------------------------------------------------
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Route("mealattendance/createoredit/{id?}")]
+    public async Task<IActionResult> CreateOrEdit(MealAttendanceVm attendanceVm)
+    {
+        if (!ModelState.IsValid)
+        {
+            TempData["AlertMessage"] = "Please fix validation errors.";
+            TempData["AlertType"] = "Warning";
+            return View(attendanceVm);
+        }
+
+        try
+        {
+            bool result = await _attendanceRepository.UpsertAsync(attendanceVm);
+
+            if (!result)
+            {
+                TempData["AlertMessage"] = "Saving Meal Attendance failed!";
+                TempData["AlertType"] = "Error";
+                return View(attendanceVm);
+            }
+
+            TempData["AlertMessage"] =
+                attendanceVm.Id > 0
+                ? "Meal Attendance updated successfully!"
+                : "Meal Attendance created successfully!";
+
+            TempData["AlertType"] = "Success";
+
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Error while saving Meal Attendance", ex);
+            TempData["AlertMessage"] = "An error occurred while saving Meal Attendance.";
             TempData["AlertType"] = "Error";
+
             return StatusCode(500);
         }
     }
 
+
+    // --------------------------------------------------------
+    // DELETE
+    // --------------------------------------------------------
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Apply(FilterViewModel model)
+    [Route("mealattendance/delete/{id}")]
+    public async Task<IActionResult> Delete(long id)
     {
         try
         {
-#if DEBUG
-            var sw = Stopwatch.StartNew();
-#endif
+            var success = await _attendanceRepository.DeleteAsync(id);
 
-            var bills = await _mealAttendanceRepository.GetMealBillsWithMemberAsync(model.MealCycleId);
+            if (!success)
+            {
+                TempData["AlertMessage"] = $"MealAttendance with Id {id} not found!";
+                TempData["AlertType"] = "Error";
+                return NotFound();
+            }
 
-#if DEBUG
-            _logger.LogInfo($"ElectricBill GetAllAsync took {sw.ElapsedMilliseconds}ms");
-#endif
+            TempData["AlertMessage"] = "Meal Attendance deleted successfully!";
+            TempData["AlertType"] = "Success";
 
-            return View(bills);
+            return RedirectToAction(nameof(Index));
         }
         catch (Exception ex)
         {
-            _logger.LogError("Error while fetching Electric Bills", ex);
-            return StatusCode(500, "An error occurred while fetching Electric Bills.");
-        }
-    }
+            _logger.LogError($"Error deleting MealAttendance Id={id}", ex);
+            TempData["AlertMessage"] = "An error occurred while deleting Meal Attendance.";
+            TempData["AlertType"] = "Error";
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public IActionResult PDF(FilterViewModel model)
-    {
-        TempData["AlertMessage"] = "PDF button clicked!";
-        TempData["AlertType"] = "success";
-        return RedirectToAction(nameof(MealAttendanceProcess));
+            return StatusCode(500);
+        }
     }
 }

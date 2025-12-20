@@ -28,19 +28,51 @@
         </div>
 
         <div class="col-auto d-flex gap-2">
-            <button type="submit" formaction="@Url.Action("Process", "MealAttendance")" class="btn btn-secondary">
+            <button type="submit" formaction="@Url.Action("Process", "MealBill")" class="btn btn-secondary">
                 <i class="bi bi-arrow-repeat"></i> Process
             </button>
 
-            <button type="submit" formaction="@Url.Action("Apply", "MealAttendance")" class="btn btn-dark">
+            <button type="button" id="btnApply" class="btn btn-dark">
                 <i class="bi bi-check-circle"></i> Apply
             </button>
 
-            <button type="submit" formaction="@Url.Action("PDF", "MealAttendance")" class="btn btn-secondary">
+            <button type="submit" formaction="@Url.Action("PDF", "MealBill")" class="btn btn-secondary">
                 <i class="bi bi-file-earmark-pdf"></i> PDF
             </button>
         </div>
     </form>
-
-   
 </div>
+
+<div id="loadData">
+</div>
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $("#btnApply").click(function () {
+
+                var formData = {
+                    SelectedMember: $("#SelectedMember").val(),
+                    MemberCodeNo: $("#MemberCodeNo").val(),
+                    MealCycleId: $("#MealCycleId").val(),
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                };
+
+                $.ajax({
+                    url: '@Url.Action("Apply", "MealBill")',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        $("#loadData").html(response);
+                    },
+                    error: function () {
+                        alert("Error loading data");
+                    }
+                });
+            });
+
+        });
+    </script>
+}
+
