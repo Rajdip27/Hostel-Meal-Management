@@ -14,7 +14,7 @@ namespace HostelMealManagement.Application.Repositories;
 public interface IMealBillRepository: IBaseService<MealBill>
 {
     Task<bool> GenerateMealBillAsync(long mealCycleId, long createdBy);
-    Task<List<MealBill>> GetMealBillsWithMemberAsync(long mealCycleId);
+    Task<List<MealBill>> GetMealBillsWithMemberAsync(long mealCycleId, long? memberId);
 }
 
 public class MealBillRepository : BaseService<MealBill>, IMealBillRepository
@@ -132,11 +132,16 @@ public class MealBillRepository : BaseService<MealBill>, IMealBillRepository
         }
     }
 
-    public async Task<List<MealBill>> GetMealBillsWithMemberAsync(long mealCycleId)
+    public async Task<List<MealBill>> GetMealBillsWithMemberAsync(long mealCycleId, long? memberId)
     {
         return await _context.Set<MealBill>()
-        .Include(mb => mb.Member)   // join with Member table
-        .Where(mb => mb.MealCycleId == mealCycleId && !mb.IsDelete)
+        .Include(mb => mb.Member)
+        .Include(mb => mb.MealCycle)
+        .Where(mb =>
+            mb.MealCycleId == mealCycleId &&
+            !mb.IsDelete &&
+            (memberId == 0 || mb.MemberId == memberId))
         .ToListAsync();
     }
+
 }

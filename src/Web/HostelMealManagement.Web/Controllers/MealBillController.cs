@@ -83,7 +83,7 @@ public class MealBillController : Controller
             var sw = Stopwatch.StartNew();
 #endif
 
-            var bills = await _mealAttendanceRepository.GetMealBillsWithMemberAsync(model.MealCycleId);
+            var bills = await _mealAttendanceRepository.GetMealBillsWithMemberAsync(model.MealCycleId, model.SelectedMember);
 
 #if DEBUG
             _logger.LogInfo($"ElectricBill GetAllAsync took {sw.ElapsedMilliseconds}ms");
@@ -105,5 +105,37 @@ public class MealBillController : Controller
         TempData["AlertMessage"] = "PDF button clicked!";
         TempData["AlertType"] = "success";
         return RedirectToAction(nameof(MealAttendanceProcess));
+    }
+    [HttpGet]
+    [Route("meal-bill-report")]
+    public IActionResult MealBillReport()
+    {
+        ViewBag.Members = _memberRepository.GetMemberList();
+        ViewBag.MealCycle = _mealCycleRepository.GetMealCycleList();
+        return View();
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> MealBillReportView(FilterViewModel model)
+    {
+        try
+        {
+#if DEBUG
+            var sw = Stopwatch.StartNew();
+#endif
+
+            var bills = await _mealAttendanceRepository.GetMealBillsWithMemberAsync(model.MealCycleId, model.SelectedMember);
+
+#if DEBUG
+            _logger.LogInfo($"ElectricBill GetAllAsync took {sw.ElapsedMilliseconds}ms");
+#endif
+
+            return View(bills);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Error while fetching Electric Bills", ex);
+            return StatusCode(500, "An error occurred while fetching Electric Bills.");
+        }
     }
 }
