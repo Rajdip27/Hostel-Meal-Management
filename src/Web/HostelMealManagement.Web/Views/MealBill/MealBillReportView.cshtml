@@ -100,8 +100,8 @@
             <div class="section">
                 <h2>Bill Period</h2>
                 <table>
-                    <tr><th>Meal Cycle</th><td>December 2025 (Cycle ID: 123)</td></tr>
-                    <tr><th>Period</th><td>01 Dec 2025 - 31 Dec 2025</td></tr>
+                    <tr><th>Meal Cycle</th><td>@bill.MealCycle.StartDate.ToString("MMMM yyyy")</td></tr>
+                    <tr><th>Period</th><td>@bill.MealCycle.StartDate.ToString("dd-MMMM-yyyy") - @bill.MealCycle.EndDate.ToString("dd-MMMM-yyyy")</td></tr>
                 </table>
             </div>
 
