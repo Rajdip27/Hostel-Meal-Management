@@ -31,9 +31,13 @@
             <button type="button" id="btnApply"  class="btn btn-dark">
                 <i class="bi bi-check-circle"></i> Apply
             </button>
-            <button type="submit" formaction="@Url.Action("PDF", "MealBill")" class="btn btn-secondary">
+            <button type="submit"
+                    formaction="@Url.Action("MealBillReportPdf", "MealBill")"
+                    formtarget="_blank"
+                    class="btn btn-secondary">
                 <i class="bi bi-file-earmark-pdf"></i> PDF
             </button>
+
         </div>
     </form>
 </div>
