@@ -11,6 +11,133 @@
     var roles = SignInHelper.Roles;
 }
 
+<!-- ================= PREMIUM CORPORATE THEME ================= -->
+<style>
+    body {
+        background: #f5f7fb !important;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    h2 {
+        color: #1f2937;
+        font-weight: 700;
+        margin-bottom: 18px;
+    }
+
+    /* ===== Add Button ===== */
+    .btn-primary {
+        background: linear-gradient(135deg, #2563eb, #1e40af) !important;
+        border: none !important;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 10px 22px;
+        box-shadow: 0 8px 20px rgba(37,99,235,0.35);
+        transition: 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1e40af, #1e3a8a) !important;
+            box-shadow: 0 10px 28px rgba(37,99,235,0.45);
+            transform: translateY(-1px);
+        }
+
+    /* ===== Card ===== */
+    .utility-card {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+    }
+
+    .utility-card-header {
+        background: linear-gradient(135deg, #1e3a8a, #2563eb);
+        color: #ffffff;
+        padding: 14px 20px;
+        font-weight: 600;
+        letter-spacing: .4px;
+    }
+
+    /* ===== Section Titles ===== */
+    .section-title {
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #1f2937;
+    }
+
+    /* ===== Tables ===== */
+    .table {
+        background: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
+    }
+
+        .table thead th {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb) !important;
+            color: #ffffff !important;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 12px;
+            text-align: center;
+            border: none !important;
+        }
+
+        .table td {
+            padding: 12px;
+            font-size: 14px;
+            color: #374151;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover {
+            background-color: #eef2ff;
+            transition: 0.2s ease;
+        }
+
+    /* ===== Buttons ===== */
+    .btn-info {
+        background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+        border: none !important;
+        color: #fff !important;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 6px 16px rgba(59,130,246,0.35);
+        transition: 0.25s ease;
+    }
+
+        .btn-info:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+            box-shadow: 0 8px 22px rgba(59,130,246,0.45);
+        }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
+        border: none !important;
+        color: #fff !important;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 6px 16px rgba(239,68,68,0.35);
+        transition: 0.25s ease;
+    }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #dc2626, #991b1b) !important;
+            box-shadow: 0 8px 22px rgba(239,68,68,0.45);
+        }
+
+    /* ===== Grand Total ===== */
+    .grand-total {
+        font-size: 18px;
+        font-weight: 700;
+        color: #16a34a;
+    }
+</style>
+
 <h2>@ViewData["Title"]</h2>
 
 @if (!roles.Contains("Member"))
@@ -33,62 +160,54 @@
 else
 {
     @foreach (var group in Model
-            .GroupBy(x => new { x.BillYear, x.BillMonth })
-            .OrderByDescending(x => x.Key.BillYear)
-            .ThenByDescending(x => x.Key.BillMonth))
+                .GroupBy(x => new { x.BillYear, x.BillMonth })
+                .OrderByDescending(x => x.Key.BillYear)
+                .ThenByDescending(x => x.Key.BillMonth))
     {
         var electric = group.FirstOrDefault(x => x.UtilityType == UtilityType.Electric);
         var others = group.Where(x => x.UtilityType != UtilityType.Electric).ToList();
         var grandTotal = group.Sum(x => x.TotalAmount);
 
-        <div class="card mb-4 shadow-sm">
-            <div class="card-header bg-light">
-                <strong>
-                    Billing Period:
-                    @group.Key.BillMonth/@group.Key.BillYear
-                </strong>
+        <div class="utility-card mb-4">
+
+            <div class="utility-card-header">
+                Billing Period: @group.Key.BillMonth / @group.Key.BillYear
             </div>
 
-            <div class="card-body">
+            <div class="card-body p-4">
 
-                <!-- ================= ELECTRIC ================= -->
+                <!-- ELECTRIC -->
                 @if (electric != null)
                 {
-                    <h5 class="text-primary mb-2">Electric Bill</h5>
+                    <h5 class="section-title text-primary">Electric Bill</h5>
 
-                    <table class="table table-bordered table-sm mb-4">
-                        <thead class="table-light">
+                    <table class="table table-bordered mb-4">
+                        <thead>
                             <tr>
                                 <th>Current Unit</th>
                                 <th>Per Unit Rate</th>
                                 <th>Total Amount</th>
-                                <th style="width:160px">Actions</th>
+                                <th style="width:170px">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>@electric.CurrentUnit</td>
                                 <td>@electric.PerUnitRate</td>
-                                <td>
-                                    <strong>@electric.TotalAmount.ToString("0.00")</strong>
-                                </td>
+                                <td><strong>@electric.TotalAmount.ToString("0.00")</strong></td>
                                 <td>
                                     @if (!roles.Contains("Member"))
                                     {
                                         <a class="btn btn-sm btn-info"
                                            asp-action="CreateOrEdit"
-                                           asp-route-id="@electric.Id">
-                                            Edit
-                                        </a>
+                                           asp-route-id="@electric.Id">Edit</a>
 
                                         <form asp-action="Delete"
                                               asp-route-id="@electric.Id"
                                               method="post"
                                               style="display:inline"
                                               onsubmit="return confirm('Are you sure you want to delete this electric bill?');">
-                                            <button class="btn btn-sm btn-danger">
-                                                Delete
-                                            </button>
+                                            <button class="btn btn-sm btn-danger">Delete</button>
                                         </form>
                                     }
                                 </td>
@@ -97,44 +216,38 @@ else
                     </table>
                 }
 
-                <!-- ================= OTHER BILLS ================= -->
+                <!-- OTHER BILLS -->
                 @if (others.Any())
                 {
-                    <h5 class="text-secondary mb-2">Other Bills</h5>
+                    <h5 class="section-title text-secondary">Other Bills</h5>
 
-                    <table class="table table-bordered table-sm">
-                        <thead class="table-light">
+                    <table class="table table-bordered">
+                        <thead>
                             <tr>
                                 <th>Utility Type</th>
                                 <th>Amount</th>
-                                <th style="width:160px">Actions</th>
+                                <th style="width:170px">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var item in others)
                             {
                                 <tr>
-                                    <td>
-                                        <strong>@item.UtilityType</strong>
-                                    </td>
+                                    <td><strong>@item.UtilityType</strong></td>
                                     <td>@item.TotalAmount.ToString("0.00")</td>
                                     <td>
                                         @if (!roles.Contains("Member"))
                                         {
                                             <a class="btn btn-sm btn-info"
                                                asp-action="CreateOrEdit"
-                                               asp-route-id="@item.Id">
-                                                Edit
-                                            </a>
+                                               asp-route-id="@item.Id">Edit</a>
 
                                             <form asp-action="Delete"
                                                   asp-route-id="@item.Id"
                                                   method="post"
                                                   style="display:inline"
                                                   onsubmit="return confirm('Are you sure you want to delete this bill?');">
-                                                <button class="btn btn-sm btn-danger">
-                                                    Delete
-                                                </button>
+                                                <button class="btn btn-sm btn-danger">Delete</button>
                                             </form>
                                         }
                                     </td>
@@ -144,14 +257,10 @@ else
                     </table>
                 }
 
-                <!-- ================= GRAND TOTAL ================= -->
+                <!-- GRAND TOTAL -->
                 <div class="text-end mt-3">
-                    <h4>
-                        Grand Total:
-                        <span class="text-success">
-                            @grandTotal.ToString("0.00")
-                        </span>
-                    </h4>
+                    <span class="me-2 fw-semibold">Grand Total:</span>
+                    <span class="grand-total">@grandTotal.ToString("0.00")</span>
                 </div>
 
             </div>

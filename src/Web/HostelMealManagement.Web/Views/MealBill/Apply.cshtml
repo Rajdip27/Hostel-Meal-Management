@@ -5,135 +5,101 @@
 @{
     Layout = null;
 }
-<!-- CORPORATE BLUE GLOSSY THEME -->
+
 <style>
-
-    /* ===== Page Background ===== */
+    /* ================= PAGE ================= */
     body {
-        background: #ffffff !important; /* Requested white background */
+        background: #ffffff !important;
+        font-family: "Segoe UI", sans-serif;
+        padding: 20px;
     }
 
-    /* ===== Glossy Blue Button ===== */
-    .custom-btn {
-        background: #3559a8 !important;
-        border: none !important;
-        font-weight: 600;
-        color: #fff !important;
-        border-radius: 8px;
-        padding: 8px 18px;
-        box-shadow: 0 6px 18px rgba(53, 89, 168, 0.25);
-        transition: 0.25s ease;
+    /* ================= TABLE CONTAINER ================= */
+    .table {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #d7dce3;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.06);
     }
 
-        .custom-btn:hover {
-            background: #2d4d8f !important;
-            box-shadow: 0 8px 24px rgba(53, 89, 168, 0.38);
-        }
-
-    /* ===== Gradient Blue Table Header (Same as Login Theme) ===== */
+    /* ================= HEADER ================= */
     .custom-header th {
-        background: linear-gradient(135deg, rgba(33, 71, 155, 0.9), rgba(38, 92, 170, 0.95)) !important;
+        background: linear-gradient( 135deg, rgba(33, 71, 155, 0.95), rgba(38, 92, 170, 0.95) ) !important;
         color: #ffffff !important;
         font-weight: 600;
         text-align: center;
         padding: 12px;
         letter-spacing: .3px;
-        border: none;
-    }
-
-    /* ===== Table Body - Clean & Minimal ===== */
-    table.table {
-        background: rgba(255, 255, 255, 0.85);
-        border-radius: 10px;
-        overflow: hidden;
-        border: 1px solid #d7dce3;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.05);
-    }
-
-        table.table td {
-            vertical-align: middle;
-            padding: 10px 12px;
-            font-size: 15px;
-            color: #2b3340;
-        }
-
-    /* ===== Edit Button (Blue Glossy) ===== */
-    .btn-info {
-        background: #3b82f6 !important;
         border: none !important;
-        color: white !important;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        transition: 0.25s ease;
+        font-size: 14px;
+        white-space: nowrap;
     }
 
-        .btn-info:hover {
-            background: #1e40af !important;
-            box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4);
-        }
-
-    /* ===== Delete Button ===== */
-    .btn-danger {
-        background: #dc2626 !important;
-        border: none !important;
-        color: #fff !important;
-        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
-        transition: 0.25s ease;
+    /* ================= BODY CELLS ================= */
+    .table td {
+        vertical-align: middle;
+        padding: 10px 12px;
+        font-size: 14px;
+        color: #2b3340;
+        text-align: center;
     }
 
-        .btn-danger:hover {
-            background: #b91c1c !important;
-            box-shadow: 0 6px 18px rgba(220, 38, 38, 0.4);
-        }
-
-    /* ===== Status Badges ===== */
-    .badge.bg-success {
-        background-color: #16a34a !important;
-        padding: 6px 10px;
-        border-radius: 6px;
+    /* ================= ROW HOVER ================= */
+    .table tbody tr:hover {
+        background-color: #f1f5ff;
+        transition: 0.2s ease;
     }
 
-    .badge.bg-secondary {
-        background-color: #6b7280 !important;
-        padding: 6px 10px;
-        border-radius: 6px;
+    /* ================= NUMBERS ================= */
+    .table td {
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* ================= RESPONSIVE ================= */
+    .table-responsive {
+        border-radius: 12px;
     }
 </style>
 
-
-<table class="table table-striped table-bordered">
-    <thead class="custom-header">
-        <tr>
-            <th>Member Name</th>
-            <th>Card No</th>
-            <th>Total Bazar</th>
-            <th>Total Member Meal</th>
-            <th>Total Guest Meal</th>
-            <th>Total Meal</th>
-            <th>Meal Rate</th>
-            <th>Meal Amount</th>
-            <th>House Bill</th>
-            <th>Utility Bill</th>
-            <th>Other Bill</th>
-            <th>Total Payable</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var bill in Model)
-        {
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead class="custom-header">
             <tr>
-                <td>@bill.Member.Name</td>
-                <td>@bill.Member.MemberCode</td>
-                <td>@bill.TotalBazar</td>
-                <td>@bill.TotalMemberMeal</td>
-                <td>@bill.TotalGuestMeal</td>
-                <td>@bill.TotalMeal</td>
-                <td>@bill.MealRate</td>
-                <td>@bill.MealAmount</td>
-                <td>@bill.HouseBill</td>
-                <td>@bill.UtilityBill</td>
-                <td>@bill.OtherBill</td>
-                <td>@bill.TotalPayable</td>
+                <th>Member Name</th>
+                <th>Card No</th>
+                <th>Total Bazar</th>
+                <th>Total Member Meal</th>
+                <th>Total Guest Meal</th>
+                <th>Total Meal</th>
+                <th>Meal Rate</th>
+                <th>Meal Amount</th>
+                <th>House Bill</th>
+                <th>Utility Bill</th>
+                <th>Other Bill</th>
+                <th>Total Payable</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var bill in Model)
+            {
+                <tr>
+                    <td><strong>@bill.Member.Name</strong></td>
+                    <td>@bill.Member.MemberCode</td>
+                    <td>@bill.TotalBazar</td>
+                    <td>@bill.TotalMemberMeal</td>
+                    <td>@bill.TotalGuestMeal</td>
+                    <td>@bill.TotalMeal</td>
+                    <td>@bill.MealRate</td>
+                    <td><strong>@bill.MealAmount</strong></td>
+                    <td>@bill.HouseBill</td>
+                    <td>@bill.UtilityBill</td>
+                    <td>@bill.OtherBill</td>
+                    <td class="fw-bold text-primary">
+                        @bill.TotalPayable
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

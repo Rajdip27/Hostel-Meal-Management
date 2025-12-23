@@ -1,12 +1,14 @@
 ﻿@using HostelMealManagement.Core.Entities
 @model IEnumerable<MealBill>
+
 @{
     Layout = null;
 }
+
 <style>
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f4f6f9;
+        background-color: #ffffff;
         margin: 0;
         padding: 20px;
         color: #333;
@@ -17,27 +19,31 @@
         margin: 0 auto 40px auto;
         background: white;
         border-radius: 10px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         overflow: hidden;
-        page-break-inside: avoid; /* Prevent splitting across pages */
-        break-inside: avoid; /* Modern browsers */
+        page-break-after: always;
     }
 
+        /* 🔴 Prevent extra blank page */
+        .bill-container:last-child {
+            page-break-after: auto;
+        }
+
     .header {
-        background: linear-gradient(135deg, #2c3e50, #3498db);
+        background-color: #1f3a5f;
         color: white;
-        padding: 30px;
+        padding: 28px;
         text-align: center;
     }
 
         .header h1 {
             margin: 0;
-            font-size: 28px;
+            font-size: 26px;
+            letter-spacing: 1px;
         }
 
         .header p {
-            margin: 5px 0 0;
-            font-size: 16px;
+            margin: 6px 0 0;
+            font-size: 14px;
             opacity: 0.9;
         }
 
@@ -46,14 +52,14 @@
     }
 
     .section {
-        margin-bottom: 30px;
+        margin-bottom: 25px;
     }
 
         .section h2 {
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 8px;
-            font-size: 20px;
-            color: #2c3e50;
+            border-bottom: 2px solid #1f3a5f;
+            padding-bottom: 6px;
+            font-size: 18px;
+            color: #1f3a5f;
         }
 
     table {
@@ -63,69 +69,38 @@
     }
 
     th, td {
-        padding: 12px;
+        padding: 10px;
         text-align: left;
         border-bottom: 1px solid #ddd;
+        font-size: 14px;
     }
 
     th {
-        background-color: #f8f9fa;
-        color: #2c3e50;
+        background-color: #f1f5f9;
+        color: #1f3a5f;
         width: 40%;
     }
 
     .total-row {
         font-weight: bold;
-        font-size: 18px;
-        background-color: #e8f4fd !important;
+        font-size: 16px;
+        background-color: #e6f2ff;
     }
 
     .notes {
         background-color: #f8f9fa;
-        padding: 15px;
+        padding: 14px;
         border-radius: 8px;
-        font-size: 14px;
+        font-size: 13px;
         line-height: 1.6;
     }
 
     .footer {
         text-align: center;
-        padding: 20px;
-        background-color: #2c3e50;
+        padding: 18px;
+        background-color: #1f3a5f;
         color: white;
-        font-size: 14px;
-    }
-
-    /* Print-specific styles */
-    @@media print {
-        body {
-            background: white;
-            padding: 0;
-        }
-
-        .bill-container {
-            box-shadow: none;
-            page-break-inside: avoid;
-            break-inside: avoid;
-        }
-
-        .content, .section, table, th, td {
-            padding: 6px; /* Reduce padding for print */
-            font-size: 12pt; /* Slightly smaller font */
-        }
-
-        .header {
-            padding: 20px;
-        }
-
-        .footer {
-            padding: 10px;
-            font-size: 12pt;
-        }
-        /* Optional scaling if content overflows one page */
-        body {
-            zoom: 0.85;
-        }
+        font-size: 13px;
     }
 </style>
 
@@ -139,11 +114,19 @@
         </div>
 
         <div class="content">
+
             <div class="section">
                 <h2>Bill Period</h2>
                 <table>
                     <tr><th>Meal Cycle</th><td>@bill.MealCycle.StartDate.ToString("MMMM yyyy")</td></tr>
-                    <tr><th>Period</th><td>@bill.MealCycle.StartDate.ToString("dd-MMMM-yyyy") - @bill.MealCycle.EndDate.ToString("dd-MMMM-yyyy")</td></tr>
+                    <tr>
+                        <th>Period</th>
+                        <td>
+                            @bill.MealCycle.StartDate.ToString("dd MMM yyyy")
+                            -
+                            @bill.MealCycle.EndDate.ToString("dd MMM yyyy")
+                        </td>
+                    </tr>
                 </table>
             </div>
 
@@ -158,11 +141,11 @@
             <div class="section">
                 <h2>Meal Summary</h2>
                 <table>
-                    <tr><th>Total Bazar Costs (Market Expenses)</th><td>৳ @bill.TotalBazar</td></tr>
+                    <tr><th>Total Bazar Costs</th><td>৳ @bill.TotalBazar</td></tr>
                     <tr><th>Member Meals</th><td>@bill.TotalMemberMeal</td></tr>
-                    <tr><th>Meals (incl. Guests)</th><td>@bill.TotalGuestMeal</td></tr>
+                    <tr><th>Guest Meals</th><td>@bill.TotalGuestMeal</td></tr>
                     <tr><th>Total Meals</th><td>@bill.TotalMeal</td></tr>
-                    <tr><th>Meal Rate (Bazar / Total Meals)</th><td>৳ @bill.MealRate</td></tr>
+                    <tr><th>Meal Rate</th><td>৳ @bill.MealRate</td></tr>
                     <tr><th>Your Meal Amount</th><td>৳ @bill.MealAmount</td></tr>
                 </table>
             </div>
@@ -170,8 +153,8 @@
             <div class="section">
                 <h2>Other Bills</h2>
                 <table>
-                    <tr><th>House/Rent Bill</th><td>৳ @bill.HouseBill</td></tr>
-                    <tr><th>Utility Bill (Electricity, Water, etc.)</th><td>৳ @bill.UtilityBill</td></tr>
+                    <tr><th>House / Rent Bill</th><td>৳ @bill.HouseBill</td></tr>
+                    <tr><th>Utility Bill</th><td>৳ @bill.UtilityBill</td></tr>
                     <tr><th>Other Bill</th><td>৳ @bill.OtherBill</td></tr>
                 </table>
             </div>
@@ -186,16 +169,29 @@
             </div>
 
             <div class="notes">
-                <strong>Notes:</strong><br>
-                • Meal rate is calculated as Total Bazar ÷ Total Meals across all members.<br>
-                • Guest meals are included in the total but charged via the shared rate.<br>
-                • Please pay by the due date to avoid late fees.<br>
-                • Contact the hostel manager for any queries or discrepancies.
+                <strong>Notes:</strong><br />
+                • Meal rate = Total Bazar ÷ Total Meals<br />
+                • Guest meals included in shared calculation<br />
+                • Please pay within due date<br />
+                • Contact hostel management for any issues
             </div>
+
         </div>
 
         <div class="footer">
-            Thank you for staying with us! | Signature: ________________________ (Manager)
+            Thank you for staying with us! | Signature: ________________________
         </div>
     </div>
 }
+
+<script>
+    // 🔥 AUTO DOWNLOAD PDF (NO PRINT)
+    window.onload = function () {
+        const link = document.createElement('a');
+        link.href = window.location.href;
+        link.download = 'MealBillReport.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+</script>

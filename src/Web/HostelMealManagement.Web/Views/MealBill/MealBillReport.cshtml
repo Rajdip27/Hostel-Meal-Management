@@ -7,43 +7,124 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
+<style>
+    /* ===== Page Background ===== */
+    body {
+        background: #f5f7fb;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    /* ===== Filter Card ===== */
+    .filter-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+        border: 1px solid #e5e7eb;
+    }
+
+    /* ===== Inputs ===== */
+    .form-select,
+    .form-control {
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 14.5px;
+        border: 1px solid #d1d5db;
+        transition: 0.25s ease;
+    }
+
+        .form-select:focus,
+        .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+        }
+
+    /* ===== Buttons ===== */
+    .btn-apply {
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        border: none;
+        color: #ffffff;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 10px 18px;
+        box-shadow: 0 6px 18px rgba(37,99,235,0.35);
+        transition: 0.3s ease;
+    }
+
+        .btn-apply:hover {
+            background: linear-gradient(135deg, #1e40af, #1e3a8a);
+            box-shadow: 0 8px 25px rgba(37,99,235,0.45);
+            transform: translateY(-1px);
+        }
+
+    .btn-pdf {
+        background: linear-gradient(135deg, #6b7280, #374151);
+        border: none;
+        color: #ffffff;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 10px 18px;
+        box-shadow: 0 6px 18px rgba(55,65,81,0.35);
+        transition: 0.3s ease;
+    }
+
+        .btn-pdf:hover {
+            background: linear-gradient(135deg, #374151, #111827);
+            box-shadow: 0 8px 25px rgba(55,65,81,0.45);
+            transform: translateY(-1px);
+        }
+
+    /* ===== Loaded Data Container ===== */
+    #loadData {
+        margin-top: 24px;
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.07);
+        border: 1px solid #e5e7eb;
+    }
+</style>
+
 <div class="container-fluid mt-3">
-    <form method="post" class="row g-2 align-items-center bg-white p-3 rounded shadow-sm">
+
+    <!-- FILTER FORM -->
+    <form method="post" class="filter-card row g-3 align-items-center">
         @Html.AntiForgeryToken()
 
-        <div class="col">
+        <div class="col-lg-3 col-md-6">
             <select asp-for="SelectedMember" asp-items="ViewBag.Members" class="form-select">
                 <option value="">Name of Member</option>
             </select>
         </div>
 
-        <div class="col">
+        <div class="col-lg-3 col-md-6">
             <input asp-for="MemberCodeNo" class="form-control" placeholder="Member ID No." />
         </div>
 
-        <div class="col">
+        <div class="col-lg-3 col-md-6">
             <select asp-for="MealCycleId" asp-items="ViewBag.MealCycle" class="form-select">
                 <option value="">Select Meal Cycle</option>
             </select>
         </div>
 
-        <div class="col-auto d-flex gap-2">
-            <button type="button" id="btnApply"  class="btn btn-dark">
+        <div class="col-lg-3 col-md-6 d-flex gap-2 justify-content-end">
+            <button type="button" id="btnApply" class="btn btn-apply w-100">
                 <i class="bi bi-check-circle"></i> Apply
             </button>
+
             <button type="submit"
                     formaction="@Url.Action("MealBillReportPdf", "MealBill")"
                     formtarget="_blank"
-                    class="btn btn-secondary">
+                    class="btn btn-pdf w-100">
                 <i class="bi bi-file-earmark-pdf"></i> PDF
             </button>
-
         </div>
     </form>
 </div>
 
-<div id="loadData">
-</div>
+<!-- RESULT -->
+<div id="loadData"></div>
+
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
@@ -74,4 +155,3 @@
         });
     </script>
 }
-

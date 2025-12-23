@@ -1,140 +1,212 @@
 ﻿@using HostelMealManagement.Core.Entities
 @model IEnumerable<MealBill>
+
 @{
     Layout = null;
 }
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-        .bill-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-        .header {
-            background: linear-gradient(135deg, #2c3e50, #3498db);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
+
+<style>
+    /* ================= PAGE BASE ================= */
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f5f7fb;
+        margin: 0;
+        padding: 20px;
+        color: #1f2937;
+    }
+
+    /* ================= CONTAINER ================= */
+    .bill-container {
+        max-width: 820px;
+        margin: 0 auto 40px auto;
+        background: #ffffff;
+        border-radius: 14px;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    /* ================= HEADER ================= */
+    .header {
+        background: linear-gradient(135deg, #1e3a8a, #2563eb);
+        color: #ffffff;
+        padding: 32px;
+        text-align: center;
+    }
+
         .header h1 {
             margin: 0;
             font-size: 28px;
+            letter-spacing: 1px;
         }
+
         .header p {
-            margin: 5px 0 0;
-            font-size: 16px;
+            margin: 6px 0 0;
+            font-size: 15px;
             opacity: 0.9;
         }
-        .content {
-            padding: 30px;
-        }
-        .section {
-            margin-bottom: 30px;
-        }
+
+    /* ================= CONTENT ================= */
+    .content {
+        padding: 32px;
+    }
+
+    .section {
+        margin-bottom: 30px;
+    }
+
         .section h2 {
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 8px;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 6px;
             font-size: 20px;
-            color: #2c3e50;
+            font-weight: 600;
+            color: #1e3a8a;
+            margin-bottom: 12px;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
+
+    /* ================= TABLE ================= */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+        background: #ffffff;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    th, td {
+        padding: 12px 14px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 14.5px;
+    }
+
+    th {
+        background: #f1f5ff;
+        color: #1e3a8a;
+        font-weight: 600;
+        width: 42%;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* ================= TOTAL ================= */
+    .total-row {
+        font-weight: 700;
+        font-size: 17px;
+        background: #e0f2fe !important;
+        color: #0f172a;
+    }
+
+    /* ================= NOTES ================= */
+    .notes {
+        background: #f8fafc;
+        padding: 16px;
+        border-radius: 10px;
+        font-size: 14px;
+        line-height: 1.7;
+        color: #334155;
+        border-left: 4px solid #2563eb;
+    }
+
+    /* ================= FOOTER ================= */
+    .footer {
+        text-align: center;
+        padding: 20px;
+        background: #1e3a8a;
+        color: #ffffff;
+        font-size: 14px;
+    }
+
+    /* ================= PRINT ================= */
+    @@media print {
+        body {
+            background: #ffffff;
+            padding: 0;
         }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+
+        .bill-container {
+            box-shadow: none;
+            border-radius: 0;
+            margin-bottom: 0;
+            page-break-after: always;
         }
-        th {
-            background-color: #f8f9fa;
-            color: #2c3e50;
-            width: 40%;
-        }
-        .total-row {
-            font-weight: bold;
-            font-size: 18px;
-            background-color: #e8f4fd !important;
-        }
-        .notes {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-        .footer {
-            text-align: center;
-            padding: 20px;
-            background-color: #2c3e50;
-            color: white;
-            font-size: 14px;
-        }
-        @@media print {
-            body { background: white; padding: 0; }
-            .bill-container { box-shadow: none; }
-        }
-    </style>
+    }
+</style>
 
 @foreach (var bill in Model)
 {
-    <div class="bill-container mt-4">
+    <div class="bill-container">
+
+        <!-- HEADER -->
         <div class="header">
             <h1>HOSTEL MEAL BILL</h1>
             <p>Hostel Name: Your Hostel Name</p>
-            <p>Generated on: @DateTime.Now.ToString("MMMM dd,yyy")</p>
-
+            <p>Generated on: @DateTime.Now.ToString("MMMM dd, yyyy")</p>
         </div>
 
+        <!-- CONTENT -->
         <div class="content">
+
+            <!-- BILL PERIOD -->
             <div class="section">
                 <h2>Bill Period</h2>
                 <table>
-                    <tr><th>Meal Cycle</th><td>@bill.MealCycle.StartDate.ToString("MMMM yyyy")</td></tr>
-                    <tr><th>Period</th><td>@bill.MealCycle.StartDate.ToString("dd-MMMM-yyyy") - @bill.MealCycle.EndDate.ToString("dd-MMMM-yyyy")</td></tr>
+                    <tr>
+                        <th>Meal Cycle</th>
+                        <td>@bill.MealCycle.StartDate.ToString("MMMM yyyy")</td>
+                    </tr>
+                    <tr>
+                        <th>Period</th>
+                        <td>
+                            @bill.MealCycle.StartDate.ToString("dd MMMM yyyy")
+                            -
+                            @bill.MealCycle.EndDate.ToString("dd MMMM yyyy")
+                        </td>
+                    </tr>
                 </table>
             </div>
 
+            <!-- MEMBER DETAILS -->
             <div class="section">
                 <h2>Member Details</h2>
                 <table>
-                    <tr><th>Member Name</th><td>@bill.Member.Name</td></tr>
-                    <tr><th>Member ID</th><td>@bill.Member.MemberCode</td></tr>
-                   
+                    <tr>
+                        <th>Member Name</th>
+                        <td>@bill.Member.Name</td>
+                    </tr>
+                    <tr>
+                        <th>Member ID</th>
+                        <td>@bill.Member.MemberCode</td>
+                    </tr>
                 </table>
             </div>
 
+            <!-- MEAL SUMMARY -->
             <div class="section">
                 <h2>Meal Summary</h2>
                 <table>
-                    <tr><th>Total Bazar Costs (Market Expenses)</th><td>৳ @bill.TotalBazar</td></tr>
+                    <tr><th>Total Bazar Costs</th><td>৳ @bill.TotalBazar</td></tr>
                     <tr><th>Member Meals</th><td>@bill.TotalMemberMeal</td></tr>
                     <tr><th>Meals (incl. Guests)</th><td>@bill.TotalGuestMeal</td></tr>
                     <tr><th>Total Meals</th><td>@bill.TotalMeal</td></tr>
-                    <tr><th>Meal Rate (Bazar / Total Meals)</th><td>৳ @bill.MealRate</td></tr>
+                    <tr><th>Meal Rate</th><td>৳ @bill.MealRate</td></tr>
                     <tr><th>Your Meal Amount</th><td>৳ @bill.MealAmount</td></tr>
                 </table>
             </div>
 
+            <!-- OTHER BILLS -->
             <div class="section">
                 <h2>Other Bills</h2>
                 <table>
-                    <tr><th>House/Rent Bill</th><td>৳ @bill.HouseBill</td></tr>
-                    <tr><th>Utility Bill (Electricity, Water, etc.)</th><td>৳ @bill.UtilityBill</td></tr>
+                    <tr><th>House / Rent Bill</th><td>৳ @bill.HouseBill</td></tr>
+                    <tr><th>Utility Bill</th><td>৳ @bill.UtilityBill</td></tr>
                     <tr><th>Other Bill</th><td>৳ @bill.OtherBill</td></tr>
                 </table>
             </div>
 
+            <!-- TOTAL -->
             <div class="section">
                 <table>
                     <tr class="total-row">
@@ -144,18 +216,22 @@
                 </table>
             </div>
 
+            <!-- NOTES -->
             <div class="notes">
-                <strong>Notes:</strong><br>
-                • Meal rate is calculated as Total Bazar ÷ Total Meals across all members.<br>
-                • Guest meals are included in the total but charged via the shared rate.<br>
-                • Please pay by the due date to avoid late fees.<br>
+                <strong>Notes:</strong><br />
+                • Meal rate is calculated as Total Bazar ÷ Total Meals across all members.<br />
+                • Guest meals are included in the total but charged via the shared rate.<br />
+                • Please pay by the due date to avoid late fees.<br />
                 • Contact the hostel manager for any queries or discrepancies.
             </div>
+
         </div>
 
+        <!-- FOOTER -->
         <div class="footer">
-            Thank you for staying with us! | Signature: ________________________ (Manager)
+            Thank you for staying with us! &nbsp; | &nbsp;
+            Signature: ________________________ (Manager)
         </div>
-    </div>
 
+    </div>
 }

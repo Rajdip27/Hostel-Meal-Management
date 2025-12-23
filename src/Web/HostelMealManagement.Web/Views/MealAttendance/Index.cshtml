@@ -11,125 +11,133 @@
     var role = SignInHelper.Roles;
 }
 
-<!-- ================= CORPORATE GLOSSY BLUE THEME ================= -->
+<!-- ================= PREMIUM CORPORATE THEME ================= -->
 <style>
-
     body {
-        background: #ffffff !important;
+        background: #f5f7fb !important;
         font-family: "Segoe UI", sans-serif;
     }
 
     h2 {
-        color: #1e3a8a;
+        color: #1f2937;
         font-weight: 700;
         margin-bottom: 18px;
     }
 
-    /* ===== Add Button ===== */
+    /* ===== Primary Button ===== */
     .btn-primary {
-        background: #3559a8 !important;
+        background: linear-gradient(135deg, #2563eb, #1e40af) !important;
         border: none !important;
         font-weight: 600;
         border-radius: 10px;
-        padding: 10px 20px;
-        box-shadow: 0 6px 18px rgba(53, 89, 168, 0.25);
-        transition: 0.25s ease;
+        padding: 10px 22px;
+        color: #fff !important;
+        box-shadow: 0 8px 20px rgba(37,99,235,0.35);
+        transition: 0.3s ease;
     }
 
         .btn-primary:hover {
-            background: #2d4d8f !important;
-            box-shadow: 0 8px 25px rgba(53, 89, 168, 0.35);
+            background: linear-gradient(135deg, #1e40af, #1e3a8a) !important;
+            box-shadow: 0 10px 28px rgba(37,99,235,0.45);
+            transform: translateY(-1px);
         }
 
-    /* ===== Table Container ===== */
+    /* ===== Table Wrapper ===== */
     .table-responsive {
-        background: rgba(255, 255, 255, 0.8);
-        padding: 18px;
-        border-radius: 14px;
-        border: 1px solid rgba(200, 200, 200, 0.4);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 16px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.08);
     }
 
-    /* ===== Glossy Blue Header ===== */
+    /* ===== Table Header ===== */
     .table thead th {
-        background: linear-gradient(135deg, rgba(33, 71, 155, 0.9), rgba(38, 92, 170, 0.95)) !important;
+        background: linear-gradient(135deg, #1e3a8a, #2563eb) !important;
         color: #ffffff !important;
-        padding: 12px;
-        font-size: 15px;
+        padding: 14px;
+        font-size: 14px;
         font-weight: 600;
         text-align: center;
         border: none !important;
-        letter-spacing: .3px;
+        letter-spacing: .4px;
+        white-space: nowrap;
     }
 
     /* ===== Table Cells ===== */
     .table td {
         vertical-align: middle !important;
-        padding: 10px;
+        padding: 12px;
+        font-size: 14px;
+        color: #374151;
         text-align: center;
-        font-size: 15px;
-        color: #2b3340;
     }
 
     .left-text {
         text-align: left !important;
+        font-weight: 500;
+    }
+
+    /* ===== Row Hover ===== */
+    .table tbody tr:hover {
+        background-color: #eef2ff;
+        transition: 0.2s ease;
     }
 
     /* ===== Check / Cross Icons ===== */
     .check-icon {
-        font-size: 22px;
-        color: #16a34a; /* corporate green */
+        font-size: 20px;
+        color: #16a34a;
         font-weight: bold;
     }
 
     .cross-icon {
-        font-size: 22px;
+        font-size: 20px;
         color: #dc2626;
         font-weight: bold;
     }
 
     /* ===== Action Buttons ===== */
     .btn-info {
-        background: #3b82f6 !important;
+        background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
         border: none !important;
-        font-weight: 600;
+        color: #fff !important;
         border-radius: 8px;
-        padding: 5px 12px;
-        color: white !important;
-        box-shadow: 0 4px 12px rgba(59,130,246,0.3);
-        transition: .25s ease;
+        padding: 6px 12px;
+        box-shadow: 0 6px 16px rgba(59,130,246,0.35);
+        transition: 0.25s ease;
     }
 
         .btn-info:hover {
-            background: #1e40af !important;
-            box-shadow: 0 6px 16px rgba(59,130,246,0.4);
+            background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+            box-shadow: 0 8px 22px rgba(59,130,246,0.45);
         }
 
     .btn-danger {
-        background: #dc2626 !important;
+        background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
         border: none !important;
-        font-weight: 600;
         border-radius: 8px;
-        padding: 5px 12px;
-        color: white !important;
-        box-shadow: 0 4px 12px rgba(220,38,38,0.3);
-        transition: .25s ease;
+        padding: 6px 12px;
+        color: #fff !important;
+        box-shadow: 0 6px 16px rgba(239,68,68,0.35);
+        transition: 0.25s ease;
     }
 
         .btn-danger:hover {
-            background: #b91c1c !important;
-            box-shadow: 0 6px 16px rgba(220,38,38,0.4);
+            background: linear-gradient(135deg, #dc2626, #991b1b) !important;
+            box-shadow: 0 8px 22px rgba(239,68,68,0.45);
         }
 
     .action-buttons .btn {
-        margin-right: 4px;
+        margin-right: 6px;
     }
-
 </style>
 
 <h2 class="mb-3">Meal Attendance List</h2>
 
-<a class="btn btn-primary mb-3" asp-action="CreateOrEdit">Add Meal Attendance</a>
+<a class="btn btn-primary mb-3" asp-action="CreateOrEdit">
+    Add New Meal Attendance
+</a>
 
 <div class="table-responsive">
     <table class="table table-bordered table-striped">
@@ -160,77 +168,76 @@
                 <td>@a.MealDate.ToString("yyyy-MM-dd")</td>
                 <td class="left-text">@a.MemberName</td>
 
-                <!-- Member Breakfast -->
                 <td>
                     @Html.Raw(a.IsBreakfast
-                                        ? "<span class='check-icon'>✔️</span>"
-                                        : "<span class='cross-icon'>❌</span>")
+                                        ? "<span class='check-icon'>✔</span>"
+                                        : "<span class='cross-icon'>✖</span>")
                 </td>
 
-                <!-- Member Lunch -->
                 <td>
                     @Html.Raw(a.IsLunch
-                                        ? "<span class='check-icon'>✔️</span>"
-                                        : "<span class='cross-icon'>❌</span>")
+                                        ? "<span class='check-icon'>✔</span>"
+                                        : "<span class='cross-icon'>✖</span>")
                 </td>
 
-                <!-- Member Dinner -->
                 <td>
                     @Html.Raw(a.IsDinner
-                                        ? "<span class='check-icon'>✔️</span>"
-                                        : "<span class='cross-icon'>❌</span>")
+                                        ? "<span class='check-icon'>✔</span>"
+                                        : "<span class='cross-icon'>✖</span>")
                 </td>
 
-                <!-- Is Guest -->
                 <td>
                     @Html.Raw(a.IsGuest
-                                        ? "<span class='check-icon'>✔️</span>"
-                                        : "<span class='cross-icon'>❌</span>")
+                                        ? "<span class='check-icon'>✔</span>"
+                                        : "<span class='cross-icon'>✖</span>")
                 </td>
 
-                <!-- Guest Breakfast -->
                 <td>
                     @Html.Raw(a.GuestIsBreakfast
-                                        ? "<span class='check-icon'>✔️</span>"
-                                        : "<span class='cross-icon'>❌</span>")
+                                        ? "<span class='check-icon'>✔</span>"
+                                        : "<span class='cross-icon'>✖</span>")
                 </td>
 
                 <td>@a.GuestBreakfastQty</td>
 
-                <!-- Guest Lunch -->
                 <td>
                     @Html.Raw(a.GuestIsLunch
-                                        ? "<span class='check-icon'>✔️</span>"
-                                        : "<span class='cross-icon'>❌</span>")
+                                        ? "<span class='check-icon'>✔</span>"
+                                        : "<span class='cross-icon'>✖</span>")
                 </td>
 
                 <td>@a.GuestLunchQty</td>
 
-                <!-- Guest Dinner -->
                 <td>
                     @Html.Raw(a.GuestIsDinner
-                                        ? "<span class='check-icon'>✔️</span>"
-                                        : "<span class='cross-icon'>❌</span>")
+                                        ? "<span class='check-icon'>✔</span>"
+                                        : "<span class='cross-icon'>✖</span>")
                 </td>
 
                 <td>@a.GuestDinnerQty</td>
 
-                <!-- Actions -->
                 <td class="action-buttons">
-
                     @if (Permission.CanEdit(role))
                         {
-                            <a class="btn btn-sm btn-info" asp-action="CreateOrEdit" asp-route-id="@a.Id">Edit</a>
+                            <a class="btn btn-sm btn-info"
+                               asp-action="CreateOrEdit"
+                               asp-route-id="@a.Id">
+                                Edit
+                            </a>
                         }
                         @if (Permission.CanDelete(role))
                         {
-                            <form asp-action="Delete" asp-route-id="@a.Id" method="post" style="display:inline"
+                            <form asp-action="Delete"
+                                  asp-route-id="@a.Id"
+                                  method="post"
+                                  style="display:inline"
                                   onsubmit="return confirm('Are you sure?');">
-                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                <button type="submit"
+                                        class="btn btn-sm btn-danger">
+                                    Delete
+                                </button>
                             </form>
                         }
-
-
                     </td>
                 </tr>
             }
