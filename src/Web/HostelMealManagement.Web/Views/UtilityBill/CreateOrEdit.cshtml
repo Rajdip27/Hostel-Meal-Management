@@ -1,0 +1,160 @@
+﻿@model HostelMealManagement.Application.ViewModel.UtilityBillVm
+@using HostelMealManagement.Core.Entities
+@using System.Globalization
+
+@{
+    ViewData["Title"] = Model.Id == 0 ? "Create Utility Bill" : "Edit Utility Bill";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>@ViewData["Title"]</h2>
+<hr />
+
+<form asp-action="CreateOrEdit" method="post">
+
+    <!-- ================= HIDDEN FIELDS ================= -->
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="UtilityType" />
+    <input type="hidden" asp-for="CurrentUnit" />
+    <input type="hidden" asp-for="PerUnitRate" />
+
+    <!-- NEW: OTHER BILLS -->
+    <input type="hidden" asp-for="WaterAmount" />
+    <input type="hidden" asp-for="GasAmount" />
+    <input type="hidden" asp-for="ServantAmount" />
+
+    <!-- ================= BILLING PERIOD ================= -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label asp-for="BillYear"></label>
+            <input asp-for="BillYear" class="form-control" />
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="BillMonth"></label>
+            <select asp-for="BillMonth" class="form-control">
+                @for (int i = 1; i <= 12; i++)
+                {
+                    <option value="@i">
+                        @CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="BillDate"></label>
+            <input asp-for="BillDate" type="date" class="form-control" />
+        </div>
+    </div>
+
+    <!-- ================= ELECTRIC ================= -->
+    <h5 class="text-primary">Electric Bill</h5>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label>Unit</label>
+            <input id="electricUnit" class="form-control" />
+        </div>
+
+        <div class="col-md-4">
+            <label>Rate</label>
+            <input id="electricRate" class="form-control" />
+        </div>
+
+        <div class="col-md-4">
+            <label>Electric Total</label>
+            <input id="electricTotal" class="form-control" readonly />
+        </div>
+    </div>
+
+    <!-- ================= WATER ================= -->
+    <div id="waterSection" style="display:none">
+        <h5>Water Bill</h5>
+        <input id="waterAmount" class="form-control mb-3" />
+    </div>
+
+    <!-- ================= GAS ================= -->
+    <div id="gasSection" style="display:none">
+        <h5>Gas Bill</h5>
+        <input id="gasAmount" class="form-control mb-3" />
+    </div>
+
+    <!-- ================= SERVANT ================= -->
+    <div id="servantSection" style="display:none">
+        <h5>Servant Bill</h5>
+        <input id="servantAmount" class="form-control mb-3" />
+    </div>
+
+    <!-- ================= GRAND TOTAL ================= -->
+    <div id="totalSection" style="display:none">
+        <h5 class="text-success">Grand Total</h5>
+        <input id="grandTotal" class="form-control fw-bold" readonly />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-4">Save</button>
+    <a asp-action="Index" class="btn btn-secondary mt-4 ms-2">Cancel</a>
+</form>
+
+@section Scripts {
+    <script>
+        const electricUnit = document.getElementById("electricUnit");
+        const electricRate = document.getElementById("electricRate");
+        const electricTotal = document.getElementById("electricTotal");
+
+        const water = document.getElementById("waterAmount");
+        const gas = document.getElementById("gasAmount");
+        const servant = document.getElementById("servantAmount");
+        const grandTotal = document.getElementById("grandTotal");
+
+        const waterSection = document.getElementById("waterSection");
+        const gasSection = document.getElementById("gasSection");
+        const servantSection = document.getElementById("servantSection");
+        const totalSection = document.getElementById("totalSection");
+
+        const hiddenUnit = document.querySelector("[name='CurrentUnit']");
+        const hiddenRate = document.querySelector("[name='PerUnitRate']");
+        const hiddenUtilityType = document.querySelector("[name='UtilityType']");
+        const hiddenWater = document.querySelector("[name='WaterAmount']");
+        const hiddenGas = document.querySelector("[name='GasAmount']");
+        const hiddenServant = document.querySelector("[name='ServantAmount']");
+
+        function calculateElectric() {
+            const unit = parseFloat(electricUnit.value) || 0;
+            const rate = parseFloat(electricRate.value) || 0;
+            const total = unit * rate;
+
+            electricTotal.value = total.toFixed(2);
+            if (unit > 0 && rate > 0) waterSection.style.display = "block";
+
+            hiddenUtilityType.value = 1; // Electric
+            hiddenUnit.value = unit;
+            hiddenRate.value = rate;
+
+            calculateGrandTotal();
+        }
+
+        function calculateGrandTotal() {
+            const e = parseFloat(electricTotal.value) || 0;
+            const w = parseFloat(water.value) || 0;
+            const g = parseFloat(gas.value) || 0;
+            const s = parseFloat(servant.value) || 0;
+
+            if (w > 0) gasSection.style.display = "block";
+            if (g > 0) servantSection.style.display = "block";
+            if (s > 0) totalSection.style.display = "block";
+
+            hiddenWater.value = w;
+            hiddenGas.value = g;
+            hiddenServant.value = s;
+
+            grandTotal.value = (e + w + g + s).toFixed(2);
+        }
+
+        electricUnit.addEventListener("input", calculateElectric);
+        electricRate.addEventListener("input", calculateElectric);
+        water.addEventListener("input", calculateGrandTotal);
+        gas.addEventListener("input", calculateGrandTotal);
+        servant.addEventListener("input", calculateGrandTotal);
+    </script>
+}

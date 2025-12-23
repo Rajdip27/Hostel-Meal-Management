@@ -156,10 +156,10 @@
                     <h5>Quick Actions</h5>
                 </div>
                 <div class="quick-actions">
-                    <button class="quick-action-btn">
-                        <i class="fas fa-plus"></i>
+                     <a asp-controller="MealMenu" asp-action="CreateOrEdit" class="quick-action-btn">
+                        <i class="fas fa-list-alt"></i>
                         <span>Add New Meal</span>
-                    </button>
+                    </a>
                     <a asp-controller="Member" asp-action="CreateOrEdit" class="quick-action-btn">
                         <i class="fas fa-user-plus"></i>
                         <span>Add Member</span>
@@ -167,7 +167,7 @@
 
                     <button class="quick-action-btn">
                         <i class="fas fa-file-invoice"></i>
-                        <span>Generate Report</span>
+                        <span>Reports</span>
                     </button>
                     <button class="quick-action-btn">
                         <i class="fas fa-bell"></i>

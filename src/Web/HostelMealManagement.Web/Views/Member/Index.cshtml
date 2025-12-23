@@ -8,162 +8,74 @@
     bool isMember = SignInHelper.Roles.Contains("Member");
 }
 
-<h2>@ViewData["Title"]</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="page-title">@ViewData["Title"]</h2>
 
-@if (!isMember)
-{
-    <p>
-        <a class="btn btn-primary custom-btn" asp-controller="Member" asp-action="CreateOrEdit">Add New Member</a>
-    </p>
-}
-
-<!-- CORPORATE BLUE GLOSSY THEME -->
-<style>
-
-    /* ===== Page Background ===== */
-    body {
-        background: #ffffff !important; /* Requested white background */
+    @if (!isMember)
+    {
+        <a class="btn btn-primary"
+           asp-controller="Member"
+           asp-action="CreateOrEdit">
+            <i class="fa fa-plus"></i> Add New Member
+        </a>
     }
+</div>
 
-    /* ===== Glossy Blue Button ===== */
-    .custom-btn {
-        background: #3559a8 !important;
-        border: none !important;
-        font-weight: 600;
-        color: #fff !important;
-        border-radius: 8px;
-        padding: 8px 18px;
-        box-shadow: 0 6px 18px rgba(53, 89, 168, 0.25);
-        transition: 0.25s ease;
-    }
-
-        .custom-btn:hover {
-            background: #2d4d8f !important;
-            box-shadow: 0 8px 24px rgba(53, 89, 168, 0.38);
-        }
-
-    /* ===== Gradient Blue Table Header (Same as Login Theme) ===== */
-    .custom-header th {
-        background: linear-gradient(135deg, rgba(33, 71, 155, 0.9), rgba(38, 92, 170, 0.95)) !important;
-        color: #ffffff !important;
-        font-weight: 600;
-        text-align: center;
-        padding: 12px;
-        letter-spacing: .3px;
-        border: none;
-    }
-
-    /* ===== Table Body - Clean & Minimal ===== */
-    table.table {
-        background: rgba(255, 255, 255, 0.85);
-        border-radius: 10px;
-        overflow: hidden;
-        border: 1px solid #d7dce3;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.05);
-    }
-
-        table.table td {
-            vertical-align: middle;
-            padding: 10px 12px;
-            font-size: 15px;
-            color: #2b3340;
-        }
-
-    /* ===== Edit Button (Blue Glossy) ===== */
-    .btn-info {
-        background: #3b82f6 !important;
-        border: none !important;
-        color: white !important;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        transition: 0.25s ease;
-    }
-
-        .btn-info:hover {
-            background: #1e40af !important;
-            box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4);
-        }
-
-    /* ===== Delete Button ===== */
-    .btn-danger {
-        background: #dc2626 !important;
-        border: none !important;
-        color: #fff !important;
-        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
-        transition: 0.25s ease;
-    }
-
-        .btn-danger:hover {
-            background: #b91c1c !important;
-            box-shadow: 0 6px 18px rgba(220, 38, 38, 0.4);
-        }
-
-    /* ===== Status Badges ===== */
-    .badge.bg-success {
-        background-color: #16a34a !important;
-        padding: 6px 10px;
-        border-radius: 6px;
-    }
-
-    .badge.bg-secondary {
-        background-color: #6b7280 !important;
-        padding: 6px 10px;
-        border-radius: 6px;
-    }
-</style>
-
-
-<table class="table table-striped table-bordered">
-    <thead class="custom-header">
-        <tr>
-            <th>Member Code</th>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Joining Date</th>
-            <th>Date of Birth</th>
-            <th>Meal Status</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var member in Model)
-        {
+<div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
             <tr>
-                <td>@member.MemberCode</td>
-                <td>@member.Name</td>
-                <td>@member.PhoneNumber</td>
-                <td>@member.Email</td>
-                <td>@member.JoiningDate.ToString("yyyy-MM-dd")</td>
-                <td>@member.DateOfBirth.ToString("yyyy-MM-dd")</td>
-                <td>
-                    @if (member.MealStatus)
-                    {
-                        <span class="badge bg-success">Active</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-secondary">Inactive</span>
-                    }
-                </td>
-                <td>
-                    <a class="btn btn-sm btn-info"
-                       asp-action="CreateOrEdit"
-                       asp-route-id="@member.Id">
-                        Edit
-                    </a>
-
-                    <form asp-action="Delete"
-                          asp-route-id="@member.Id"
-                          method="post"
-                          style="display:inline;"
-                          onsubmit="return confirm('Are you sure you want to delete this member?');">
-
-                        <button type="submit" class="btn btn-sm btn-danger">
-                            Delete
-                        </button>
-                    </form>
-                </td>
+                <th>Member Code</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Joining Date</th>
+                <th>Date of Birth</th>
+                <th>Meal Status</th>
+                <th style="width:150px">Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var member in Model)
+            {
+                <tr>
+                    <td>@member.MemberCode</td>
+                    <td><strong>@member.Name</strong></td>
+                    <td>@member.PhoneNumber</td>
+                    <td>@member.Email</td>
+                    <td>@member.JoiningDate.ToString("yyyy-MM-dd")</td>
+                    <td>@member.DateOfBirth.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        @if (member.MealStatus)
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Inactive</span>
+                        }
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a class="btn btn-info"
+                               asp-action="CreateOrEdit"
+                               asp-route-id="@member.Id">
+                                Edit
+                            </a>
+
+                            <form asp-action="Delete"
+                                  asp-route-id="@member.Id"
+                                  method="post"
+                                  onsubmit="return confirm('Are you sure you want to delete this member?');">
+                                <button type="submit"
+                                        class="btn btn-danger">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

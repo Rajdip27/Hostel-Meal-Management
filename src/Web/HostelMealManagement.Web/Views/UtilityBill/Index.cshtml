@@ -1,0 +1,160 @@
+﻿@using HostelMealManagement.Application.ViewModel
+@using HostelMealManagement.Infrastructure.Helper.Acls
+@using HostelMealManagement.Core.Entities
+@inject ISignInHelper SignInHelper
+
+@model IEnumerable<UtilityBillVm>
+
+@{
+    ViewData["Title"] = "Utility Bill List";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var roles = SignInHelper.Roles;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (!roles.Contains("Member"))
+{
+    <p>
+        <a class="btn btn-primary"
+           asp-controller="UtilityBill"
+           asp-action="CreateOrEdit">
+            Add New Utility Bill
+        </a>
+    </p>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No utility bills found.
+    </div>
+}
+else
+{
+    @foreach (var group in Model
+            .GroupBy(x => new { x.BillYear, x.BillMonth })
+            .OrderByDescending(x => x.Key.BillYear)
+            .ThenByDescending(x => x.Key.BillMonth))
+    {
+        var electric = group.FirstOrDefault(x => x.UtilityType == UtilityType.Electric);
+        var others = group.Where(x => x.UtilityType != UtilityType.Electric).ToList();
+        var grandTotal = group.Sum(x => x.TotalAmount);
+
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-light">
+                <strong>
+                    Billing Period:
+                    @group.Key.BillMonth/@group.Key.BillYear
+                </strong>
+            </div>
+
+            <div class="card-body">
+
+                <!-- ================= ELECTRIC ================= -->
+                @if (electric != null)
+                {
+                    <h5 class="text-primary mb-2">Electric Bill</h5>
+
+                    <table class="table table-bordered table-sm mb-4">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Current Unit</th>
+                                <th>Per Unit Rate</th>
+                                <th>Total Amount</th>
+                                <th style="width:160px">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>@electric.CurrentUnit</td>
+                                <td>@electric.PerUnitRate</td>
+                                <td>
+                                    <strong>@electric.TotalAmount.ToString("0.00")</strong>
+                                </td>
+                                <td>
+                                    @if (!roles.Contains("Member"))
+                                    {
+                                        <a class="btn btn-sm btn-info"
+                                           asp-action="CreateOrEdit"
+                                           asp-route-id="@electric.Id">
+                                            Edit
+                                        </a>
+
+                                        <form asp-action="Delete"
+                                              asp-route-id="@electric.Id"
+                                              method="post"
+                                              style="display:inline"
+                                              onsubmit="return confirm('Are you sure you want to delete this electric bill?');">
+                                            <button class="btn btn-sm btn-danger">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+
+                <!-- ================= OTHER BILLS ================= -->
+                @if (others.Any())
+                {
+                    <h5 class="text-secondary mb-2">Other Bills</h5>
+
+                    <table class="table table-bordered table-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Utility Type</th>
+                                <th>Amount</th>
+                                <th style="width:160px">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in others)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@item.UtilityType</strong>
+                                    </td>
+                                    <td>@item.TotalAmount.ToString("0.00")</td>
+                                    <td>
+                                        @if (!roles.Contains("Member"))
+                                        {
+                                            <a class="btn btn-sm btn-info"
+                                               asp-action="CreateOrEdit"
+                                               asp-route-id="@item.Id">
+                                                Edit
+                                            </a>
+
+                                            <form asp-action="Delete"
+                                                  asp-route-id="@item.Id"
+                                                  method="post"
+                                                  style="display:inline"
+                                                  onsubmit="return confirm('Are you sure you want to delete this bill?');">
+                                                <button class="btn btn-sm btn-danger">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+
+                <!-- ================= GRAND TOTAL ================= -->
+                <div class="text-end mt-3">
+                    <h4>
+                        Grand Total:
+                        <span class="text-success">
+                            @grandTotal.ToString("0.00")
+                        </span>
+                    </h4>
+                </div>
+
+            </div>
+        </div>
+    }
+}

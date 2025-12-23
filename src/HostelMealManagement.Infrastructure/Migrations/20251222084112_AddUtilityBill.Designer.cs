@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HostelMealManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251218073628_AddElectricBillTable")]
-    partial class AddElectricBillTable
+    [Migration("20251222084112_AddUtilityBill")]
+    partial class AddUtilityBill
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -221,7 +221,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "826573c2-b94e-4277-8c7d-5ab69b56a9cc",
+                            ConcurrencyStamp = "ffcbe84f-0cf1-4dd9-8b9e-2a20c5f165f8",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@localhost.com",
@@ -230,9 +230,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELgjhZj+sJNrhhwOJ3nk//HI09Www7vsZU4oA6g/qezPWPmJzQHvmw238pcGh8Iqug==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMEin1AZWF19pQbPZFD3qK/2KLLe4M9CAeng33ATXTda/gXy8fW+M7dPG+0dl4982Q==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c491e689-3f26-4b9c-9613-76c14bcae5c2",
+                            SecurityStamp = "83661d95-c2f0-4ebf-8243-74ee791629e7",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -240,7 +240,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 2L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8bec34fa-8e49-4943-afdc-c956c43a460f",
+                            ConcurrencyStamp = "cc7fa116-b277-4427-8167-c2062e075b3a",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "Manager@localhost.com",
@@ -249,9 +249,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "MANAGER@LOCALHOST.COM",
                             NormalizedUserName = "MANAGER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDkK6AF/2WVDa81UtzrSw6VHbk3mTeRI9gDvy0lIpCpMF9mkmtEAoDcCfJrhAeuY6Q==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBX1GI4psCNn/yCe/qIDNRCC64lsslMbdcZGF4kBpXfk0U0vQMsK0Ke31K+C85MkBA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "0b65a02a-2c43-4361-8500-db61fe170509",
+                            SecurityStamp = "c0e61b10-8809-4e5a-81f1-2f32f4578a60",
                             TwoFactorEnabled = false,
                             UserName = "Manager@localhost.com"
                         });
@@ -363,53 +363,6 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("HostelMealManagement.Core.Entities.ElectricBill", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<decimal>("CurrentUnit")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<long>("MealCycleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasDefaultValueSql("0");
-
-                    b.Property<long?>("ModifiedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("ModifiedDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<decimal>("PerUnitRate")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("PreviousUnit")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MealCycleId");
-
-                    b.ToTable("ElectricBills", (string)null);
                 });
 
             modelBuilder.Entity("HostelMealManagement.Core.Entities.EntityLogs.AuditLog", b =>
@@ -912,6 +865,55 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     b.ToTable("Member", (string)null);
                 });
 
+            modelBuilder.Entity("HostelMealManagement.Core.Entities.UtilityBill", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<decimal?>("CurrentUnit")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<long?>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("ModifiedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<decimal?>("PerUnitRate")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalUnit")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("UtilityType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UtilityType");
+
+                    b.ToTable("UtilityBill", (string)null);
+                });
+
             modelBuilder.Entity("HostelMealManagement.Core.Entities.Auth.IdentityModel+RoleClaim", b =>
                 {
                     b.HasOne("HostelMealManagement.Core.Entities.Auth.IdentityModel+Role", null)
@@ -969,17 +971,6 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("HostelMealManagement.Core.Entities.ElectricBill", b =>
-                {
-                    b.HasOne("HostelMealManagement.Core.Entities.MealCycle", "MealCycle")
-                        .WithMany()
-                        .HasForeignKey("MealCycleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("MealCycle");
                 });
 
             modelBuilder.Entity("HostelMealManagement.Core.Entities.MealAttendance", b =>
