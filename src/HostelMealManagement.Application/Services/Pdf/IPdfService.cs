@@ -7,6 +7,7 @@ namespace HostelMealManagement.Application.Services.Pdf;
 public interface IPdfService
 {
     byte[] GeneratePdf(string htmlContent, PdfOptions options = null);
+    
 }
 
 public class PdfService(IConverter _converter) : IPdfService

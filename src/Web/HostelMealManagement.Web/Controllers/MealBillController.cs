@@ -167,10 +167,11 @@ public class MealBillController : Controller
                 MarginBottom = 10,
                 MarginLeft = 10,
                 MarginRight = 10,
-
                 ShowPageNumbers = false
             };
+
             var pdfBytes = _pdfService.GeneratePdf(htmlContent, pdfOptions);
+
             // Return PDF inline (open in browser)
             Response.Headers.Add("Content-Disposition", "inline; filename=DepartmentReport.pdf");
             return File(pdfBytes, "application/pdf");
