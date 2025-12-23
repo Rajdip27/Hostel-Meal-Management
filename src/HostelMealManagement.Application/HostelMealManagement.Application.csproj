@@ -17,6 +17,16 @@
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.3.0" />
 		<PackageReference Include="NodaTime" Version="3.2.2" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="PdfTemplates\**\*.cshtml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="runtimes\**\*.*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\HostelMealManagement.Core\HostelMealManagement.Core.csproj" />
 	  <ProjectReference Include="..\HostelMealManagement.Infrastructure\HostelMealManagement.Infrastructure.csproj" />

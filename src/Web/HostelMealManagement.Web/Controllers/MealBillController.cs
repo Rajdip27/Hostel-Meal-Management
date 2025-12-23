@@ -1,6 +1,8 @@
 ﻿using HostelMealManagement.Application.CommonModel;
 using HostelMealManagement.Application.Logging;
 using HostelMealManagement.Application.Repositories;
+using HostelMealManagement.Application.Services;
+using HostelMealManagement.Application.Services.Pdf;
 using HostelMealManagement.Infrastructure.Helper.Acls;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -14,19 +16,25 @@ public class MealBillController : Controller
     private readonly  IMealBillRepository _mealAttendanceRepository;
     private ISignInHelper SignInHelper;
     private readonly IAppLogger<MealAttendanceController> _logger;
+    private readonly IRazorViewToStringRenderer _razorViewToStringRenderer;
+    private readonly IPdfService _pdfService;
 
     public MealBillController(
         IMemberRepository memberRepository,
         IMealCycleRepository mealCycleRepository,
         IAppLogger<MealAttendanceController> logger,
         IMealBillRepository mealAttendanceRepository,
-        ISignInHelper signInHelper)
+        ISignInHelper signInHelper,
+        IRazorViewToStringRenderer razorViewToStringRenderer,
+        IPdfService pdfService)
     {
         _memberRepository = memberRepository;
         _mealCycleRepository = mealCycleRepository;
         _logger = logger;
         _mealAttendanceRepository = mealAttendanceRepository;
         SignInHelper = signInHelper;
+        _razorViewToStringRenderer = razorViewToStringRenderer;
+        _pdfService = pdfService;
     }
 
 
@@ -137,5 +145,41 @@ public class MealBillController : Controller
             _logger.LogError("Error while fetching Electric Bills", ex);
             return StatusCode(500, "An error occurred while fetching Electric Bills.");
         }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> MealBillReportPdf(FilterViewModel model)
+    {
+        try
+        {
+            // Example data
+            var data = await _mealAttendanceRepository.GetMealBillsWithMemberAsync(model.MealCycleId, model.SelectedMember);
+
+            // Render Razor view to string
+            var htmlContent = await _razorViewToStringRenderer.RenderViewToStringAsync("PdfTemplates/MealBillReportPdf", data);
+
+            var pdfOptions = new PdfOptions
+            {
+                PageSize = "A4",
+                Landscape = false,
+                MarginTop = 10,
+                MarginBottom = 10,
+                MarginLeft = 10,
+                MarginRight = 10,
+
+                ShowPageNumbers = false
+            };
+            var pdfBytes = _pdfService.GeneratePdf(htmlContent, pdfOptions);
+            // Return PDF inline (open in browser)
+            Response.Headers.Add("Content-Disposition", "inline; filename=DepartmentReport.pdf");
+            return File(pdfBytes, "application/pdf");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
+
     }
 }
