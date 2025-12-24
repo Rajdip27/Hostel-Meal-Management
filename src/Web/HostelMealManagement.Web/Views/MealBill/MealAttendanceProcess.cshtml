@@ -41,7 +41,6 @@
             box-shadow: 0 0 0 4px rgba(37,99,235,0.15);
         }
 
-    /* ===== Buttons ===== */
     .btn-process,
     .btn-apply,
     .btn-pdf {
@@ -65,10 +64,6 @@
         box-shadow: 0 6px 18px rgba(55,65,81,.35);
     }
 
-        .btn-process:hover {
-            transform: translateY(-1px);
-        }
-
     .btn-apply {
         background: linear-gradient(135deg, #2563eb, #1e40af);
         box-shadow: 0 6px 18px rgba(37,99,235,.35);
@@ -79,7 +74,6 @@
         box-shadow: 0 6px 18px rgba(239,68,68,.35);
     }
 
-    /* ===== Button Row Spacing ===== */
     .btn-row {
         margin-top: 16px;
         display: flex;
@@ -144,8 +138,9 @@
                 <i class="bi bi-check-circle"></i> Apply
             </button>
 
+            <!-- ✅ UPDATED PDF BUTTON -->
             <button type="submit"
-                    formaction="@Url.Action("PDF", "MealBill")"
+                    formaction="@Url.Action("MealAttendancePdf", "MealBill")"
                     class="btn btn-pdf">
                 <i class="bi bi-file-earmark-pdf"></i> PDF
             </button>

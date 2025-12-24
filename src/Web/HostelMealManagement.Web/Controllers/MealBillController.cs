@@ -181,6 +181,53 @@ public class MealBillController : Controller
             Console.WriteLine(ex.Message);
             throw;
         }
-
     }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> MealAttendancePdf(FilterViewModel model)
+    {
+        try
+        {
+            // 1. Get data
+            var bills = await _mealAttendanceRepository
+                .GetMealBillsWithMemberAsync(model.MealCycleId, model.SelectedMember);
+
+            if (bills == null || !bills.Any())
+            {
+                TempData["AlertMessage"] = "No data found for PDF.";
+                TempData["AlertType"] = "Warning";
+                return RedirectToAction(nameof(MealAttendanceProcess));
+            }
+
+            // 2. Render Razor → HTML
+            var html = await _razorViewToStringRenderer
+                .RenderViewToStringAsync("PdfTemplates/MealAttendancePdf", bills);
+
+            // 3. Generate PDF
+            var pdf = _pdfService.GeneratePdf(html, new PdfOptions
+            {
+                PageSize = "A4",
+                Landscape = false,
+                MarginTop = 10,
+                MarginBottom = 10,
+                MarginLeft = 10,
+                MarginRight = 10
+            });
+
+            // 4. Open PDF in browser
+            Response.Headers.Add(
+                "Content-Disposition",
+                "inline; filename=MealAttendance.pdf"
+            );
+
+            return File(pdf, "application/pdf");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("PDF generation failed", ex);
+            return StatusCode(500);
+        }
+    }
+
 }
