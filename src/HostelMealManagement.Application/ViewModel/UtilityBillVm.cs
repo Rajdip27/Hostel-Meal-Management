@@ -1,29 +1,28 @@
-﻿using System;
-using HostelMealManagement.Core.Entities;
+﻿using AutoMapper;
+using HostelMealManagement.Core.Entities.BaseEntities;
+using System.ComponentModel.DataAnnotations;
 
 namespace HostelMealManagement.Application.ViewModel;
 
-public class UtilityBillVm
+[AutoMap(typeof(Core.Entities.UtilityBill), ReverseMap = true)]
+public class UtilityBillVm : BaseEntity
 {
-    public long Id { get; set; }
+    [Required(ErrorMessage = "Month is required.")]
+    [Range(1, 12, ErrorMessage = "Month must be between 1 and 12.")]
+    public int Month { get; set; }
 
-    public UtilityType UtilityType { get; set; }
+    [Required(ErrorMessage = "Date is required.")]
+    public DateTimeOffset Date { get; set; }
 
-    // ===== BILLING PERIOD =====
-    public int BillYear { get; set; }
-    public int BillMonth { get; set; }
-    public DateTimeOffset BillDate { get; set; }
+    [Required(ErrorMessage = "Current bill amount is required.")]
+    [Range(0, double.MaxValue, ErrorMessage = "Current bill amount must be positive.")]
+    public decimal CurrentBill { get; set; }
 
-    // ===== ELECTRIC =====
-    public decimal? CurrentUnit { get; set; }
-    public decimal? PerUnitRate { get; set; }
+    [Required(ErrorMessage = "Gas bill amount is required.")]
+    [Range(0, double.MaxValue, ErrorMessage = "Gas bill amount must be positive.")]
+    public decimal GasBill { get; set; }
 
-    // ===== OTHER BILLS =====
-    public decimal WaterAmount { get; set; }
-    public decimal GasAmount { get; set; }
-    public decimal ServantAmount { get; set; }
-
-    // ===== COMMON =====
-    public decimal TotalUnit { get; set; }
-    public decimal TotalAmount { get; set; }
+    [Required(ErrorMessage = "Servant bill amount is required.")]
+    [Range(0, double.MaxValue, ErrorMessage = "Servant bill amount must be positive.")]
+    public decimal ServantBill { get; set; }
 }

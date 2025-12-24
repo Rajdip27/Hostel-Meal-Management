@@ -10,57 +10,24 @@ public class UtilityBillConfiguration : IEntityTypeConfiguration<UtilityBill>
     {
         builder.ToTable(nameof(UtilityBill));
 
-        builder.HasKey(x => x.Id);
+        builder.HasKey(ub => ub.Id);
 
-        builder.Property(x => x.UtilityType)
-               .IsRequired()
-               .HasConversion<int>();
-
-        // ========================
-        // Billing Period
-        // ========================
-
-        builder.Property(x => x.BillYear)
+        builder.Property(ub => ub.Month)
                .IsRequired();
 
-        builder.Property(x => x.BillMonth)
+        builder.Property(ub => ub.Date)
                .IsRequired();
 
-        builder.Property(x => x.BillDate)
-               .IsRequired();
-
-        // ========================
-        // Electric only
-        // ========================
-
-        builder.Property(x => x.CurrentUnit)
-               .HasPrecision(18, 2);
-
-        builder.Property(x => x.PerUnitRate)
-               .HasPrecision(18, 2);
-
-        // ========================
-        // Common for all utilities
-        // ========================
-
-        builder.Property(x => x.TotalUnit)
+        builder.Property(ub => ub.CurrentBill)
                .IsRequired()
-               .HasPrecision(18, 2);
+               .HasColumnType("decimal(18,2)");
 
-        builder.Property(x => x.TotalAmount)
+        builder.Property(ub => ub.GasBill)
                .IsRequired()
-               .HasPrecision(18, 2);
+               .HasColumnType("decimal(18,2)");
 
-        // ========================
-        // Indexes
-        // ========================
-
-        // For fast monthly reports
-        builder.HasIndex(x => new { x.BillYear, x.BillMonth });
-
-        // Prevent duplicate utility bill for same month
-        builder.HasIndex(x => new { x.UtilityType, x.BillYear, x.BillMonth })
-               .IsUnique();
+        builder.Property(ub => ub.ServantBill)
+               .IsRequired()
+               .HasColumnType("decimal(18,2)");
     }
 }
-

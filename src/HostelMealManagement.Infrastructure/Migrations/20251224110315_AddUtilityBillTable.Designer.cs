@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HostelMealManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251222084112_AddUtilityBill")]
-    partial class AddUtilityBill
+    [Migration("20251224110315_AddUtilityBillTable")]
+    partial class AddUtilityBillTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -221,7 +221,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ffcbe84f-0cf1-4dd9-8b9e-2a20c5f165f8",
+                            ConcurrencyStamp = "be510705-a8b2-4af0-acef-1e7c2c41ea71",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@localhost.com",
@@ -230,9 +230,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMEin1AZWF19pQbPZFD3qK/2KLLe4M9CAeng33ATXTda/gXy8fW+M7dPG+0dl4982Q==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPBeVg42OeqZeOziE6HfCiFwNULKq67xt1RgGy3WX9LTn9BEdhpUE6/k5HAMPbN3+A==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "83661d95-c2f0-4ebf-8243-74ee791629e7",
+                            SecurityStamp = "f6d4bdcc-c21a-4389-a41c-e2d4b44030a1",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -240,7 +240,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 2L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "cc7fa116-b277-4427-8167-c2062e075b3a",
+                            ConcurrencyStamp = "7129ae62-f455-4354-ae32-00638b1d4848",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "Manager@localhost.com",
@@ -249,9 +249,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "MANAGER@LOCALHOST.COM",
                             NormalizedUserName = "MANAGER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBX1GI4psCNn/yCe/qIDNRCC64lsslMbdcZGF4kBpXfk0U0vQMsK0Ke31K+C85MkBA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEKbDq5ZrzcouDa3mJbrc+e536m3X2/XKefSJ0Nze8kJkzUiZ2JIVyfdJYwZsRhixQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c0e61b10-8809-4e5a-81f1-2f32f4578a60",
+                            SecurityStamp = "7272f086-d110-4036-8cad-ca669cf65ab5",
                             TwoFactorEnabled = false,
                             UserName = "Manager@localhost.com"
                         });
@@ -879,7 +879,14 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<decimal?>("CurrentUnit")
+                    b.Property<decimal>("CurrentBill")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTimeOffset>("Date")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<decimal>("GasBill")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
@@ -892,24 +899,14 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("ModifiedDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<decimal?>("PerUnitRate")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("TotalUnit")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("UtilityType")
+                    b.Property<int>("Month")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.Property<decimal>("ServantBill")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
-                    b.HasIndex("UtilityType");
+                    b.HasKey("Id");
 
                     b.ToTable("UtilityBill", (string)null);
                 });

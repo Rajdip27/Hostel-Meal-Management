@@ -4,22 +4,10 @@ namespace HostelMealManagement.Core.Entities;
 
 public class UtilityBill : AuditableEntity
 {
-    // Electric / Water / Gas / Servant
-    public UtilityType UtilityType { get; set; }
+    public int Month { get; set; }              // 1 = January, 12 = December
+    public DateTimeOffset Date { get; set; }
 
-    // Billing period
-    public int BillYear { get; set; }      // e.g. 2025
-    public int BillMonth { get; set; }     // 1 = January, 12 = December
-
-    // Actual bill issue/payment date
-    public DateTimeOffset BillDate { get; set; }
-
-    // Only for Electric Bill
-    public decimal? CurrentUnit { get; set; }
-    public decimal? PerUnitRate { get; set; }
-
-    // Common for all utility bills
-    public decimal TotalUnit { get; set; }
-    public decimal TotalAmount { get; set; }
+    public decimal CurrentBill { get; set; }    // Electricity / Current bill amount
+    public decimal GasBill { get; set; }
+    public decimal ServantBill { get; set; }
 }
-
