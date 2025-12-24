@@ -1,57 +1,165 @@
 ﻿@model HostelMealManagement.Application.CommonModel.FilterViewModel
 @{
-    ViewData["Title"] = "Meal Attendance";
+    ViewData["Title"] = "Meal Bill";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
+<style>
+    body {
+        background: #f5f7fb !important;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    .page-title {
+        color: #1f2937;
+        font-weight: 700;
+        margin-bottom: 18px;
+    }
+
+    .filter-card {
+        background: #ffffff;
+        padding: 24px;
+        border-radius: 16px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+    }
+
+    .form-select,
+    .form-control {
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 14.5px;
+        border: 1px solid #d1d5db;
+    }
+
+        .form-select:focus,
+        .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.15);
+        }
+
+    /* ===== Buttons ===== */
+    .btn-process,
+    .btn-apply,
+    .btn-pdf {
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        border-radius: 12px;
+        padding: 0 22px;
+        line-height: 1;
+        color: #fff !important;
+        border: none !important;
+        transition: .3s ease;
+    }
+
+    .btn-process {
+        background: linear-gradient(135deg, #6b7280, #374151);
+        box-shadow: 0 6px 18px rgba(55,65,81,.35);
+    }
+
+        .btn-process:hover {
+            transform: translateY(-1px);
+        }
+
+    .btn-apply {
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        box-shadow: 0 6px 18px rgba(37,99,235,.35);
+    }
+
+    .btn-pdf {
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        box-shadow: 0 6px 18px rgba(239,68,68,.35);
+    }
+
+    /* ===== Button Row Spacing ===== */
+    .btn-row {
+        margin-top: 16px;
+        display: flex;
+        gap: 16px;
+        justify-content: flex-end;
+    }
+
+    #loadData {
+        margin-top: 28px;
+        background: #ffffff;
+        padding: 22px;
+        border-radius: 16px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+        min-height: 60px;
+    }
+</style>
+
 <div class="container-fluid mt-3">
-    <form method="post" class="row g-2 align-items-center bg-white p-3 rounded shadow-sm">
+
+    <h4 class="page-title">Meal Bill</h4>
+
+    <form method="post" class="filter-card">
         @Html.AntiForgeryToken()
 
-        <div class="col">
-            <select asp-for="SelectedMember" asp-items="ViewBag.Members" class="form-select">
-                <option value="">Name of Member</option>
-            </select>
+        <!-- 🔹 ROW 1 : INPUTS -->
+        <div class="row g-3">
+            <div class="col-lg-4 col-md-6">
+                <select asp-for="SelectedMember"
+                        asp-items="ViewBag.Members"
+                        class="form-select">
+                    <option value="">Name of Member</option>
+                </select>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <input asp-for="MemberCodeNo"
+                       class="form-control"
+                       placeholder="Member ID No." />
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <select asp-for="MealCycleId"
+                        asp-items="ViewBag.MealCycle"
+                        class="form-select">
+                    <option value="">Select Meal Cycle</option>
+                </select>
+            </div>
         </div>
 
-        <div class="col">
-            <input asp-for="MemberCodeNo" class="form-control" placeholder="Member ID No." />
-        </div>
-
-        <div class="col">
-            <select asp-for="MealCycleId" asp-items="ViewBag.MealCycle" class="form-select">
-                <option value="">Select Meal Cycle</option>
-            </select>
-        </div>
-
-        <div class="col-auto d-flex gap-2">
-            <button type="submit" formaction="@Url.Action("Process", "MealBill")" class="btn btn-secondary">
+        <!-- 🔹 ROW 2 : BUTTONS -->
+        <div class="btn-row">
+            <button type="submit"
+                    formaction="@Url.Action("Process", "MealBill")"
+                    class="btn btn-process">
                 <i class="bi bi-arrow-repeat"></i> Process
             </button>
 
-            <button type="button" id="btnApply" class="btn btn-dark">
+            <button type="button"
+                    id="btnApply"
+                    class="btn btn-apply">
                 <i class="bi bi-check-circle"></i> Apply
             </button>
 
-            <button type="submit" formaction="@Url.Action("PDF", "MealBill")" class="btn btn-secondary">
+            <button type="submit"
+                    formaction="@Url.Action("PDF", "MealBill")"
+                    class="btn btn-pdf">
                 <i class="bi bi-file-earmark-pdf"></i> PDF
             </button>
         </div>
     </form>
 </div>
 
-<div id="loadData">
-</div>
+<div id="loadData"></div>
+
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
         $(document).ready(function () {
-
             $("#btnApply").click(function () {
-
                 var formData = {
                     SelectedMember: $("#SelectedMember").val(),
                     MemberCodeNo: $("#MemberCodeNo").val(),
@@ -71,8 +179,6 @@
                     }
                 });
             });
-
         });
     </script>
 }
-

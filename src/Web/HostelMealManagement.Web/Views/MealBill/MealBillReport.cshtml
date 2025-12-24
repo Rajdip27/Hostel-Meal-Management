@@ -1,6 +1,6 @@
 ﻿@model HostelMealManagement.Application.CommonModel.FilterViewModel
 @{
-    ViewData["Title"] = "Meal Attendance";
+    ViewData["Title"] = "Reports";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -8,26 +8,32 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
 <style>
-    /* ===== Page Background ===== */
+    /* ===== BASE (FROM MEMBERS LIST) ===== */
     body {
-        background: #f5f7fb;
+        background: #f5f7fb !important;
         font-family: "Segoe UI", sans-serif;
     }
 
-    /* ===== Filter Card ===== */
-    .filter-card {
-        background: #ffffff;
-        border-radius: 16px;
-        padding: 20px;
-        box-shadow: 0 12px 35px rgba(0,0,0,0.08);
-        border: 1px solid #e5e7eb;
+    .page-title {
+        color: #1f2937;
+        font-weight: 700;
+        margin-bottom: 18px;
     }
 
-    /* ===== Inputs ===== */
+    /* ===== CARD (SAME AS TABLE WRAPPER) ===== */
+    .filter-card {
+        background: #ffffff;
+        padding: 24px;
+        border-radius: 16px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+    }
+
+    /* ===== INPUTS ===== */
     .form-select,
     .form-control {
         border-radius: 10px;
-        padding: 10px 12px;
+        padding: 12px 14px;
         font-size: 14.5px;
         border: 1px solid #d1d5db;
         transition: 0.25s ease;
@@ -36,86 +42,116 @@
         .form-select:focus,
         .form-control:focus {
             border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.15);
         }
 
-    /* ===== Buttons ===== */
-    .btn-apply {
-        background: linear-gradient(135deg, #2563eb, #1e40af);
-        border: none;
-        color: #ffffff;
+    /* ===== BUTTON BASE (CONSISTENT) ===== */
+    .btn-apply,
+    .btn-pdf {
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 15px;
         font-weight: 600;
         border-radius: 10px;
-        padding: 10px 18px;
-        box-shadow: 0 6px 18px rgba(37,99,235,0.35);
+        padding: 0 22px;
+        line-height: 1;
+        border: none !important;
+        color: #fff !important;
         transition: 0.3s ease;
+    }
+
+    /* ===== APPLY BUTTON (PRIMARY – SAME AS ADD NEW MEMBER) ===== */
+    .btn-apply {
+        background: linear-gradient(135deg, #2563eb, #1e40af) !important;
+        box-shadow: 0 8px 20px rgba(37,99,235,0.35);
     }
 
         .btn-apply:hover {
-            background: linear-gradient(135deg, #1e40af, #1e3a8a);
-            box-shadow: 0 8px 25px rgba(37,99,235,0.45);
+            background: linear-gradient(135deg, #1e40af, #1e3a8a) !important;
+            box-shadow: 0 10px 28px rgba(37,99,235,0.45);
             transform: translateY(-1px);
         }
 
+    /* ===== PDF BUTTON (DELETE STYLE FROM MEMBERS LIST) ===== */
     .btn-pdf {
-        background: linear-gradient(135deg, #6b7280, #374151);
-        border: none;
-        color: #ffffff;
-        font-weight: 600;
-        border-radius: 10px;
-        padding: 10px 18px;
-        box-shadow: 0 6px 18px rgba(55,65,81,0.35);
-        transition: 0.3s ease;
+        background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
+        box-shadow: 0 6px 16px rgba(239,68,68,0.35);
     }
 
         .btn-pdf:hover {
-            background: linear-gradient(135deg, #374151, #111827);
-            box-shadow: 0 8px 25px rgba(55,65,81,0.45);
+            background: linear-gradient(135deg, #dc2626, #991b1b) !important;
+            box-shadow: 0 8px 22px rgba(239,68,68,0.45);
             transform: translateY(-1px);
         }
 
-    /* ===== Loaded Data Container ===== */
+    /* ===== BUTTON ROW ===== */
+    .btn-row {
+        margin-top: 18px;
+        display: flex;
+        gap: 16px;
+        justify-content: flex-end;
+    }
+
+    /* ===== RESULT CARD ===== */
     #loadData {
-        margin-top: 24px;
+        margin-top: 28px;
         background: #ffffff;
-        padding: 20px;
+        padding: 22px;
         border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.07);
         border: 1px solid #e5e7eb;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+        min-height: 50px;
     }
 </style>
 
 <div class="container-fluid mt-3">
 
+    <h4 class="page-title">Meal Bill Report</h4>
+
     <!-- FILTER FORM -->
-    <form method="post" class="filter-card row g-3 align-items-center">
+    <form method="post" class="filter-card">
         @Html.AntiForgeryToken()
 
-        <div class="col-lg-3 col-md-6">
-            <select asp-for="SelectedMember" asp-items="ViewBag.Members" class="form-select">
-                <option value="">Name of Member</option>
-            </select>
+        <!-- 🔹 ROW 1 : INPUTS -->
+        <div class="row g-3">
+            <div class="col-lg-4 col-md-6">
+                <select asp-for="SelectedMember"
+                        asp-items="ViewBag.Members"
+                        class="form-select">
+                    <option value="">Name of Member</option>
+                </select>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <input asp-for="MemberCodeNo"
+                       class="form-control"
+                       placeholder="Member ID No." />
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <select asp-for="MealCycleId"
+                        asp-items="ViewBag.MealCycle"
+                        class="form-select">
+                    <option value="">Select Meal Cycle</option>
+                </select>
+            </div>
         </div>
 
-        <div class="col-lg-3 col-md-6">
-            <input asp-for="MemberCodeNo" class="form-control" placeholder="Member ID No." />
-        </div>
-
-        <div class="col-lg-3 col-md-6">
-            <select asp-for="MealCycleId" asp-items="ViewBag.MealCycle" class="form-select">
-                <option value="">Select Meal Cycle</option>
-            </select>
-        </div>
-
-        <div class="col-lg-3 col-md-6 d-flex gap-2 justify-content-end">
-            <button type="button" id="btnApply" class="btn btn-apply w-100">
+        <!-- 🔹 ROW 2 : BUTTONS (UNCHANGED POSITION) -->
+        <div class="btn-row">
+            <button type="button"
+                    id="btnApply"
+                    class="btn btn-apply">
                 <i class="bi bi-check-circle"></i> Apply
             </button>
 
             <button type="submit"
                     formaction="@Url.Action("MealBillReportPdf", "MealBill")"
                     formtarget="_blank"
-                    class="btn btn-pdf w-100">
+                    class="btn btn-pdf">
                 <i class="bi bi-file-earmark-pdf"></i> PDF
             </button>
         </div>
