@@ -190,8 +190,7 @@ public class MealBillController : Controller
         try
         {
             // 1. Get data
-            var bills = await _mealAttendanceRepository
-                .GetMealBillsWithMemberAsync(model.MealCycleId, model.SelectedMember);
+            var bills = await _mealAttendanceRepository.GetMealBillsWithMemberAsync(model.MealCycleId, model.SelectedMember);
 
             if (bills == null || !bills.Any())
             {

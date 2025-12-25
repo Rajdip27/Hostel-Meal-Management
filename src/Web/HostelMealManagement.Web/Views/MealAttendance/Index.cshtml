@@ -217,28 +217,28 @@
                 <td>@a.GuestDinnerQty</td>
 
                 <td class="action-buttons">
-                    @if (Permission.CanEdit(role))
-                        {
-                            <a class="btn btn-sm btn-info"
-                               asp-action="CreateOrEdit"
-                               asp-route-id="@a.Id">
-                                Edit
-                            </a>
-                        }
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <a class="btn btn-sm btn-info"
+                           asp-action="CreateOrEdit"
+                           asp-route-id="@a.Id">
+                            Edit
+                        </a>
+
                         @if (Permission.CanDelete(role))
-                        {
-                            <form asp-action="Delete"
-                                  asp-route-id="@a.Id"
-                                  method="post"
-                                  style="display:inline"
-                                  onsubmit="return confirm('Are you sure?');">
-                                <button type="submit"
-                                        class="btn btn-sm btn-danger">
-                                    Delete
-                                </button>
-                            </form>
-                        }
+                            {
+                                <form asp-action="Delete"
+                                      asp-route-id="@a.Id"
+                                      method="post"
+                                      onsubmit="return confirm('Are you sure?');">
+                                    <button type="submit"
+                                            class="btn btn-sm btn-danger">
+                                        Delete
+                                    </button>
+                                </form>
+                            }
+                        </div>
                     </td>
+
                 </tr>
             }
         </tbody>

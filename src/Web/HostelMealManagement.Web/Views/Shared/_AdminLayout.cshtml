@@ -1,6 +1,6 @@
 ﻿@inject HostelMealManagement.Infrastructure.Helper.Acls.ISignInHelper SignInHelper
 @{
-    bool isMember = SignInHelper.Roles.Contains("Member");
+
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -233,21 +233,49 @@
 
         <h3>Hostel Meal</h3>
 
-        @if (isMember)
+        <a href="/Dashboard" class="hmm-nav-link">
+            <i class="fas fa-home"></i>
+            <span class="hmm-sidebar-text">Dashboard</span>
+        </a>
+        @if (User.IsInRole("Member"))
         {
+
             <!-- ONLY Member Menu -->
             <a href="/Member" class="hmm-nav-link">
                 <i class="fas fa-users"></i>
                 <span class="hmm-sidebar-text">Members</span>
             </a>
+            <a href="/mealbazar" class="hmm-nav-link">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="hmm-sidebar-text">Meal Bazar</span>
+            </a>
+            <a href="/mealattendance" class="hmm-nav-link">
+                <i class="fas fa-user-check"></i>
+                <span class="hmm-sidebar-text">Meal Attendance</span>
+            </a>
+            <a asp-controller="MealMenu" asp-action="Index" class="hmm-nav-link">
+                <i class="fas fa-list-alt"></i>
+                <span class="hmm-sidebar-text">Meal Menu</span>
+            </a>
+            <a asp-controller="UtilityBill" asp-action="Index" class="hmm-nav-link">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span class="hmm-sidebar-text">Utility Bill</span>
+            </a>
+            <a href="#" class="hmm-nav-link">
+                <i class="fas fa-credit-card"></i>
+                <span class="hmm-sidebar-text">Payment</span>
+            </a>
+
+            <a href="/meal-bill-report" class="hmm-nav-link">
+                <i class="fas fa-chart-line"></i>
+                <span class="hmm-sidebar-text">Reports</span>
+            </a>
         }
         else
         {
+
             <!-- ALL OTHER MENUS -->
-            <a href="/Dashboard" class="hmm-nav-link">
-                <i class="fas fa-home"></i>
-                <span class="hmm-sidebar-text">Dashboard</span>
-            </a>
+
             <a href="/Member" class="hmm-nav-link">
                 <i class="fas fa-users"></i>
                 <span class="hmm-sidebar-text">Members</span>
@@ -264,9 +292,9 @@
             </a>
 
             <a href="/mealattendance" class="hmm-nav-link">
-            <i class="fas fa-user-check"></i>
-            <span class="hmm-sidebar-text">Meal Attendance</span>
-           </a>
+                <i class="fas fa-user-check"></i>
+                <span class="hmm-sidebar-text">Meal Attendance</span>
+            </a>
 
             <a asp-controller="MealMenu" asp-action="Index" class="hmm-nav-link">
                 <i class="fas fa-list-alt"></i>
@@ -280,10 +308,10 @@
 
 
             <a href="/meala-bill" class="hmm-nav-link">
-           <i class="fas fa-file-invoice"></i>
-           <span class="hmm-sidebar-text">Meal Bill</span>
-           </a>
-        
+                <i class="fas fa-file-invoice"></i>
+                <span class="hmm-sidebar-text">Meal Bill</span>
+            </a>
+
 
             <a href="#" class="hmm-nav-link">
                 <i class="fas fa-credit-card"></i>

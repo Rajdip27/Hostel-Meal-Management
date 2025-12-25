@@ -138,9 +138,10 @@
                 <i class="bi bi-check-circle"></i> Apply
             </button>
 
-            <!-- ✅ UPDATED PDF BUTTON -->
+            <!-- ✅ PDF OPENS IN NEW TAB -->
             <button type="submit"
                     formaction="@Url.Action("MealAttendancePdf", "MealBill")"
+                    formtarget="_blank"
                     class="btn btn-pdf">
                 <i class="bi bi-file-earmark-pdf"></i> PDF
             </button>
