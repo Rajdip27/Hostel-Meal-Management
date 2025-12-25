@@ -4,48 +4,189 @@
     ViewData["Title"] = Model.Id > 0 ? "Edit Meal Bazar" : "Create Meal Bazar";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-<link href="~/css/mealbazar.css" rel="stylesheet" />
+
+<!-- ================= PREMIUM CORPORATE THEME ================= -->
+<style>
+    body {
+        background: #f5f7fb !important;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    .page-title {
+        color: #1f2937;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .page-underline {
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        border-radius: 4px;
+        margin-bottom: 24px;
+    }
+
+    /* ===== Form Wrapper ===== */
+    .form-wrapper {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 30px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+        max-width: 900px;
+    }
+
+    /* ===== Labels ===== */
+    .form-label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 6px;
+    }
+
+    /* ===== Inputs ===== */
+    .form-control {
+        border-radius: 10px;
+        padding: 10px 14px;
+        border: 1px solid #d1d5db;
+        font-size: 14.5px;
+    }
+
+        .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+        }
+
+    .bg-light {
+        background-color: #f9fafb !important;
+    }
+
+    /* ===== Section Heading ===== */
+    .section-heading {
+        margin-top: 28px;
+        margin-bottom: 12px;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    /* ===== Table ===== */
+    .table {
+        background: #ffffff;
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 10px 28px rgba(0,0,0,0.06);
+    }
+
+        .table thead th {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 12px;
+            text-align: center;
+            border: none;
+            white-space: nowrap;
+        }
+
+        .table td {
+            padding: 12px;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover {
+            background-color: #eef2ff;
+            transition: 0.2s ease;
+        }
+
+    /* ===== Buttons ===== */
+    .btn-outline-primary {
+        border-radius: 10px;
+        padding: 6px 14px;
+        font-weight: 600;
+    }
+
+    .btn-remove {
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 13px;
+        box-shadow: 0 6px 16px rgba(239,68,68,0.35);
+        transition: 0.25s ease;
+    }
+
+        .btn-remove:hover {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            box-shadow: 0 8px 22px rgba(239,68,68,0.45);
+        }
+
+    /* ===== Action Buttons ===== */
+    .btn-save {
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 26px;
+        font-weight: 600;
+        box-shadow: 0 8px 20px rgba(37,99,235,0.35);
+        transition: 0.3s ease;
+    }
+
+        .btn-save:hover {
+            background: linear-gradient(135deg, #1e40af, #1e3a8a);
+            box-shadow: 0 10px 28px rgba(37,99,235,0.45);
+            transform: translateY(-1px);
+        }
+
+    .btn-cancel {
+        margin-left: 10px;
+        color: #374151;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+        .btn-cancel:hover {
+            color: #1f2937;
+            text-decoration: underline;
+        }
+</style>
+
 <div class="container-fluid px-4 py-4">
 
     <h2 class="page-title">@ViewData["Title"]</h2>
     <div class="page-underline"></div>
 
     <div class="form-wrapper">
-
         <form asp-action="CreateOrEdit" method="post">
             <input type="hidden" asp-for="Id" />
 
-            <!-- ================= BAZAR DATE ================= -->
             <div class="mb-4">
                 <label asp-for="BazarDate" class="form-label"></label>
-                <input asp-for="BazarDate" type="date" class="form-control" id="BazarDate" />
+                <input asp-for="BazarDate" type="date" class="form-control" />
             </div>
 
-            <!-- ================= START DATE ================= -->
             <div class="mb-4">
                 <label asp-for="StartDate" class="form-label"></label>
-                <input asp-for="StartDate" type="date" class="form-control bg-light" id="StartDate" readonly />
+                <input asp-for="StartDate" type="date" class="form-control bg-light" readonly />
             </div>
 
-            <!-- ================= END DATE ================= -->
             <div class="mb-4">
                 <label asp-for="EndDate" class="form-label"></label>
-                <input asp-for="EndDate" asp-format="{0:yyyy-MM-dd}" type="date" class="form-control" id="EndDate" />
+                <input asp-for="EndDate" type="date" class="form-control" />
                 <small id="dateError" class="text-danger" style="display:none;">
                     End date must be greater than or equal to start date
                 </small>
             </div>
 
-            <!-- ================= TOTAL DAYS ================= -->
             <div class="mb-4">
                 <label asp-for="TotalDays" class="form-label"></label>
-                <input asp-for="TotalDays" class="form-control bg-light" readonly id="TotalDays" />
+                <input asp-for="TotalDays" class="form-control bg-light" readonly />
             </div>
 
-            <!-- ================= MEMBERS ================= -->
             <div class="mb-4">
                 <label class="form-label">Member(s)</label>
-
                 <select id="memberSelect" class="form-control">
                     <option value="">-- Select Member --</option>
                     @foreach (var item in ViewBag.Members as List<SelectListItem>)
@@ -54,14 +195,10 @@
                     }
                 </select>
 
-                <!-- IMPORTANT: no asp-for -->
                 <input type="hidden" id="MemberIds" name="MemberIds" />
-
                 <div id="selectedMembers" class="mt-2"></div>
             </div>
 
-
-            <!-- ================= ITEMS ================= -->
             <h4 class="section-heading">Bazar Items</h4>
 
             <table class="table table-bordered" id="itemsTable">
@@ -82,7 +219,9 @@
                             <td><input asp-for="Items[@i].Quantity" class="form-control quantity" /></td>
                             <td><input asp-for="Items[@i].Price" class="form-control price" /></td>
                             <td class="item-total">0.00</td>
-                            <td><button type="button" class="btn-remove remove-item">Remove</button></td>
+                            <td>
+                                <button type="button" class="btn-remove remove-item">Remove</button>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -92,10 +231,9 @@
                 Add Item
             </button>
 
-            <!-- ================= TOTAL AMOUNT ================= -->
             <div class="mb-4 mt-4">
                 <label asp-for="BazarAmount" class="form-label"></label>
-                <input asp-for="BazarAmount" class="form-control bg-light" readonly id="BazarAmount" />
+                <input asp-for="BazarAmount" class="form-control bg-light" readonly />
             </div>
 
             <div class="mb-4 mt-4">
@@ -103,12 +241,10 @@
                 <textarea asp-for="Description" class="form-control bg-light" rows="4"></textarea>
             </div>
 
-            <!-- ================= ACTIONS ================= -->
             <div class="mt-4">
                 <button type="submit" class="btn-save">Save</button>
                 <a asp-action="Index" class="btn-cancel">Cancel</a>
             </div>
-
         </form>
     </div>
 </div>
@@ -133,6 +269,4 @@
             ]
         };
     </script>
-
-    
 }

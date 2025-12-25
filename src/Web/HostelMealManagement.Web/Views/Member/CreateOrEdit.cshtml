@@ -9,277 +9,311 @@
     bool isMember = SignInHelper.Roles.Contains("Member");
 }
 
+<!-- ================= PREMIUM CORPORATE THEME ================= -->
 <style>
-    /* ===== Page Background ===== */
     body {
-        background-color: #ffffff !important;
-    }
-
-    /* ===== Form Container ===== */
-    form {
-        background-color: rgba(255, 255, 255, 0.7);
-        border-color: rgba(180, 180, 180, 0.35);
+        background: #f5f7fb !important;
+        font-family: "Segoe UI", sans-serif;
     }
 
     /* ===== Page Title ===== */
-    h2 {
-        color: #1e3a8a;
+    .page-title {
+        color: #1f2937;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .page-underline {
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        border-radius: 4px;
+        margin-bottom: 24px;
+    }
+
+    /* ===== Form Wrapper ===== */
+    .form-wrapper {
+        background: #ffffff;
+        padding: 32px;
+        border-radius: 18px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 14px 40px rgba(0,0,0,0.08);
     }
 
     /* ===== Labels ===== */
     .form-label {
-        color: #22344d;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 6px;
     }
 
-    /* ===== Inputs & Select ===== */
+    /* ===== Inputs & Selects ===== */
     .form-control,
     .form-select {
-        background-color: rgba(255,255,255,0.85);
-        border-color: #b6c1d1;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        font-size: 14.5px;
+        background: #ffffff;
         color: #1f2937;
+        transition: .25s ease;
     }
 
         .form-control:focus,
         .form-select:focus {
-            border-color: #3559a8;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
         }
 
     /* ===== Checkbox ===== */
     .form-check-input {
-        border-color: #3559a8;
+        border-color: #2563eb;
     }
 
         .form-check-input:checked {
-            background-color: #3559a8;
-            border-color: #1e3a8a;
+            background-color: #2563eb;
+            border-color: #1e40af;
         }
 
     /* ===== Image Preview ===== */
     #imagePreview {
-        border-color: #d0d6e1;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 4px;
+        background: #ffffff;
     }
 
     /* ===== Password Toggle Button ===== */
     .btn-outline-secondary {
-        background-color: transparent;
-        color: #6b7280;
-        border-color: #a7b0b9;
+        border-radius: 10px;
+        font-weight: 600;
     }
 
-        .btn-outline-secondary:hover {
-            background-color: #3559a8;
-            color: #ffffff !important;
-            border-color: #3559a8;
-        }
-
-    /* ===== Save Button ===== */
+    /* ===== Action Buttons ===== */
     .btn-save {
-        background-color: #3559a8 !important;
-        color: #ffffff !important;
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 26px;
+        font-weight: 600;
+        box-shadow: 0 8px 20px rgba(37,99,235,0.35);
+        transition: .3s ease;
     }
 
         .btn-save:hover {
-            background-color: #2d4d8f !important;
+            background: linear-gradient(135deg, #1e40af, #1e3a8a);
+            box-shadow: 0 10px 28px rgba(37,99,235,0.45);
+            transform: translateY(-1px);
         }
 
-        .btn-save:active {
-            background-color: #263f78 !important;
-        }
-
-    /* ===== Cancel Button ===== */
     .btn-cancel {
-        background-color: #ffffff !important;
-        color: #6c757d !important;
-        border-color: #6c757d !important;
+        margin-left: 10px;
+        padding: 10px 26px;
+        border-radius: 10px;
+        font-weight: 600;
+        background: transparent;
+        color: #374151;
+        text-decoration: none;
     }
 
         .btn-cancel:hover {
-            background-color: #6c757d !important;
-            color: #ffffff !important;
-        }
-
-        .btn-cancel:active {
-            background-color: #4f5458 !important;
+            text-decoration: underline;
+            color: #1f2937;
         }
 </style>
 
-<h2>@ViewData["Title"]</h2>
+<div class="container-fluid px-4 py-4">
 
-<form asp-action="CreateOrEdit"
-      asp-controller="Member"
-      method="post"
-      enctype="multipart/form-data"
-      class="needs-validation"
-      novalidate>
+    <h2 class="page-title">@ViewData["Title"]</h2>
+    <div class="page-underline"></div>
 
-    <input type="hidden" asp-for="Id" />
+    <div class="form-wrapper">
 
-    <div class="row">
+        <form asp-action="CreateOrEdit"
+              asp-controller="Member"
+              method="post"
+              enctype="multipart/form-data"
+              class="needs-validation"
+              novalidate>
 
-        @if (!isMember)
-        {
-            <div class="col-md-6 mb-3">
-                <label asp-for="MemberCode" class="form-label"></label>
-                <input asp-for="MemberCode" class="form-control" />
-                <span asp-validation-for="MemberCode" class="text-danger"></span>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row">
+
+                @if (!isMember)
+                {
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="MemberCode" class="form-label"></label>
+                        <input asp-for="MemberCode" class="form-control" />
+                        <span asp-validation-for="MemberCode" class="text-danger"></span>
+                    </div>
+                }
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="FatherName" class="form-label"></label>
+                    <input asp-for="FatherName" class="form-control" />
+                    <span asp-validation-for="FatherName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="MotherName" class="form-label"></label>
+                    <input asp-for="MotherName" class="form-control" />
+                    <span asp-validation-for="MotherName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PermanentAddress" class="form-label"></label>
+                    <input asp-for="PermanentAddress" class="form-control" />
+                    <span asp-validation-for="PermanentAddress" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PresentAddress" class="form-label"></label>
+                    <input asp-for="PresentAddress" class="form-control" />
+                    <span asp-validation-for="PresentAddress" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="JoiningDate" class="form-label"></label>
+                    <input asp-for="JoiningDate" type="date" class="form-control" />
+                    <span asp-validation-for="JoiningDate" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="DateOfBirth" class="form-label"></label>
+                    <input asp-for="DateOfBirth" type="date" class="form-control" />
+                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PhoneNumber" class="form-label"></label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" type="email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="EmergencyContact" class="form-label"></label>
+                    <input asp-for="EmergencyContact" class="form-control" />
+                    <span asp-validation-for="EmergencyContact" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="EmergencyName" class="form-label"></label>
+                    <input asp-for="EmergencyName" class="form-control" />
+                    <span asp-validation-for="EmergencyName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Relationship" class="form-label"></label>
+                    <input asp-for="Relationship" class="form-control" />
+                    <span asp-validation-for="Relationship" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Religion" class="form-label"></label>
+                    <select asp-for="Religion" class="form-select">
+                        <option value="">Select Religion</option>
+                        <option>Buddhism</option>
+                        <option>Christianity</option>
+                        <option>Hinduism</option>
+                        <option>Islam</option>
+                        <option>Jain</option>
+                        <option>OtherReligions</option>
+                    </select>
+                    <span asp-validation-for="Religion" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Gender" class="form-label"></label>
+                    <select asp-for="Gender" class="form-select">
+                        <option value="">Select Gender</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Other</option>
+                    </select>
+                    <span asp-validation-for="Gender" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="MaritalStatus" class="form-label"></label><br />
+                    <input asp-for="MaritalStatus" type="checkbox" class="form-check-input" />
+                </div>
+
+                @if (!isMember)
+                {
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="NID" class="form-label"></label>
+                        <input asp-for="NID" class="form-control" />
+                        <span asp-validation-for="NID" class="text-danger"></span>
+                    </div>
+                }
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="MealStatus" class="form-label"></label><br />
+                    <input asp-for="MealStatus" type="checkbox" class="form-check-input" />
+                </div>
+
+                @if (!isMember)
+                {
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="HouseBill" class="form-label"></label>
+                        <input asp-for="HouseBill" class="form-control" />
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="UtilityBill" class="form-label"></label>
+                        <input asp-for="UtilityBill" class="form-control" />
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="OtherBill" class="form-label"></label>
+                        <input asp-for="OtherBill" class="form-control" />
+                    </div>
+                }
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="ImageFile" class="form-label"></label>
+                    <input asp-for="ImageFile" type="file" class="form-control"
+                           accept="image/*"
+                           onchange="previewImage(event)" />
+                    <img id="imagePreview"
+                         src="~/@UrlHelpers.GetEventImageUrl(Model.Picture, CommonVariables.ProfileLocation)"
+                         class="img-thumbnail mt-2"
+                         style="max-height:150px;" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Password" class="form-label"></label>
+                    <div class="input-group">
+                        <input asp-for="Password" type="password" class="form-control" id="Password" />
+                        <button type="button"
+                                class="btn btn-outline-secondary"
+                                onclick="togglePassword()">
+                            Show
+                        </button>
+                    </div>
+                </div>
             </div>
-        }
 
-        <div class="col-md-6 mb-3">
-            <label asp-for="Name" class="form-label"></label>
-            <input asp-for="Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
-        </div>
+            <button type="submit" class="btn-save">Save</button>
+            <a asp-action="Index" class="btn-cancel">Cancel</a>
 
-        <div class="col-md-6 mb-3">
-            <label asp-for="FatherName" class="form-label"></label>
-            <input asp-for="FatherName" class="form-control" />
-            <span asp-validation-for="FatherName" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <label asp-for="MotherName" class="form-label"></label>
-            <input asp-for="MotherName" class="form-control" />
-            <span asp-validation-for="MotherName" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <label asp-for="PermanentAddress" class="form-label"></label>
-            <input asp-for="PermanentAddress" class="form-control" />
-            <span asp-validation-for="PermanentAddress" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <label asp-for="PresentAddress" class="form-label"></label>
-            <input asp-for="PresentAddress" class="form-control" />
-            <span asp-validation-for="PresentAddress" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <label asp-for="JoiningDate" class="form-label"></label>
-            <input asp-for="JoiningDate" type="date" class="form-control" />
-            <span asp-validation-for="JoiningDate" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <label asp-for="DateOfBirth" class="form-label"></label>
-            <input asp-for="DateOfBirth" type="date" class="form-control" />
-            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <label asp-for="PhoneNumber" class="form-label"></label>
-            <input asp-for="PhoneNumber" class="form-control" />
-            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <label asp-for="Email" class="form-label"></label>
-            <input asp-for="Email" type="email" class="form-control" />
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <label asp-for="EmergencyContact" class="form-label"></label>
-            <input asp-for="EmergencyContact" class="form-control" />
-            <span asp-validation-for="EmergencyContact" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <label asp-for="EmergencyName" class="form-label"></label>
-            <input asp-for="EmergencyName" class="form-control" />
-            <span asp-validation-for="EmergencyName" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <label asp-for="Relationship" class="form-label"></label>
-            <input asp-for="Relationship" class="form-control" />
-            <span asp-validation-for="Relationship" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <label asp-for="Religion" class="form-label"></label>
-            <select asp-for="Religion" class="form-select">
-                <option value="">Select Religion</option>
-                <option>Buddhism</option>
-                <option>Christianity</option>
-                <option>Hinduism</option>
-                <option>Islam</option>
-                <option>Jain</option>
-                <option>OtherReligions</option>
-            </select>
-            <span asp-validation-for="Religion" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <label asp-for="Gender" class="form-label"></label>
-            <select asp-for="Gender" class="form-select">
-                <option value="">Select Gender</option>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-            </select>
-            <span asp-validation-for="Gender" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <label asp-for="MaritalStatus" class="form-label"></label><br />
-            <input asp-for="MaritalStatus" type="checkbox" class="form-check-input" />
-        </div>
-
-        @if (!isMember)
-        {
-            <div class="col-md-6 mb-3">
-                <label asp-for="NID" class="form-label"></label>
-                <input asp-for="NID" class="form-control" />
-                <span asp-validation-for="NID" class="text-danger"></span>
-            </div>
-        }
-
-        <div class="col-md-6 mb-3">
-            <label asp-for="MealStatus" class="form-label"></label><br />
-            <input asp-for="MealStatus" type="checkbox" class="form-check-input" />
-        </div>
-
-        @if (!isMember)
-        {
-            <div class="col-md-4 mb-3">
-                <label asp-for="HouseBill" class="form-label"></label>
-                <input asp-for="HouseBill" class="form-control" />
-            </div>
-
-            <div class="col-md-4 mb-3">
-                <label asp-for="UtilityBill" class="form-label"></label>
-                <input asp-for="UtilityBill" class="form-control" />
-            </div>
-
-            <div class="col-md-4 mb-3">
-                <label asp-for="OtherBill" class="form-label"></label>
-                <input asp-for="OtherBill" class="form-control" />
-            </div>
-        }
-
-        <div class="col-md-6 mb-3">
-            <label asp-for="ImageFile" class="form-label"></label>
-            <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" onchange="previewImage(event)" />
-            <img id="imagePreview"
-                 src="~/@UrlHelpers.GetEventImageUrl(Model.Picture, CommonVariables.ProfileLocation)"
-                 class="img-thumbnail mt-2"
-                 style="max-height:150px;" />
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <label asp-for="Password" class="form-label"></label>
-            <div class="input-group">
-                <input asp-for="Password" type="password" class="form-control" id="Password" />
-                <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">Show</button>
-            </div>
-        </div>
+        </form>
     </div>
-
-    <button type="submit" class="btn-save">Save</button>
-    <a asp-action="Index" class="btn-cancel">Cancel</a>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

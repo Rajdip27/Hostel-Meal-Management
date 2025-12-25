@@ -5,71 +5,173 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<h2>@ViewData["Title"]</h2>
-<hr />
+<!-- ================= PREMIUM CORPORATE THEME ================= -->
+<style>
+    body {
+        background: #f5f7fb !important;
+        font-family: "Segoe UI", sans-serif;
+    }
 
-<form asp-action="CreateOrEdit" method="post">
-    @Html.AntiForgeryToken()
+    .page-title {
+        color: #1f2937;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
 
-    <!-- ================= HIDDEN FIELD ================= -->
-    <input type="hidden" asp-for="Id" />
+    .page-underline {
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        border-radius: 4px;
+        margin-bottom: 24px;
+    }
 
-    <!-- ================= BILLING INFO ================= -->
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <label asp-for="Month" class="form-label"></label>
-            <select asp-for="Month" class="form-control">
-                <option value="">-- Select Month --</option>
-                @for (int i = 1; i <= 12; i++)
-                {
-                    <option value="@i">@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)</option>
-                }
-            </select>
-            <span asp-validation-for="Month" class="text-danger"></span>
-        </div>
+    .form-wrapper {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 30px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+        max-width: 900px;
+    }
 
-        <div class="col-md-4">
-            <label asp-for="Date" class="form-label"></label>
-            <input asp-for="Date" type="date" class="form-control" />
-            <span asp-validation-for="Date" class="text-danger"></span>
-        </div>
+    .form-label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 6px;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        padding: 10px 14px;
+        border: 1px solid #d1d5db;
+        font-size: 14.5px;
+    }
+
+        .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+        }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #2563eb, #1e40af) !important;
+        border: none !important;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 10px 26px;
+        color: #fff !important;
+        box-shadow: 0 8px 20px rgba(37,99,235,0.35);
+        transition: 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1e40af, #1e3a8a) !important;
+            box-shadow: 0 10px 28px rgba(37,99,235,0.45);
+            transform: translateY(-1px);
+        }
+
+    .btn-secondary {
+        border-radius: 10px;
+        padding: 10px 26px;
+        font-weight: 600;
+    }
+
+    .text-danger {
+        font-size: 13px;
+    }
+</style>
+
+<div class="container-fluid px-4 py-4">
+
+    <h2 class="page-title">@ViewData["Title"]</h2>
+    <div class="page-underline"></div>
+
+    <div class="form-wrapper">
+
+        <form asp-action="CreateOrEdit" method="post">
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" asp-for="Id" />
+
+            <!-- ================= BILLING INFO ================= -->
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label asp-for="Month" class="form-label"></label>
+                    <select asp-for="Month" class="form-control" id="Month">
+                        <option value="">-- Select Month --</option>
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            <option value="@i">
+                                @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)
+                            </option>
+                        }
+                    </select>
+                    <span asp-validation-for="Month" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="Date" class="form-label"></label>
+                    <input asp-for="Date" type="date" class="form-control" id="Date" />
+                    <span asp-validation-for="Date" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- ================= BILL AMOUNTS ================= -->
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label asp-for="CurrentBill" class="form-label"></label>
+                    <input asp-for="CurrentBill" class="form-control" />
+                    <span asp-validation-for="CurrentBill" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="GasBill" class="form-label"></label>
+                    <input asp-for="GasBill" class="form-control" />
+                    <span asp-validation-for="GasBill" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="ServantBill" class="form-label"></label>
+                    <input asp-for="ServantBill" class="form-control" />
+                    <span asp-validation-for="ServantBill" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- ================= ACTION BUTTONS ================= -->
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+            </div>
+
+        </form>
+
     </div>
-
-    <!-- ================= BILL AMOUNTS ================= -->
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <label asp-for="CurrentBill" class="form-label"></label>
-            <input asp-for="CurrentBill" class="form-control" />
-            <span asp-validation-for="CurrentBill" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-4">
-            <label asp-for="GasBill" class="form-label"></label>
-            <input asp-for="GasBill" class="form-control" />
-            <span asp-validation-for="GasBill" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-4">
-            <label asp-for="ServantBill" class="form-label"></label>
-            <input asp-for="ServantBill" class="form-control" />
-            <span asp-validation-for="ServantBill" class="text-danger"></span>
-        </div>
-    </div>
-
-    <!-- ================= ACTION BUTTONS ================= -->
-    <div class="mt-4">
-        <button type="submit" class="btn btn-primary">
-            Save
-        </button>
-
-        <a asp-action="Index" class="btn btn-secondary ms-2">
-            Cancel
-        </a>
-    </div>
-</form>
+</div>
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const monthSelect = document.getElementById("Month");
+            const dateInput = document.getElementById("Date");
+
+            const today = new Date();
+            const todayDate = today.toISOString().split("T")[0];
+            const currentMonth = today.getMonth() + 1;
+
+            // Fix ASP.NET default DateTime
+            if (dateInput.value === "0001-01-01") {
+                dateInput.value = todayDate;
+            }
+
+            // Select current month
+            if (!monthSelect.value || monthSelect.value === "0") {
+                monthSelect.value = currentMonth;
+            }
+        });
+    </script>
 }

@@ -5,130 +5,143 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<!-- ===================== CORPORATE GLOSSY BLUE THEME ====================== -->
+<!-- ================= PREMIUM CORPORATE THEME ================= -->
 <style>
     body {
-        background: #ffffff !important;
+        background: #f5f7fb !important;
         font-family: "Segoe UI", sans-serif;
     }
 
-    /* ---------- Page Title ---------- */
-    h2 {
-        font-size: 32px;
+    .page-title {
+        color: #1f2937;
         font-weight: 700;
-        color: #1e3a8a;
-        margin-bottom: 10px;
+        margin-bottom: 6px;
     }
 
-    hr {
-        border-top: 2px solid #cbd5e1 !important;
-        opacity: 0.5;
-        margin-bottom: 25px;
+    .page-underline {
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        border-radius: 4px;
+        margin-bottom: 24px;
     }
 
-    /* ---------- Glossy Form Box ---------- */
-    form {
-        background: rgba(255,255,255,0.75);
+    /* ===== Form Wrapper ===== */
+    .form-wrapper {
+        background: #ffffff;
+        border-radius: 18px;
         padding: 30px;
-        border-radius: 16px;
-        border: 1px solid rgba(200,200,200,0.35);
-        box-shadow: 0 8px 28px rgba(0,0,0,0.08);
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+        max-width: 900px;
     }
 
-    /* ---------- Labels ---------- */
+    /* ===== Labels ===== */
     .form-label {
         font-weight: 600;
-        color: #203254;
+        color: #374151;
+        margin-bottom: 6px;
     }
 
-    /* ---------- Inputs ---------- */
+    /* ===== Inputs ===== */
     .form-control {
-        height: 48px;
-        border-radius: 10px !important;
-        border: 1px solid #b6c1d1;
-        background: rgba(255,255,255,0.85);
-        transition: .25s ease;
-        font-size: 15px;
+        border-radius: 10px;
+        padding: 10px 14px;
+        border: 1px solid #d1d5db;
+        font-size: 14.5px;
     }
 
         .form-control:focus {
-            border-color: #3559a8;
-            box-shadow: 0 0 0 2px rgba(53,89,168,0.25);
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
         }
 
-    /* ---------- Save Button (Glossy Blue) ---------- */
+    /* ===== Primary Button ===== */
     .btn-primary {
-        background: #3559a8 !important;
+        background: linear-gradient(135deg, #2563eb, #1e40af) !important;
         border: none !important;
-        font-size: 17px;
         font-weight: 600;
         border-radius: 10px;
         padding: 10px 26px;
-        box-shadow: 0 6px 18px rgba(53,89,168,0.25);
-        transition: .25s ease;
+        color: #fff !important;
+        box-shadow: 0 8px 20px rgba(37,99,235,0.35);
+        transition: 0.3s ease;
     }
 
         .btn-primary:hover {
-            background: #2d4d8f !important;
-            box-shadow: 0 8px 25px rgba(53,89,168,0.35);
+            background: linear-gradient(135deg, #1e40af, #1e3a8a) !important;
+            box-shadow: 0 10px 28px rgba(37,99,235,0.45);
+            transform: translateY(-1px);
         }
 
-        .btn-primary:active {
-            background: #263f78 !important;
-            transform: scale(0.97);
-        }
-
+    /* ===== Validation ===== */
     .text-danger {
         font-size: 13px;
     }
-
 </style>
 
+<div class="container-fluid px-4 py-4">
 
-<h2>@ViewData["Title"]</h2>
-<hr />
+    <h2 class="page-title">@ViewData["Title"]</h2>
+    <div class="page-underline"></div>
 
-<form asp-action="createoredit" asp-controller="mealcycle" method="post">
+    <div class="form-wrapper">
 
-    <input type="hidden" asp-for="Id" />
+        <form asp-action="createoredit"
+              asp-controller="mealcycle"
+              method="post">
 
-    <div class="row">
+            <input type="hidden" asp-for="Id" />
 
-        <!-- Name -->
-        <div class="col-md-6 mb-3">
-            <label asp-for="Name" class="form-label"></label>
-            <input asp-for="Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
-        </div>
+            <div class="row">
 
-        <!-- Start Date -->
-        <div class="col-md-6 mb-3">
-            <label asp-for="StartDate" class="form-label"></label>
-            <input asp-for="StartDate" type="date" class="form-control" id="StartDate" />
-            <span asp-validation-for="StartDate" class="text-danger"></span>
-        </div>
+                <!-- Name -->
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
 
-        <!-- End Date -->
-        <div class="col-md-6 mb-3">
-            <label asp-for="EndDate" class="form-label"></label>
-            <input asp-for="EndDate" type="date" class="form-control" id="EndDate" readonly />
-            <span asp-validation-for="EndDate" class="text-danger"></span>
-        </div>
+                <!-- Start Date -->
+                <div class="col-md-6 mb-3">
+                    <label asp-for="StartDate" class="form-label"></label>
+                    <input asp-for="StartDate"
+                           type="date"
+                           class="form-control"
+                           id="StartDate" />
+                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                </div>
 
-        <!-- Total Days -->
-        <div class="col-md-6 mb-3">
-            <label asp-for="TotalDays" class="form-label"></label>
-            <input asp-for="TotalDays" class="form-control" id="TotalDays" readonly />
-            <span asp-validation-for="TotalDays" class="text-danger"></span>
-        </div>
+                <!-- End Date -->
+                <div class="col-md-6 mb-3">
+                    <label asp-for="EndDate" class="form-label"></label>
+                    <input asp-for="EndDate"
+                           type="date"
+                           class="form-control"
+                           id="EndDate"
+                           readonly />
+                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                </div>
 
+                <!-- Total Days -->
+                <div class="col-md-6 mb-3">
+                    <label asp-for="TotalDays" class="form-label"></label>
+                    <input asp-for="TotalDays"
+                           class="form-control"
+                           id="TotalDays"
+                           readonly />
+                    <span asp-validation-for="TotalDays" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                @(Model.Id == 0 ? "Create" : "Update")
+            </button>
+
+        </form>
     </div>
-
-    <button type="submit" class="btn btn-primary">
-        @(Model.Id == 0 ? "Create" : "Update")
-    </button>
-
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
@@ -162,7 +175,6 @@
                 let y = d.getFullYear();
                 let m = d.getMonth();
 
-                // Last day of selected month (local time)
                 let end = new Date(y, m + 1, 0);
 
                 $("#EndDate").val(formatDateLocal(end));
@@ -183,5 +195,4 @@
             $("#StartDate").on("change", setEndDate);
         });
     </script>
-
 }

@@ -43,35 +43,35 @@
         }
 
     /* ===== Table Wrapper ===== */
-    .table-responsive {
+    .table {
         background: #ffffff;
-        padding: 20px;
         border-radius: 16px;
-        border: 1px solid #e5e7eb;
+        overflow: hidden;
+        border: 1px solid #e5e7eb !important;
         box-shadow: 0 12px 35px rgba(0,0,0,0.08);
     }
 
-    /* ===== Table Header ===== */
-    .table thead th {
-        background: linear-gradient(135deg, #1e3a8a, #2563eb) !important;
-        color: #ffffff !important;
-        padding: 14px;
-        font-size: 14px;
-        font-weight: 600;
-        text-align: center;
-        border: none !important;
-        letter-spacing: .4px;
-        white-space: nowrap;
-    }
+        /* ===== Table Header ===== */
+        .table thead th {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb) !important;
+            color: #ffffff !important;
+            padding: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            border: none !important;
+            letter-spacing: .4px;
+            white-space: nowrap;
+        }
 
-    /* ===== Table Cells ===== */
-    .table td {
-        vertical-align: middle !important;
-        padding: 12px;
-        font-size: 14px;
-        color: #374151;
-        text-align: center;
-    }
+        /* ===== Table Cells ===== */
+        .table td {
+            padding: 12px;
+            font-size: 14px;
+            color: #374151;
+            text-align: center;
+            vertical-align: middle !important;
+        }
 
     .left-text {
         text-align: left !important;
@@ -127,96 +127,59 @@
             background: linear-gradient(135deg, #dc2626, #991b1b) !important;
             box-shadow: 0 8px 22px rgba(239,68,68,0.45);
         }
-
-    .action-buttons .btn {
-        margin-right: 6px;
-    }
 </style>
 
-<h2 class="mb-3">Meal Attendance List</h2>
+<h2>@ViewData["Title"]</h2>
 
 <a class="btn btn-primary mb-3" asp-action="CreateOrEdit">
     Add New Meal Attendance
 </a>
 
-<div class="table-responsive">
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Meal Date</th>
-                <th>Member</th>
-                <th>Breakfast</th>
-                <th>Lunch</th>
-                <th>Dinner</th>
-                <th>Guest</th>
-                <th>Guest Breakfast</th>
-                <th>B-Qty</th>
-                <th>Guest Lunch</th>
-                <th>L-Qty</th>
-                <th>Guest Dinner</th>
-                <th>D-Qty</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Meal Date</th>
+            <th>Member</th>
+            <th>Breakfast</th>
+            <th>Lunch</th>
+            <th>Dinner</th>
+            <th>Guest</th>
+            <th>Guest Breakfast</th>
+            <th>B-Qty</th>
+            <th>Guest Lunch</th>
+            <th>L-Qty</th>
+            <th>Guest Dinner</th>
+            <th>D-Qty</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
 
-        <tbody>
-            @foreach (var a in Model)
-            {
+    <tbody>
+        @foreach (var a in Model)
+        {
             <tr>
                 <td>@a.Id</td>
                 <td>@a.MealDate.ToString("yyyy-MM-dd")</td>
                 <td class="left-text">@a.MemberName</td>
 
-                <td>
-                    @Html.Raw(a.IsBreakfast
-                                        ? "<span class='check-icon'>✔</span>"
-                                        : "<span class='cross-icon'>✖</span>")
-                </td>
-
-                <td>
-                    @Html.Raw(a.IsLunch
-                                        ? "<span class='check-icon'>✔</span>"
-                                        : "<span class='cross-icon'>✖</span>")
-                </td>
-
-                <td>
-                    @Html.Raw(a.IsDinner
-                                        ? "<span class='check-icon'>✔</span>"
-                                        : "<span class='cross-icon'>✖</span>")
-                </td>
-
-                <td>
-                    @Html.Raw(a.IsGuest
-                                        ? "<span class='check-icon'>✔</span>"
-                                        : "<span class='cross-icon'>✖</span>")
-                </td>
-
-                <td>
-                    @Html.Raw(a.GuestIsBreakfast
-                                        ? "<span class='check-icon'>✔</span>"
-                                        : "<span class='cross-icon'>✖</span>")
-                </td>
+                <td>@Html.Raw(a.IsBreakfast ? "<span class='check-icon'>✔</span>" : "<span class='cross-icon'>✖</span>")</td>
+                <td>@Html.Raw(a.IsLunch ? "<span class='check-icon'>✔</span>" : "<span class='cross-icon'>✖</span>")</td>
+                <td>@Html.Raw(a.IsDinner ? "<span class='check-icon'>✔</span>" : "<span class='cross-icon'>✖</span>")</td>
+                <td>@Html.Raw(a.IsGuest ? "<span class='check-icon'>✔</span>" : "<span class='cross-icon'>✖</span>")</td>
+                <td>@Html.Raw(a.GuestIsBreakfast ? "<span class='check-icon'>✔</span>" : "<span class='cross-icon'>✖</span>")</td>
 
                 <td>@a.GuestBreakfastQty</td>
 
-                <td>
-                    @Html.Raw(a.GuestIsLunch
-                                        ? "<span class='check-icon'>✔</span>"
-                                        : "<span class='cross-icon'>✖</span>")
-                </td>
+                <td>@Html.Raw(a.GuestIsLunch ? "<span class='check-icon'>✔</span>" : "<span class='cross-icon'>✖</span>")</td>
 
                 <td>@a.GuestLunchQty</td>
 
-                <td>
-                    @Html.Raw(a.GuestIsDinner
-                                        ? "<span class='check-icon'>✔</span>"
-                                        : "<span class='cross-icon'>✖</span>")
-                </td>
+                <td>@Html.Raw(a.GuestIsDinner ? "<span class='check-icon'>✔</span>" : "<span class='cross-icon'>✖</span>")</td>
 
                 <td>@a.GuestDinnerQty</td>
 
-                <td class="action-buttons">
+                <td>
                     <div style="display:flex; align-items:center; gap:6px;">
                         <a class="btn btn-sm btn-info"
                            asp-action="CreateOrEdit"
@@ -225,22 +188,19 @@
                         </a>
 
                         @if (Permission.CanDelete(role))
-                            {
-                                <form asp-action="Delete"
-                                      asp-route-id="@a.Id"
-                                      method="post"
-                                      onsubmit="return confirm('Are you sure?');">
-                                    <button type="submit"
-                                            class="btn btn-sm btn-danger">
-                                        Delete
-                                    </button>
-                                </form>
-                            }
-                        </div>
-                    </td>
-
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
+                        {
+                            <form asp-action="Delete"
+                                  asp-route-id="@a.Id"
+                                  method="post"
+                                  onsubmit="return confirm('Are you sure?');">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    Delete
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

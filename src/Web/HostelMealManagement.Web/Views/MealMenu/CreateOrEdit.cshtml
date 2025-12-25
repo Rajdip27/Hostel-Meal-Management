@@ -5,71 +5,160 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<h2>@ViewData["Title"]</h2>
-<hr />
+<!-- ================= PREMIUM CORPORATE THEME ================= -->
+<style>
+    body {
+        background: #f5f7fb !important;
+        font-family: "Segoe UI", sans-serif;
+    }
 
-<form asp-action="CreateOrEdit" asp-controller="MealMenu" method="post">
-    <input type="hidden" asp-for="Id" />
+    /* ===== Page Title ===== */
+    .page-title {
+        color: #1f2937;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
 
-    <div class="row">
+    .page-underline {
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        border-radius: 4px;
+        margin-bottom: 24px;
+    }
 
-        <!-- Day Of Week -->
-        <div class="col-md-6 mb-3">
-            <label asp-for="DayOfWeek" class="form-label"></label>
-            <select asp-for="DayOfWeek" class="form-control">
-                <option value="">-- Select Day --</option>
-                @foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
-                {
-                    <option value="@day">@day</option>
-                }
-            </select>
-            <span asp-validation-for="DayOfWeek" class="text-danger"></span>
-        </div>
+    /* ===== Form Wrapper ===== */
+    .form-wrapper {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 30px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+        max-width: 900px;
+    }
 
-        <!-- Meal Name -->
-        <div class="col-md-6 mb-3">
-            <label asp-for="MealName" class="form-label"></label>
+    /* ===== Labels ===== */
+    .form-label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 6px;
+    }
 
-            @if (Model.Id == 0)
-            {
-                <select asp-for="MealName" class="form-control">
-                    <option value="">-- Select Meal --</option>
-                    <option value="Breakfast">Breakfast</option>
-                    <option value="Lunch">Lunch</option>
-                    <option value="Dinner">Dinner</option>
-                </select>
-            }
-            else
-            {
-                <input class="form-control" value="@Model.MealName" readonly />
-                <input type="hidden" asp-for="MealName" />
-            }
+    /* ===== Inputs & Select ===== */
+    .form-control {
+        border-radius: 10px;
+        padding: 10px 14px;
+        border: 1px solid #d1d5db;
+        font-size: 14.5px;
+    }
 
-            <span asp-validation-for="MealName" class="text-danger"></span>
-        </div>
+        .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+        }
 
-        <!-- Menu Items -->
-        <div class="col-md-12 mb-3">
-            <label asp-for="MenuItems" class="form-label"></label>
-            <textarea asp-for="MenuItems" class="form-control"></textarea>
-            <span asp-validation-for="MenuItems" class="text-danger"></span>
-        </div>
+    /* ===== Primary Button ===== */
+    .btn-primary {
+        background: linear-gradient(135deg, #2563eb, #1e40af) !important;
+        border: none !important;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 10px 26px;
+        color: #fff !important;
+        box-shadow: 0 8px 20px rgba(37,99,235,0.35);
+        transition: 0.3s ease;
+    }
 
-        <!-- Is Active -->
-        <div class="col-md-6 mb-3">
-            <label asp-for="IsActive" class="form-label"></label>
-            <select asp-for="IsActive" class="form-control">
-                <option value="true">Active</option>
-                <option value="false">Inactive</option>
-            </select>
-        </div>
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1e40af, #1e3a8a) !important;
+            box-shadow: 0 10px 28px rgba(37,99,235,0.45);
+            transform: translateY(-1px);
+        }
+
+    /* ===== Validation ===== */
+    .text-danger {
+        font-size: 13px;
+    }
+</style>
+
+<div class="container-fluid px-4 py-4">
+
+    <h2 class="page-title">@ViewData["Title"]</h2>
+    <div class="page-underline"></div>
+
+    <div class="form-wrapper">
+
+        <form asp-action="CreateOrEdit"
+              asp-controller="MealMenu"
+              method="post">
+
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row">
+
+                <!-- Day Of Week -->
+                <div class="col-md-6 mb-3">
+                    <label asp-for="DayOfWeek" class="form-label"></label>
+                    <select asp-for="DayOfWeek" class="form-control">
+                        <option value="">-- Select Day --</option>
+                        @foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
+                        {
+                            <option value="@day">@day</option>
+                        }
+                    </select>
+                    <span asp-validation-for="DayOfWeek" class="text-danger"></span>
+                </div>
+
+                <!-- Meal Name -->
+                <div class="col-md-6 mb-3">
+                    <label asp-for="MealName" class="form-label"></label>
+
+                    @if (Model.Id == 0)
+                    {
+                        <select asp-for="MealName" class="form-control">
+                            <option value="">-- Select Meal --</option>
+                            <option value="Breakfast">Breakfast</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Dinner">Dinner</option>
+                        </select>
+                    }
+                    else
+                    {
+                        <input class="form-control" value="@Model.MealName" readonly />
+                        <input type="hidden" asp-for="MealName" />
+                    }
+
+                    <span asp-validation-for="MealName" class="text-danger"></span>
+                </div>
+
+                <!-- Menu Items -->
+                <div class="col-md-12 mb-3">
+                    <label asp-for="MenuItems" class="form-label"></label>
+                    <textarea asp-for="MenuItems"
+                              class="form-control"
+                              rows="4"></textarea>
+                    <span asp-validation-for="MenuItems" class="text-danger"></span>
+                </div>
+
+                <!-- Is Active -->
+                <div class="col-md-6 mb-3">
+                    <label asp-for="IsActive" class="form-label"></label>
+                    <select asp-for="IsActive" class="form-control">
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                @(Model.Id == 0 ? "Create" : "Update")
+            </button>
+
+        </form>
 
     </div>
-
-    <button type="submit" class="btn btn-primary">
-        @(Model.Id == 0 ? "Create" : "Update")
-    </button>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

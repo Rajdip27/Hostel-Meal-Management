@@ -12,7 +12,6 @@
 
 <!-- ================= PREMIUM CORPORATE THEME ================= -->
 <style>
-
     body {
         background: #f5f7fb !important;
         font-family: "Segoe UI", sans-serif;
@@ -24,13 +23,14 @@
         margin-bottom: 18px;
     }
 
-    /* ===== Add Button ===== */
+    /* ===== Primary Button ===== */
     .btn-primary {
         background: linear-gradient(135deg, #2563eb, #1e40af) !important;
         border: none !important;
         font-weight: 600;
         border-radius: 10px;
         padding: 10px 22px;
+        color: #fff !important;
         box-shadow: 0 8px 20px rgba(37,99,235,0.35);
         transition: 0.3s ease;
     }
@@ -42,54 +42,54 @@
         }
 
     /* ===== Table Wrapper ===== */
-    .table-responsive {
+    .table {
         background: #ffffff;
-        padding: 20px;
         border-radius: 16px;
-        border: 1px solid #e5e7eb;
+        overflow: hidden;
+        border: 1px solid #e5e7eb !important;
         box-shadow: 0 12px 35px rgba(0,0,0,0.08);
     }
 
-    /* ===== Table Header ===== */
-    .table thead th {
-        background: linear-gradient(135deg, #1e3a8a, #2563eb) !important;
-        color: #ffffff !important;
-        padding: 14px;
-        font-size: 15px;
-        font-weight: 600;
-        border: none !important;
-        text-align: center;
-        letter-spacing: .4px;
-        white-space: nowrap;
-    }
-
-    /* ===== Table Cells ===== */
-    .table td {
-        vertical-align: middle !important;
-        padding: 14px;
-        font-size: 14.5px;
-        color: #374151;
-    }
-
-    /* ===== Row Hover ===== */
-    .table tbody tr:hover {
-        background-color: #f1f5ff;
-        transition: 0.2s ease;
-    }
-
-    /* ===== Item List ===== */
-    .table ul {
-        margin: 0;
-        padding-left: 20px;
-    }
-
-        .table ul li {
-            color: #1f2937;
-            font-size: 14px;
-            margin-bottom: 4px;
+        /* ===== Table Header ===== */
+        .table thead th {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb) !important;
+            color: #ffffff !important;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: .4px;
+            text-align: center;
+            border: none !important;
+            white-space: nowrap;
         }
 
-    /* ===== Edit Button ===== */
+        /* ===== Table Cells ===== */
+        .table td {
+            padding: 14px;
+            font-size: 14.5px;
+            color: #374151;
+            vertical-align: middle !important;
+        }
+
+        /* ===== Row Hover ===== */
+        .table tbody tr:hover {
+            background-color: #eef2ff;
+            transition: 0.2s ease;
+        }
+
+        /* ===== Item List ===== */
+        .table ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+            .table ul li {
+                font-size: 14px;
+                margin-bottom: 4px;
+                color: #1f2937;
+            }
+
+    /* ===== Action Buttons ===== */
     .btn-info {
         background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
         border: none !important;
@@ -105,7 +105,6 @@
             box-shadow: 0 8px 22px rgba(59,130,246,0.45);
         }
 
-    /* ===== Delete Button ===== */
     .btn-danger {
         background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
         border: none !important;
@@ -120,76 +119,68 @@
             background: linear-gradient(135deg, #dc2626, #991b1b) !important;
             box-shadow: 0 8px 22px rgba(239,68,68,0.45);
         }
-
-    /* ===== Action Buttons ===== */
-    .action-buttons .btn {
-        margin-right: 6px;
-    }
-
 </style>
 
-<h2>Meal Bazar List</h2>
+<h2>@ViewData["Title"]</h2>
 
 <a class="btn btn-primary mb-3" asp-action="CreateOrEdit">
     Add New Meal Bazar
 </a>
 
-<div class="table-responsive">
-    <table class="table table-bordered table-striped">
-        <thead>
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Total Amount</th>
+            <th>Items</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var bazar in Model)
+        {
             <tr>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Total Amount</th>
-                <th>Items</th>
-                <th>Actions</th>
+                <td>@bazar.BazarDate.ToString("yyyy-MM-dd")</td>
+                <td>@bazar.Description</td>
+                <td><strong>@bazar.BazarAmount</strong></td>
+
+                <td>
+                    <ul>
+                        @foreach (var item in bazar.Items)
+                        {
+                            <li>
+                                <strong>@item.ProductName</strong> —
+                                @item.Quantity × @item.Price =
+                                <strong>@(item.Quantity* item.Price)</strong>
+                            </li>
+                        }
+                    </ul>
+                </td>
+
+                <td>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <a class="btn btn-sm btn-info"
+                           asp-action="CreateOrEdit"
+                           asp-route-id="@bazar.Id">
+                            Edit
+                        </a>
+
+                        @if (Permission.CanDelete(role))
+                        {
+                            <form asp-action="Delete"
+                                  asp-route-id="@bazar.Id"
+                                  method="post"
+                                  onsubmit="return confirm('Are you sure you want to delete this record?');">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    Delete
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (var bazar in Model)
-            {
-                <tr>
-                    <td>@bazar.BazarDate.ToString("yyyy-MM-dd")</td>
-                    <td>@bazar.Description</td>
-                    <td><strong>@bazar.BazarAmount</strong></td>
-
-                    <td>
-                        <ul>
-                            @foreach (var item in bazar.Items)
-                            {
-                                <li>
-                                    <strong>@item.ProductName</strong> —
-                                    @item.Quantity × @item.Price =
-                                    <strong>@(item.Quantity* item.Price)</strong>
-                                </li>
-                            }
-                        </ul>
-                    </td>
-
-                    <td class="action-buttons">
-                        <!-- ✅ ONLY CHANGE IS HERE -->
-                        <div style="display:flex; align-items:center; gap:6px;">
-                            <a class="btn btn-sm btn-info"
-                               asp-action="CreateOrEdit"
-                               asp-route-id="@bazar.Id">
-                                Edit
-                            </a>
-
-                            @if (Permission.CanDelete(role))
-                            {
-                                <form asp-action="Delete"
-                                      asp-route-id="@bazar.Id"
-                                      method="post"
-                                      onsubmit="return confirm('Are you sure you want to delete this record?');">
-                                    <button type="submit" class="btn btn-sm btn-danger">
-                                        Delete
-                                    </button>
-                                </form>
-                            }
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
+        }
+    </tbody>
+</table>
