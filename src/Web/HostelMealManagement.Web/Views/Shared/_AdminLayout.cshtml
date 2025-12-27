@@ -1,49 +1,49 @@
 ﻿@inject HostelMealManagement.Infrastructure.Helper.Acls.ISignInHelper SignInHelper
-@{
-
-}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Hostel Meal Management</title>
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
+        /* ================= GLASSMORPHIC COLOR SYSTEM ================= */
         :root {
-            --primary-color: #3498db;
-            --secondary-color: #2C3E50;
-            --accent-color: #1ABC9C;
-            --light-color: #f5f6fa;
-            --dark-color: #2C3E50;
-            --text-color: #333;
-            --text-light: #fff;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
+            --glass-bg: rgba(255, 255, 255, 0.55);
+            --glass-dark: rgba(255, 255, 255, 0.35);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --primary-color: #2563eb;
+            --accent-color: #22c55e;
+            --text-color: #0f172a;
+            --text-light: #ffffff;
+            --shadow: 0 25px 45px rgba(0, 0, 0, 0.15);
+            --transition: all 0.35s ease;
         }
 
         body {
             margin: 0;
             font-family: 'Segoe UI', sans-serif;
-            background: var(--light-color);
+            background: linear-gradient(135deg, #e0e7ff, #f8fafc, #ecfeff);
             color: var(--text-color);
-            transition: var(--transition);
         }
 
-        /* Sidebar */
+        /* ================= SIDEBAR (GLASS) ================= */
         .hmm-sidebar {
             width: 250px;
             height: 100vh;
-            background: var(--secondary-color);
             position: fixed;
             top: 0;
             left: 0;
             padding: 20px 0;
-            color: var(--text-light);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
             box-shadow: var(--shadow);
             z-index: 1000;
             transition: var(--transition);
@@ -61,73 +61,85 @@
                 font-size: 0;
             }
 
-                .sidebar-collapsed h3:after {
+                .sidebar-collapsed h3::after {
                     content: "HMM";
                     font-size: 18px;
+                    font-weight: 700;
+                    color: #2563eb;
                 }
 
         .hmm-sidebar h3 {
             text-align: center;
             margin-bottom: 30px;
-            font-weight: 600;
-            transition: var(--transition);
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #1e40af;
         }
 
+        /* ================= NAV LINKS ================= */
         .hmm-nav-link {
-            padding: 12px 20px;
-            color: #ecf0f1;
+            padding: 12px 22px;
+            margin-right: 12px;
             display: flex;
             align-items: center;
             text-decoration: none;
-            font-size: 16px;
+            font-size: 15px;
+            color: #1e293b;
+            border-radius: 0 30px 30px 0;
             transition: var(--transition);
-            border-radius: 0 25px 25px 0;
-            margin-right: 10px;
         }
 
             .hmm-nav-link i {
-                margin-right: 10px;
+                margin-right: 12px;
                 width: 20px;
                 text-align: center;
+                font-size: 16px;
+                color: #2563eb;
             }
 
         .sidebar-collapsed .hmm-nav-link i {
             margin-right: 0;
         }
 
-        .hmm-nav-link:hover,
-        .hmm-nav-link.active {
-            background: var(--accent-color);
-            color: var(--text-light);
-            transform: translateX(5px);
+        .hmm-nav-link:hover {
+            background: rgba(37, 99, 235, 0.15);
+            transform: translateX(6px);
         }
 
-        /* Toggle Button */
+        .hmm-nav-link.active {
+            background: linear-gradient(135deg, rgba(37,99,235,0.25), rgba(34,197,94,0.25));
+            color: #1e293b;
+            box-shadow: inset 0 0 0 1px var(--glass-border);
+        }
+
+        /* ================= TOGGLE ================= */
         .sidebar-toggle {
             position: absolute;
             top: 20px;
             right: -15px;
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            width: 30px;
-            height: 30px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-dark);
+            backdrop-filter: blur(12px);
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
             box-shadow: var(--shadow);
             transition: var(--transition);
-            z-index: 1001;
         }
 
-            .sidebar-toggle:hover {
-                background: #16a085;
-                transform: scale(1.1);
+            .sidebar-toggle i {
+                color: #2563eb;
             }
 
-        /* MAIN CONTENT AREA */
+            .sidebar-toggle:hover {
+                transform: scale(1.15) rotate(90deg);
+            }
+
+        /* ================= MAIN CONTENT ================= */
         .hmm-main-content {
             margin-left: 250px;
             min-height: 100vh;
@@ -140,85 +152,34 @@
             margin-left: 70px;
         }
 
-        /* TOP NAVBAR */
+        /* ================= TOPBAR (GLASS) ================= */
         .hmm-topbar {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 15px 25px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 16px 26px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: var(--shadow);
-            color: var(--text-light);
         }
 
-            .hmm-topbar .username {
-                font-weight: 600;
-                display: flex;
-                align-items: center;
-            }
-
-                .hmm-topbar .username i {
-                    margin-right: 8px;
-                }
-
-        /* BODY CONTENT */
+        /* ================= BODY ================= */
         .hmm-body-wrapper {
             padding: 30px;
             flex-grow: 1;
-            background: var(--light-color);
         }
 
-        /* Cards for content */
-        .hmm-card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: var(--transition);
-            border-top: 4px solid var(--accent-color);
-        }
-
-            .hmm-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            }
-
-        /* FOOTER */
+        /* ================= FOOTER ================= */
         .hmm-footer {
-            background: var(--secondary-color);
-            padding: 15px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid var(--glass-border);
+            padding: 14px;
             text-align: center;
-            color: var(--text-light);
+            color: #475569;
             font-size: 0.9rem;
-        }
-
-        /* Responsive */
-        @@media (max-width: 768px) {
-            .hmm-sidebar {
-                width: 70px;
-            }
-
-                .hmm-sidebar .hmm-sidebar-text {
-                    display: none;
-                }
-
-                .hmm-sidebar h3 {
-                    font-size: 0;
-                }
-
-                    .hmm-sidebar h3:after {
-                        content: "HMM";
-                        font-size: 18px;
-                    }
-
-            .hmm-main-content {
-                margin-left: 70px;
-            }
-
-            .hmm-nav-link i {
-                margin-right: 0;
-            }
         }
     </style>
 </head>
@@ -234,161 +195,72 @@
         <h3>Hostel Meal</h3>
 
         <a href="/Dashboard" class="hmm-nav-link">
-            <i class="fas fa-home"></i>
-            <span class="hmm-sidebar-text">Dashboard</span>
+            <i class="fas fa-home"></i><span class="hmm-sidebar-text">Dashboard</span>
         </a>
+
         @if (User.IsInRole("Member"))
         {
-
-            <!-- ONLY Member Menu -->
-            <a href="/Member" class="hmm-nav-link">
-                <i class="fas fa-users"></i>
-                <span class="hmm-sidebar-text">Members</span>
-            </a>
-            <a href="/mealbazar" class="hmm-nav-link">
-                <i class="fas fa-shopping-cart"></i>
-                <span class="hmm-sidebar-text">Meal Bazar</span>
-            </a>
-            <a href="/mealattendance" class="hmm-nav-link">
-                <i class="fas fa-user-check"></i>
-                <span class="hmm-sidebar-text">Meal Attendance</span>
-            </a>
-            <a asp-controller="MealMenu" asp-action="Index" class="hmm-nav-link">
-                <i class="fas fa-list-alt"></i>
-                <span class="hmm-sidebar-text">Meal Menu</span>
-            </a>
-            <a asp-controller="UtilityBill" asp-action="Index" class="hmm-nav-link">
-                <i class="fas fa-file-invoice-dollar"></i>
-                <span class="hmm-sidebar-text">Utility Bill</span>
-            </a>
-            <a href="#" class="hmm-nav-link">
-                <i class="fas fa-credit-card"></i>
-                <span class="hmm-sidebar-text">Payment</span>
-            </a>
-
-            <a href="/meal-bill-report" class="hmm-nav-link">
-                <i class="fas fa-chart-line"></i>
-                <span class="hmm-sidebar-text">Reports</span>
-            </a>
+            <a href="/Member" class="hmm-nav-link"><i class="fas fa-users"></i><span class="hmm-sidebar-text">Members</span></a>
+            <a href="/mealbazar" class="hmm-nav-link"><i class="fas fa-shopping-cart"></i><span class="hmm-sidebar-text">Meal Bazar</span></a>
+            <a href="/mealattendance" class="hmm-nav-link"><i class="fas fa-user-check"></i><span class="hmm-sidebar-text">Meal Attendance</span></a>
+            <a asp-controller="MealMenu" asp-action="Index" class="hmm-nav-link"><i class="fas fa-list-alt"></i><span class="hmm-sidebar-text">Meal Menu</span></a>
+            <a asp-controller="UtilityBill" asp-action="Index" class="hmm-nav-link"><i class="fas fa-file-invoice-dollar"></i><span class="hmm-sidebar-text">Utility Bill</span></a>
+            <a href="#" class="hmm-nav-link"><i class="fas fa-credit-card"></i><span class="hmm-sidebar-text">Payment</span></a>
+            <a href="/meal-bill-report" class="hmm-nav-link"><i class="fas fa-chart-line"></i><span class="hmm-sidebar-text">Reports</span></a>
         }
         else
         {
-
-            <!-- ALL OTHER MENUS -->
-
-            <a href="/Member" class="hmm-nav-link">
-                <i class="fas fa-users"></i>
-                <span class="hmm-sidebar-text">Members</span>
-            </a>
-            <a href="/mealbazar" class="hmm-nav-link">
-                <i class="fas fa-shopping-cart"></i>
-                <span class="hmm-sidebar-text">Meal Bazar</span>
-            </a>
-
-
-            <a href="/mealcycle" class="hmm-nav-link">
-                <i class="fas fa-sync-alt"></i>
-                <span class="hmm-sidebar-text">Meal Cycle</span>
-            </a>
-
-            <a href="/mealattendance" class="hmm-nav-link">
-                <i class="fas fa-user-check"></i>
-                <span class="hmm-sidebar-text">Meal Attendance</span>
-            </a>
-
-            <a asp-controller="MealMenu" asp-action="Index" class="hmm-nav-link">
-                <i class="fas fa-list-alt"></i>
-                <span class="hmm-sidebar-text">Meal Menu</span>
-            </a>
-            <a asp-controller="UtilityBill" asp-action="Index" class="hmm-nav-link">
-                <i class="fas fa-file-invoice-dollar"></i>
-                <span class="hmm-sidebar-text">Utility Bill</span>
-            </a>
-
-
-
-            <a href="/meala-bill" class="hmm-nav-link">
-                <i class="fas fa-file-invoice"></i>
-                <span class="hmm-sidebar-text">Meal Bill</span>
-            </a>
-
-
-            <a href="#" class="hmm-nav-link">
-                <i class="fas fa-credit-card"></i>
-                <span class="hmm-sidebar-text">Payment</span>
-            </a>
-
-            <a href="/meal-bill-report" class="hmm-nav-link">
-                <i class="fas fa-chart-line"></i>
-                <span class="hmm-sidebar-text">Reports</span>
-            </a>
+            <a href="/Member" class="hmm-nav-link"><i class="fas fa-users"></i><span class="hmm-sidebar-text">Members</span></a>
+            <a href="/mealbazar" class="hmm-nav-link"><i class="fas fa-shopping-cart"></i><span class="hmm-sidebar-text">Meal Bazar</span></a>
+            <a href="/mealcycle" class="hmm-nav-link"><i class="fas fa-sync-alt"></i><span class="hmm-sidebar-text">Meal Cycle</span></a>
+            <a href="/mealattendance" class="hmm-nav-link"><i class="fas fa-user-check"></i><span class="hmm-sidebar-text">Meal Attendance</span></a>
+            <a asp-controller="MealMenu" asp-action="Index" class="hmm-nav-link"><i class="fas fa-list-alt"></i><span class="hmm-sidebar-text">Meal Menu</span></a>
+            <a asp-controller="UtilityBill" asp-action="Index" class="hmm-nav-link"><i class="fas fa-file-invoice-dollar"></i><span class="hmm-sidebar-text">Utility Bill</span></a>
+            <a href="/meala-bill" class="hmm-nav-link"><i class="fas fa-file-invoice"></i><span class="hmm-sidebar-text">Meal Bill</span></a>
+            <a href="#" class="hmm-nav-link"><i class="fas fa-credit-card"></i><span class="hmm-sidebar-text">Payment</span></a>
+            <a href="/meal-bill-report" class="hmm-nav-link"><i class="fas fa-chart-line"></i><span class="hmm-sidebar-text">Reports</span></a>
         }
 
         <a asp-action="Logout" asp-controller="Account" class="hmm-nav-link">
-            <i class="fas fa-sign-out-alt"></i>
-            <span class="hmm-sidebar-text">Logout</span>
+            <i class="fas fa-sign-out-alt"></i><span class="hmm-sidebar-text">Logout</span>
         </a>
     </div>
 
     <!-- MAIN CONTENT -->
     <div class="hmm-main-content" id="mainContent">
-
-        <!-- TOP NAVBAR -->
         <div class="hmm-topbar">
-            <div><strong>@ViewData["Title"]</strong></div>
-            <div class="username">
-                <i class="fas fa-user-circle"></i> @SignInHelper.Fullname
-            </div>
+            <strong>@ViewData["Title"]</strong>
+            <div><i class="fas fa-user-circle"></i> @SignInHelper.Fullname</div>
         </div>
 
-        <!-- PAGE CONTENT -->
         <div class="hmm-body-wrapper">
             @RenderBody()
         </div>
 
-        <!-- FOOTER -->
         <div class="hmm-footer">
-            © @DateTime.Now.Year Hostel Meal Management | All Rights Reserved
+            © @DateTime.Now.Year Hostel Meal Management
         </div>
     </div>
-    @await Html.PartialAsync("_SweetAlertPartial")
 
-    <!-- JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('mainContent');
-            const sidebarToggle = document.getElementById('sidebarToggle');
-            const toggleIcon = sidebarToggle.querySelector('i');
+            const toggle = document.getElementById('sidebarToggle');
+            const icon = toggle.querySelector('i');
 
-            sidebarToggle.addEventListener('click', function() {
+            toggle.addEventListener('click', function () {
                 sidebar.classList.toggle('sidebar-collapsed');
                 mainContent.classList.toggle('main-expanded');
-
-                if (sidebar.classList.contains('sidebar-collapsed')) {
-                    toggleIcon.classList.remove('fa-bars');
-                    toggleIcon.classList.add('fa-chevron-right');
-                } else {
-                    toggleIcon.classList.remove('fa-chevron-right');
-                    toggleIcon.classList.add('fa-bars');
-                }
-            });
-
-            // Set active nav link based on current page
-            const currentPath = window.location.pathname;
-            const navLinks = document.querySelectorAll('.hmm-nav-link');
-
-            navLinks.forEach(link => {
-                if (link.getAttribute('href') === currentPath) {
-                    link.classList.add('active');
-                }
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-chevron-right');
             });
         });
     </script>
 
-    <!-- Render page-specific scripts -->
     @RenderSection("Scripts", required: false)
+
 </body>
 </html>
