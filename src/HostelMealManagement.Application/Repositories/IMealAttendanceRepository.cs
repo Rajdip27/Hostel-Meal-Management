@@ -10,7 +10,7 @@ namespace HostelMealManagement.Application.Repositories;
 public interface IMealAttendanceRepository : IBaseService<MealAttendance>
 {
     Task<bool> UpsertAsync(MealAttendanceVm vm);
-    Task<MealAttendanceVm?> GetByIdAsync(long id);
+    Task<MealAttendanceVm> GetByIdAsync(long id);
     Task<List<MealAttendanceVm>> GetAllAsync();
     Task<bool> DeleteAsync(long id);
     Task<int> GetTodayTotalMealAsync();

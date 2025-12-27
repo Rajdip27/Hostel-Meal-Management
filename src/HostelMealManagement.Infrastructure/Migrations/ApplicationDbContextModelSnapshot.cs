@@ -218,7 +218,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "be510705-a8b2-4af0-acef-1e7c2c41ea71",
+                            ConcurrencyStamp = "92b8e480-378e-44a9-bfc2-448420479f47",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@localhost.com",
@@ -227,9 +227,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPBeVg42OeqZeOziE6HfCiFwNULKq67xt1RgGy3WX9LTn9BEdhpUE6/k5HAMPbN3+A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECnvv7LUw81I8BE7iyJHIl3LwGBIxu8hwu4IGCrMAFtzM0KXJAw+q+hl08PKjD6AWg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "f6d4bdcc-c21a-4389-a41c-e2d4b44030a1",
+                            SecurityStamp = "2b8c0a00-3887-4f28-a305-5064e38b3fae",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -237,7 +237,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 2L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7129ae62-f455-4354-ae32-00638b1d4848",
+                            ConcurrencyStamp = "38343dad-4b8f-4f94-98db-a2cb0a943d1e",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "Manager@localhost.com",
@@ -246,9 +246,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "MANAGER@LOCALHOST.COM",
                             NormalizedUserName = "MANAGER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEEKbDq5ZrzcouDa3mJbrc+e536m3X2/XKefSJ0Nze8kJkzUiZ2JIVyfdJYwZsRhixQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEM0ZpyWUlNg2srjBWOj+cBbuJi7oF+vKO054suVpgPA6hCMyN//b3LmUCo7+FOarlQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7272f086-d110-4036-8cad-ca669cf65ab5",
+                            SecurityStamp = "30681df4-1756-41b0-a900-41ed7a502c76",
                             TwoFactorEnabled = false,
                             UserName = "Manager@localhost.com"
                         });
@@ -595,6 +595,14 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<decimal>("CurrentBill")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("GasBill")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("HouseBill")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -627,6 +635,10 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<decimal>("OtherBill")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ServantBill")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 

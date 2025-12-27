@@ -18,4 +18,8 @@ public class MealBill:AuditableEntity
     public long MealCycleId { get; set; }
     public Member Member { get; set; }
     public MealCycle MealCycle { get; set; }
+
+    public decimal CurrentBill { get; set; }
+    public decimal GasBill { get; set; }
+    public decimal ServantBill { get; set; }
 }
