@@ -75,4 +75,5 @@ public class AccountController(SignInManager<User> _signInManager, IAuthService 
     {
         return View();
     }
+
 }

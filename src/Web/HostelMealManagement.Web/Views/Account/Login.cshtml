@@ -167,6 +167,15 @@
                 box-shadow: 0 15px 45px rgba(99,102,241,.9);
             }
 
+        .form-check-label {
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        a.text-info:hover {
+            text-decoration: underline;
+        }
+
     </style>
 </head>
 
@@ -208,7 +217,23 @@
                 <input asp-for="Email" class="form-control mb-3" placeholder="Enter your email" />
 
                 <label class="text-white mb-1">Password</label>
-                <input asp-for="Password" type="password" class="form-control mb-4" placeholder="Enter your password" />
+                <input asp-for="Password" type="password" class="form-control mb-3" placeholder="Enter your password" />
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        <input asp-for="RememberMe" class="form-check-input" type="checkbox" id="rememberMe">
+                        <label class="form-check-label text-white" for="rememberMe">
+                            Remember me
+                        </label>
+                    </div>
+
+                    <a asp-action="ForgotPassword"
+                       asp-controller="Account"
+                       class="text-decoration-none text-info fw-semibold">
+                        Forgot password?
+                    </a>
+                </div>
+
 
                 <button type="submit" class="btn btn-login w-100">
                     <i class="fas fa-arrow-right-to-bracket me-2"></i>Login Securely

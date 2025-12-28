@@ -27,7 +27,7 @@ public class MealBillRepository : BaseService<MealBill>, IMealBillRepository
         try
         {
             var sql = @"
-                           DECLARE
+      DECLARE
       @MealCycleId BIGINT = @MealCycleIdParam,
       @StartDate DATETIMEOFFSET,
       @EndDate DATETIMEOFFSET,

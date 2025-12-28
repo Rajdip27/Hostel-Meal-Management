@@ -4,102 +4,147 @@
 
 @{
     Layout = null;
+    decimal totalBazar = 0;
+    decimal totalMealAmount = 0;
+    decimal totalHouseBill = 0;
+    decimal totalCurrentBill = 0;
+    decimal totalGasBill = 0;
+    decimal totalServantBill = 0;
+    decimal totalOtherBill = 0;
+    decimal grandTotalPayable = 0;
 }
 
-<style>
-    /* ================= PAGE ================= */
-    body {
-        background: #ffffff !important;
-        font-family: "Segoe UI", sans-serif;
-        padding: 20px;
-    }
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Meal Bill Report</title>
 
-    /* ================= TABLE CONTAINER ================= */
-    .table {
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid #d7dce3;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.06);
-    }
+    <style>
+        body {
+            background: #ffffff;
+            font-family: "Segoe UI", sans-serif;
+            padding: 20px;
+        }
 
-    /* ================= HEADER ================= */
-    .custom-header th {
-        background: linear-gradient( 135deg, rgba(33, 71, 155, 0.95), rgba(38, 92, 170, 0.95) ) !important;
-        color: #ffffff !important;
-        font-weight: 600;
-        text-align: center;
-        padding: 12px;
-        letter-spacing: .3px;
-        border: none !important;
-        font-size: 14px;
-        white-space: nowrap;
-    }
+        .table {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #d7dce3;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+        }
 
-    /* ================= BODY CELLS ================= */
-    .table td {
-        vertical-align: middle;
-        padding: 10px 12px;
-        font-size: 14px;
-        color: #2b3340;
-        text-align: center;
-    }
+        .custom-header th {
+            background: linear-gradient(135deg, #21479b, #265caa);
+            color: #ffffff;
+            font-weight: 600;
+            text-align: center;
+            padding: 12px;
+            font-size: 14px;
+            white-space: nowrap;
+            border: none;
+        }
 
-    /* ================= ROW HOVER ================= */
-    .table tbody tr:hover {
-        background-color: #f1f5ff;
-        transition: 0.2s ease;
-    }
+        .table td {
+            vertical-align: middle;
+            padding: 10px;
+            font-size: 14px;
+            text-align: center;
+            color: #2b3340;
+        }
 
-    /* ================= NUMBERS ================= */
-    .table td {
-        font-variant-numeric: tabular-nums;
-    }
+        .table tbody tr:hover {
+            background-color: #f1f5ff;
+        }
 
-    /* ================= RESPONSIVE ================= */
-    .table-responsive {
-        border-radius: 12px;
-    }
-</style>
+        tfoot td {
+            font-weight: 700;
+            background: #f8f9fc;
+            border-top: 2px solid #cfd6e0;
+        }
 
-<div class="table-responsive">
-    <table class="table table-striped table-bordered">
-        <thead class="custom-header">
-            <tr>
-                <th>Member Name</th>
-                <th>Card No</th>
-                <th>Total Bazar</th>
-                <th>Total Member Meal</th>
-                <th>Total Guest Meal</th>
-                <th>Total Meal</th>
-                <th>Meal Rate</th>
-                <th>Meal Amount</th>
-                <th>House Bill</th>
-                <th>Utility Bill</th>
-                <th>Other Bill</th>
-                <th>Total Payable</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var bill in Model)
-            {
+        .text-right {
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="custom-header">
                 <tr>
-                    <td><strong>@bill.Member.Name</strong></td>
-                    <td>@bill.Member.MemberCode</td>
-                    <td>@bill.TotalBazar</td>
-                    <td>@bill.TotalMemberMeal</td>
-                    <td>@bill.TotalGuestMeal</td>
-                    <td>@bill.TotalMeal</td>
-                    <td>@bill.MealRate</td>
-                    <td><strong>@bill.MealAmount</strong></td>
-                    <td>@bill.HouseBill</td>
-                    <td>@bill.UtilityBill</td>
-                    <td>@bill.OtherBill</td>
-                    <td class="fw-bold text-primary">
-                        @bill.TotalPayable
+                    <th>Member Name</th>
+                    <th>Card No</th>
+                    <th>Total Bazar</th>
+                    <th>Member Meal</th>
+                    <th>Guest Meal</th>
+                    <th>Total Meal</th>
+                    <th>Meal Rate</th>
+                    <th>Meal Amount</th>
+                    <th>House Bill</th>
+                    <th>Current Bill</th>
+                    <th>Gas Bill</th>
+                    <th>Servant Bill</th>
+                    <th>Other Bill</th>
+                    <th>Total Payable</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var bill in Model)
+                {
+                    totalBazar += bill.TotalBazar;
+                    totalMealAmount += bill.MealAmount;
+                    totalHouseBill += bill.HouseBill;
+                    totalCurrentBill += bill.CurrentBill;
+                    totalGasBill += bill.GasBill;
+                    totalServantBill += bill.ServantBill;
+                    totalOtherBill += bill.OtherBill;
+                    grandTotalPayable += bill.TotalPayable;
+
+                    <tr>
+                        <td><strong>@bill.Member?.Name</strong></td>
+                        <td>@bill.Member?.MemberCode</td>
+                        <td>@bill.TotalBazar.ToString("0.00")</td>
+                        <td>@bill.TotalMemberMeal</td>
+                        <td>@bill.TotalGuestMeal</td>
+                        <td>@bill.TotalMeal</td>
+                        <td>@bill.MealRate.ToString("0.00")</td>
+                        <td><strong>@bill.MealAmount.ToString("0.00")</strong></td>
+                        <td>@bill.HouseBill.ToString("0.00")</td>
+                        <td>@bill.CurrentBill.ToString("0.00")</td>
+                        <td>@bill.GasBill.ToString("0.00")</td>
+                        <td>@bill.ServantBill.ToString("0.00")</td>
+                        <td>@bill.OtherBill.ToString("0.00")</td>
+                        <td class="text-primary fw-bold">
+                            @bill.TotalPayable.ToString("0.00")
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+            <tfoot>
+                <tr>
+                    <td colspan="2">TOTAL</td>
+                    <td>@totalBazar.ToString("0.00")</td>
+                    <td colspan="3"></td>
+                    <td></td>
+                    <td>@totalMealAmount.ToString("0.00")</td>
+                    <td>@totalHouseBill.ToString("0.00")</td>
+                    <td>@totalCurrentBill.ToString("0.00")</td>
+                    <td>@totalGasBill.ToString("0.00")</td>
+                    <td>@totalServantBill.ToString("0.00")</td>
+                    <td>@totalOtherBill.ToString("0.00")</td>
+                    <td class="text-primary">
+                        @grandTotalPayable.ToString("0.00")
                     </td>
                 </tr>
-            }
-        </tbody>
-    </table>
-</div>
+            </tfoot>
+        </table>
+    </div>
+
+</body>
+</html>
