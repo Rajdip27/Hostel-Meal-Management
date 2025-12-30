@@ -1,0 +1,201 @@
+﻿@using HostelMealManagement.Application.CommonModel
+@using HostelMealManagement.Application.Helpers
+@using HostelMealManagement.Application.ViewModel
+@inject HostelMealManagement.Infrastructure.Helper.Acls.ISignInHelper SignInHelper
+@model MemberVm
+
+@{
+    ViewData["Title"] = "Member Profile";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    
+   var data = @UrlHelpers.GetEventImageUrl(Model.Picture, CommonVariables.ProfileLocation);
+       
+    bool isMember = SignInHelper.Roles.Contains("Member");
+
+
+}
+
+<h2 class="mb-3">@ViewData["Title"]</h2>
+
+<style>
+    body {
+        background: #ffffff !important;
+    }
+
+    .profile-container {
+        background: rgba(255,255,255,0.9);
+        border-radius: 12px;
+        padding: 25px;
+        border: 1px solid #d7dce3;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        margin-top: 20px;
+    }
+
+    .profile-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+        .profile-header img {
+            width: 150px;
+            height: 150px;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+            border: 2px solid #fff;
+        }
+
+    .section-title {
+        background: linear-gradient(135deg, #21479b, #265caa);
+        color: white;
+        padding: 10px 12px;
+        border-radius: 6px;
+        margin-top: 20px;
+        margin-bottom: 12px;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .info-row {
+        margin-bottom: 10px;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #22344d;
+    }
+
+    .info-text {
+        color: #374151;
+    }
+</style>
+
+<div class="profile-container">
+
+    <!-- PROFILE HEADER -->
+    <div class="profile-header">
+        
+        <img src="" />
+        <h3 class="mt-3">@Model.Name</h3>
+        <p class="text-muted">
+            Member Code: <strong>@Model.MemberCode</strong>
+        </p>
+    </div>
+
+    <!-- PERSONAL INFORMATION -->
+    <div class="section-title">Personal Information</div>
+    <div class="row">
+        <div class="col-md-6 info-row">
+            <div class="info-label">Father Name</div>
+            <div class="info-text">@Model.FatherName</div>
+        </div>
+        <div class="col-md-6 info-row">
+            <div class="info-label">Mother Name</div>
+            <div class="info-text">@Model.MotherName</div>
+        </div>
+        <div class="col-md-6 info-row">
+            <div class="info-label">Date of Birth</div>
+            <div class="info-text">@Model.DateOfBirth.ToString("yyyy-MM-dd")</div>
+        </div>
+        <div class="col-md-6 info-row">
+            <div class="info-label">Gender</div>
+            <div class="info-text">@Model.Gender</div>
+        </div>
+        <div class="col-md-6 info-row">
+            <div class="info-label">Religion</div>
+            <div class="info-text">@Model.Religion</div>
+        </div>
+        <div class="col-md-6 info-row">
+            <div class="info-label">Joining Date</div>
+            <div class="info-text">@Model.JoiningDate.ToString("yyyy-MM-dd")</div>
+        </div>
+    </div>
+
+    <!-- CONTACT INFORMATION -->
+    <div class="section-title">Contact Information</div>
+    <div class="row">
+        <div class="col-md-6 info-row">
+            <div class="info-label">Phone Number</div>
+            <div class="info-text">@Model.PhoneNumber</div>
+        </div>
+        <div class="col-md-6 info-row">
+            <div class="info-label">Email</div>
+            <div class="info-text">@Model.Email</div>
+        </div>
+        <div class="col-md-6 info-row">
+            <div class="info-label">Permanent Address</div>
+            <div class="info-text">@Model.PermanentAddress</div>
+        </div>
+        <div class="col-md-6 info-row">
+            <div class="info-label">Present Address</div>
+            <div class="info-text">@Model.PresentAddress</div>
+        </div>
+    </div>
+
+    <!-- EMERGENCY CONTACT -->
+    <div class="section-title">Emergency Contact</div>
+    <div class="row">
+        <div class="col-md-4 info-row">
+            <div class="info-label">Name</div>
+            <div class="info-text">@Model.EmergencyName</div>
+        </div>
+        <div class="col-md-4 info-row">
+            <div class="info-label">Relationship</div>
+            <div class="info-text">@Model.Relationship</div>
+        </div>
+        <div class="col-md-4 info-row">
+            <div class="info-label">Contact No</div>
+            <div class="info-text">@Model.EmergencyContact</div>
+        </div>
+    </div>
+
+    <!-- BILLING -->
+    <div class="section-title">Billing Information</div>
+    <div class="row">
+        <div class="col-md-4 info-row">
+            <div class="info-label">House Bill</div>
+            <div class="info-text">@Model.HouseBill</div>
+        </div>
+        <div class="col-md-4 info-row">
+            <div class="info-label">Utility Bill</div>
+            <div class="info-text">@Model.UtilityBill</div>
+        </div>
+        <div class="col-md-4 info-row">
+            <div class="info-label">Other Bill</div>
+            <div class="info-text">@Model.OtherBill</div>
+        </div>
+    </div>
+
+    <!-- MEAL STATUS -->
+    <div class="section-title">Meal Status</div>
+    <div>
+        @if (Model.MealStatus)
+        {
+            <span class="badge bg-success">Active</span>
+        }
+        else
+        {
+            <span class="badge bg-secondary">Inactive</span>
+        }
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="mt-4 text-end">
+        @if (isMember)
+        {
+            <a asp-controller="Member"
+               asp-action="CreateOrEdit"
+               asp-route-id="@Model.Id"
+               class="btn btn-primary">
+                Edit Profile
+            </a>
+        }
+
+        <a asp-controller="Dashboard"
+           asp-action="Index"
+           class="btn btn-secondary ms-2">
+            Back
+        </a>
+    </div>
+
+</div>
