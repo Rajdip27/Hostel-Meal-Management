@@ -1,0 +1,77 @@
+﻿@model HostelMealManagement.Application.ViewModel.NormalPaymentVm
+
+@{
+    ViewData["Title"] = Model.Id == 0 ? "Create Normal Payment" : "Edit Normal Payment";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid px-4 py-4">
+
+    <h2>@ViewData["Title"]</h2>
+
+    <div class="form-wrapper">
+
+        <form asp-action="CreateOrEdit"
+              asp-controller="NormalPayment"
+              method="post">
+
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row">
+
+                <!-- Member -->
+                <div class="col-md-6 mb-3">
+                    <label asp-for="MemberId" class="form-label"></label>
+                    <select asp-for="MemberId"
+                            class="form-control"
+                            asp-items="ViewBag.MemberList">
+                        <option value="">-- Select Member --</option>
+                    </select>
+                    <span asp-validation-for="MemberId" class="text-danger"></span>
+                </div>
+
+                <!-- Payment Date -->
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PaymentDate" class="form-label"></label>
+                    <input asp-for="PaymentDate"
+                           type="date"
+                           class="form-control" />
+                    <span asp-validation-for="PaymentDate" class="text-danger"></span>
+                </div>
+
+                <!-- Payment Amount (MANUAL INPUT) -->
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PaymentAmount" class="form-label"></label>
+                    <input asp-for="PaymentAmount"
+                           type="number"
+                           step="0.01"
+                           min="0"
+                           class="form-control"
+                           placeholder="Enter payment amount" />
+                    <span asp-validation-for="PaymentAmount" class="text-danger"></span>
+                </div>
+
+                <!-- Remarks (DROPDOWN) -->
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Remarks" class="form-label"></label>
+                    <select asp-for="Remarks"
+                            class="form-control"
+                            asp-items="ViewBag.RemarksList">
+                        <option value="">-- Select Remarks --</option>
+                    </select>
+                    <span asp-validation-for="Remarks" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                @(Model.Id == 0 ? "Create" : "Update")
+            </button>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

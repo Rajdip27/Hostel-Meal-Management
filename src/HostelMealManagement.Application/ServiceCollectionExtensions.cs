@@ -8,8 +8,10 @@ using HostelMealManagement.Application.Repositories.Auth;
 using HostelMealManagement.Application.Repositories.Base;
 using HostelMealManagement.Application.Services;
 using HostelMealManagement.Application.Services.Pdf;
+using HostelMealManagement.Core.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 
 namespace HostelMealManagement.Application;
 
@@ -24,6 +26,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IMealBazarRepository, MealBazarRepository>();
         services.AddScoped<IMealMenuRepository, MealMenuRepository>();
         services.AddScoped<IUtilityBillRepository, UtilityBillRepository>();
+        services.AddScoped<INormalPaymentRepository, NormalPaymentRepository>();
         services.AddScoped<IMealAttendanceRepository, MealAttendanceRepository>();
         services.AddScoped<IExcelUploadService, ExcelUploadService>();
         services.AddScoped(typeof(IAppLogger<>), typeof(AppLogger<>));

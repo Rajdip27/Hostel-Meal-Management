@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HostelMealManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251227154503_updatetable")]
-    partial class updatetable
+    [Migration("20251230085550_AddNormalPayment")]
+    partial class AddNormalPayment
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -221,7 +221,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "92b8e480-378e-44a9-bfc2-448420479f47",
+                            ConcurrencyStamp = "f833a5c6-831f-4530-b656-ac7193cf6d48",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@localhost.com",
@@ -230,9 +230,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAECnvv7LUw81I8BE7iyJHIl3LwGBIxu8hwu4IGCrMAFtzM0KXJAw+q+hl08PKjD6AWg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEAIsXaM0lgVjwH/gE36Igok3TYA5mE/6c7G2Ih+qN83BPolL9wORABUa/tlwHj8lXA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "2b8c0a00-3887-4f28-a305-5064e38b3fae",
+                            SecurityStamp = "48cf86c6-1473-4be7-9b50-ba388bae1c53",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -240,7 +240,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 2L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "38343dad-4b8f-4f94-98db-a2cb0a943d1e",
+                            ConcurrencyStamp = "9c6423ef-9ee1-4fd7-aa36-1c0d43696cf2",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "Manager@localhost.com",
@@ -249,9 +249,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "MANAGER@LOCALHOST.COM",
                             NormalizedUserName = "MANAGER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEM0ZpyWUlNg2srjBWOj+cBbuJi7oF+vKO054suVpgPA6hCMyN//b3LmUCo7+FOarlQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHyvAO5URHtrXjrcEG/HzWdzRxdkpssgOUtA4yOrlPfXhpxQMnoxW7W/SLpKdunHOg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "30681df4-1756-41b0-a900-41ed7a502c76",
+                            SecurityStamp = "ebc7ae91-87db-4c9e-a1f0-4928a1f02b4e",
                             TwoFactorEnabled = false,
                             UserName = "Manager@localhost.com"
                         });
@@ -877,6 +877,59 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     b.ToTable("Member", (string)null);
                 });
 
+            modelBuilder.Entity("HostelMealManagement.Core.Entities.NormalPayment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("MemberId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
+
+                    b.Property<long?>("MemberId1")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
+
+                    b.Property<long?>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("ModifiedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<decimal>("PaymentAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTimeOffset>("PaymentDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Remarks")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId");
+
+                    b.HasIndex("MemberId1");
+
+                    b.ToTable("NormalPayments", (string)null);
+                });
+
             modelBuilder.Entity("HostelMealManagement.Core.Entities.UtilityBill", b =>
                 {
                     b.Property<long>("Id")
@@ -1023,6 +1076,22 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     b.Navigation("Member");
                 });
 
+            modelBuilder.Entity("HostelMealManagement.Core.Entities.NormalPayment", b =>
+                {
+                    b.HasOne("HostelMealManagement.Core.Entities.Member", null)
+                        .WithMany("NormalPayment")
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HostelMealManagement.Core.Entities.Member", "Member")
+                        .WithMany()
+                        .HasForeignKey("MemberId1")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Member");
+                });
+
             modelBuilder.Entity("HostelMealManagement.Core.Entities.MealBazar", b =>
                 {
                     b.Navigation("Items");
@@ -1038,6 +1107,8 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     b.Navigation("MealAttendances");
 
                     b.Navigation("MealBills");
+
+                    b.Navigation("NormalPayment");
                 });
 #pragma warning restore 612, 618
         }
