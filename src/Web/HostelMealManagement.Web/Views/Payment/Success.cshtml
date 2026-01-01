@@ -1,0 +1,51 @@
+﻿@model HostelMealManagement.Application.ViewModel.SSLCommerz.PaymentSuccessViewModel
+@{
+    ViewData["Title"] = "Payment Successful";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-success">
+                <div class="card-header bg-success text-white text-center">
+                    <h4>✅ Payment Successful</h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-center text-success fw-bold">
+                        Thank you, @Model.CustomerName!
+                    </p>
+
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Transaction ID</th>
+                            <td>@Model.TransactionId</td>
+                        </tr>
+                        <tr>
+                            <th>Amount</th>
+                            <td>৳ @Model.Amount</td>
+                        </tr>
+                        <tr>
+                            <th>Status</th>
+                            <td>
+                                <span class="badge bg-success">@Model.Status</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Payment Date</th>
+                            <td>@Model.PaymentDate.ToString("dd MMM yyyy hh:mm tt")</td>
+                        </tr>
+                        <tr>
+                            <th>Message</th>
+                            <td>@Model.Message</td>
+                        </tr>
+                    </table>
+
+                    <div class="text-center mt-3">
+                        <a href="/" class="btn btn-primary">🏠 Go Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
