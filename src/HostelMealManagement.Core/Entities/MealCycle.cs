@@ -9,4 +9,5 @@ public class MealCycle:AuditableEntity
     public DateTimeOffset EndDate { get; set; }
     public int TotalDays { get; set; }
     public ICollection<MealBill> MealBills { get; set; } = new List<MealBill>();
+    public ICollection<PaymentTransaction> PaymentTransaction { get; set; } = new List<PaymentTransaction>();
 }

@@ -22,4 +22,5 @@ public class MealBill:AuditableEntity
     public decimal CurrentBill { get; set; }
     public decimal GasBill { get; set; }
     public decimal ServantBill { get; set; }
+    public ICollection<PaymentTransaction> PaymentTransaction { get; set; } = new List<PaymentTransaction>();
 }

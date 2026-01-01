@@ -30,4 +30,6 @@ public class Member : AuditableEntity
     public ICollection<MealAttendance> MealAttendances { get; set; }=new List<MealAttendance>();
     public ICollection<MealBill> MealBills { get; set; } = new List<MealBill>();
     public ICollection<NormalPayment> NormalPayment { get; set; } = new List<NormalPayment>();
+
+    public ICollection<PaymentTransaction> PaymentTransaction { get; set; } = new List<PaymentTransaction>();
 }
