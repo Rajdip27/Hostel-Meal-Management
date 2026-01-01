@@ -1,7 +1,8 @@
-﻿using HostelMealManagement.Infrastructure;
-using HostelMealManagement.Application;
-using Serilog;
+﻿using HostelMealManagement.Application;
+using HostelMealManagement.Application.ViewModel.SSLCommerz;
+using HostelMealManagement.Infrastructure;
 using HostelMealManagement.Web.Logging;
+using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
@@ -11,6 +12,8 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
     .WriteTo.Seq("http://localhost:5341")
     .CreateLogger();
+builder.Services.Configure<SSLCommerzOptions>(
+    builder.Configuration.GetSection("SSLCommerz"));
 
 builder.Host.UseSerilog();
 builder.Services.AddInfrastructure(builder.Configuration);

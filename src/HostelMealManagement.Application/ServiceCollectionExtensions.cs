@@ -6,8 +6,10 @@ using HostelMealManagement.Application.Mapping;
 using HostelMealManagement.Application.Repositories;
 using HostelMealManagement.Application.Repositories.Auth;
 using HostelMealManagement.Application.Repositories.Base;
+using HostelMealManagement.Application.Repositories.SSLCommerz;
 using HostelMealManagement.Application.Services;
 using HostelMealManagement.Application.Services.Pdf;
+using HostelMealManagement.Application.ViewModel.SSLCommerz;
 using HostelMealManagement.Core.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,5 +44,6 @@ public static class ServiceCollectionExtensions
             x.AddMaps(typeof(IApplication).Assembly);
 
         });
+        services.AddScoped<ISSLCommerzService, SSLCommerzService>();
     }
 }
