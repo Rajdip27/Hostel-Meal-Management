@@ -10,6 +10,8 @@ public class NormalPaymentVm
 
     public long MemberId { get; set; }
 
+    public long CycleId { get; set; }
+
     public string MemberName { get; set; } = string.Empty;
 
     public decimal PaymentAmount { get; set; }

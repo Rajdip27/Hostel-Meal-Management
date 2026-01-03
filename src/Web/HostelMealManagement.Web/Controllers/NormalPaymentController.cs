@@ -17,17 +17,20 @@ public class NormalPaymentController : Controller
     private readonly IMemberRepository _memberRepository;
     private readonly IMapper _mapper;
     private readonly IAppLogger<NormalPaymentController> _logger;
+    private readonly IMealBillRepository _mealBillRepository;
 
     public NormalPaymentController(
         INormalPaymentRepository normalPaymentRepository,
         IMemberRepository memberRepository,
         IMapper mapper,
-        IAppLogger<NormalPaymentController> logger)
+        IAppLogger<NormalPaymentController> logger,
+        IMealBillRepository mealBillRepository)
     {
         _normalPaymentRepository = normalPaymentRepository;
         _memberRepository = memberRepository;
         _mapper = mapper;
         _logger = logger;
+        _mealBillRepository = mealBillRepository;
     }
 
     // ========================= INDEX =========================
@@ -121,14 +124,31 @@ public class NormalPaymentController : Controller
 
             var entity = _mapper.Map<NormalPayment>(vm);
 
+            var bill = await _mealBillRepository.FindAsync(x=>x.MemberId==vm.MemberId,x=>x.MealCycleId==vm.CycleId);
+
             if (vm.Id > 0)
             {
+                var payment = await _normalPaymentRepository.FindAsync(vm.Id);
+                if(bill != null)
+                {
+                    if (payment != null)
+                    {
+                        bill.TotalPaidAmount -= entity.PaymentAmount;
+                    }
+                    bill.TotalPaidAmount += entity.PaymentAmount;
+                }
                 await _normalPaymentRepository.UpdateAsync(entity);
             }
             else
             {
+                bill.TotalPaidAmount += entity.PaymentAmount;
+
                 await _normalPaymentRepository.InsertAsync(entity);
             }
+            bill.NetPayable = bill.TotalPayable - bill.TotalPaidAmount;
+            if (bill.NetPayable < 0)
+                bill.NetPayable = 0;
+            await _mealBillRepository.UpdateAsync(bill);
 
             TempData["AlertMessage"] = vm.Id > 0
                 ? "Payment updated successfully!"

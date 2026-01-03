@@ -14,7 +14,9 @@ public class MealBill:AuditableEntity
     public decimal HouseBill { get; set; }
     public decimal UtilityBill { get; set; }
     public decimal OtherBill { get; set; }
+    public decimal TotalPaidAmount { get; set; }
     public decimal TotalPayable { get; set; }
+    public decimal NetPayable { get; set; }
     public long MealCycleId { get; set; }
     public Member Member { get; set; }
     public MealCycle MealCycle { get; set; }

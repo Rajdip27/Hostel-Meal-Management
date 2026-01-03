@@ -1,24 +1,37 @@
 ﻿using HostelMealManagement.Application.Repositories;
 using HostelMealManagement.Application.Repositories.SSLCommerz;
 using HostelMealManagement.Application.ViewModel.SSLCommerz;
+using HostelMealManagement.Infrastructure.Helper.Acls;
 using Microsoft.AspNetCore.Mvc;
 namespace HostelMealManagement.Web.Controllers;
-public class PaymentController(ISSLCommerzService _ssl, IMealBillRepository mealBillRepository, IMealCycleRepository mealCycleRepository) : Controller
+public class PaymentController(ISSLCommerzService _ssl, IPaymentTransactionRepository paymentTransactionRepository, ISignInHelper signInHelper) : Controller
 {
     public async Task<IActionResult> Pay(long BillId,long CycleId )
     {
 
+        var paymentRequestViewModel = await paymentTransactionRepository.CreateSSLPaymentRequestViewModelAsync(
+            memberId: signInHelper.UserId??1, // Replace with actual member id
+            mealCycleId: CycleId,
+            billId: BillId
+        );
+
+        if (paymentRequestViewModel is null)
+        {
+            TempData["Error"] = "Payment information not found or already paid.";
+            return RedirectToAction("Index", "MealBill");
+        }
+
         var fullHost = $"{Request.Scheme}://{Request.Host.Value}";
         var request = new SSLPaymentRequest(
-            Amount: 1000,
+            Amount: paymentRequestViewModel.Amount,
             TransactionId: Guid.NewGuid().ToString(),
             SuccessUrl: $"{fullHost}/payment/success",
             FailUrl: $"{fullHost}/payment/fail",
             CancelUrl: $"{fullHost}/payment/cancel",
-            CustomerName: "Test User",
-            CustomerEmail: "test@piistech.com",
-            CustomerPhone: "01700000000",
-            ProductName: "Software Service"
+            CustomerName: paymentRequestViewModel.CustomerName,
+            CustomerEmail: paymentRequestViewModel.CustomerEmail,
+            CustomerPhone: paymentRequestViewModel.CustomerPhone,
+            ProductName: paymentRequestViewModel.ProductName
         );
 
         var url = await _ssl.CreatePaymentAsync(request);
