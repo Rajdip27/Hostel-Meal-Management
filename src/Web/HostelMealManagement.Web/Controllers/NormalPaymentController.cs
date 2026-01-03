@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HostelMealManagement.Application.Enums;
 using HostelMealManagement.Application.Logging;
 using HostelMealManagement.Application.Repositories;
 using HostelMealManagement.Application.ViewModel;
@@ -122,6 +123,7 @@ public class NormalPaymentController : Controller
                 return RedirectToAction(nameof(Index));
             }
 
+            decimal oldPaymentAmount = 0;
             var entity = _mapper.Map<NormalPayment>(vm);
 
             var bill = await _mealBillRepository.FindAsync(x=>x.MemberId==vm.MemberId,x=>x.MealCycleId==vm.CycleId);
@@ -129,25 +131,38 @@ public class NormalPaymentController : Controller
             if (vm.Id > 0)
             {
                 var payment = await _normalPaymentRepository.FindAsync(vm.Id);
-                if(bill != null)
-                {
+                
                     if (payment != null)
                     {
-                        bill.TotalPaidAmount -= entity.PaymentAmount;
+                        oldPaymentAmount = entity.PaymentAmount;
                     }
-                    bill.TotalPaidAmount += entity.PaymentAmount;
-                }
                 await _normalPaymentRepository.UpdateAsync(entity);
             }
             else
             {
-                bill.TotalPaidAmount += entity.PaymentAmount;
+               
 
                 await _normalPaymentRepository.InsertAsync(entity);
             }
-            bill.NetPayable = bill.TotalPayable - bill.TotalPaidAmount;
-            if (bill.NetPayable < 0)
-                bill.NetPayable = 0;
+            bill.TotalPaidAmount = bill.TotalPaidAmount - oldPaymentAmount + entity.PaymentAmount;
+
+            // Ensure NetPayable is never negative
+            bill.NetPayable = Math.Max(bill.TotalPayable - bill.TotalPaidAmount, 0);
+
+            // Set PaidStatus
+            switch (bill.NetPayable)
+            {
+                case 0:
+                    bill.PaidStatus = "Paid";
+                    break;
+                default:
+                    if (bill.TotalPaidAmount > 0)
+                        bill.PaidStatus = "Partial";
+                    else
+                        bill.PaidStatus = "Unpaid";
+                    break;
+            }
+
             await _mealBillRepository.UpdateAsync(bill);
 
             TempData["AlertMessage"] = vm.Id > 0

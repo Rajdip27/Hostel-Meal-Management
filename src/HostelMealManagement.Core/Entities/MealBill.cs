@@ -20,6 +20,7 @@ public class MealBill:AuditableEntity
     public long MealCycleId { get; set; }
     public Member Member { get; set; }
     public MealCycle MealCycle { get; set; }
+    public string PaidStatus { get; set; } = string.Empty;
 
     public decimal CurrentBill { get; set; }
     public decimal GasBill { get; set; }
