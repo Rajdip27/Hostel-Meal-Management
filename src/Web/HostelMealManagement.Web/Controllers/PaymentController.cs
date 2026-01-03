@@ -1,10 +1,11 @@
-﻿using HostelMealManagement.Application.Repositories.SSLCommerz;
+﻿using HostelMealManagement.Application.Repositories;
+using HostelMealManagement.Application.Repositories.SSLCommerz;
 using HostelMealManagement.Application.ViewModel.SSLCommerz;
 using Microsoft.AspNetCore.Mvc;
 namespace HostelMealManagement.Web.Controllers;
-public class PaymentController(ISSLCommerzService _ssl) : Controller
+public class PaymentController(ISSLCommerzService _ssl, IMealBillRepository mealBillRepository, IMealCycleRepository mealCycleRepository) : Controller
 {
-    public async Task<IActionResult> Pay()
+    public async Task<IActionResult> Pay(long BillId,long CycleId )
     {
 
         var fullHost = $"{Request.Scheme}://{Request.Host.Value}";
@@ -36,7 +37,7 @@ public class PaymentController(ISSLCommerzService _ssl) : Controller
             // Parse and process the result
             var paymentResult = ParsePaymentResult(result);
 
-            if (paymentResult.Status != "VALID" && paymentResult.Status != "VALIDATED")
+            if (paymentResult.Status != "Success")
             {
                 return RedirectToAction("Fail");
             }
