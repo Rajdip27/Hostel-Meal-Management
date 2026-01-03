@@ -218,7 +218,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f833a5c6-831f-4530-b656-ac7193cf6d48",
+                            ConcurrencyStamp = "118b8577-8f61-4437-958d-d9eaef15f001",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "admin@localhost.com",
@@ -227,9 +227,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAIsXaM0lgVjwH/gE36Igok3TYA5mE/6c7G2Ih+qN83BPolL9wORABUa/tlwHj8lXA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECY51AF2cZECUlWfF6wuMuprbxS+SfR42LCZTpytQmeFxgfG7s+EFfguM+2JqGuWiw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "48cf86c6-1473-4be7-9b50-ba388bae1c53",
+                            SecurityStamp = "250fdef3-a57f-4966-a7ef-f8692e9e3c0f",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         },
@@ -237,7 +237,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         {
                             Id = 2L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9c6423ef-9ee1-4fd7-aa36-1c0d43696cf2",
+                            ConcurrencyStamp = "bb64a47d-e61f-4cb1-8481-79c546378e69",
                             CreatedBy = 0L,
                             CreatedDate = new DateTimeOffset(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Email = "Manager@localhost.com",
@@ -246,9 +246,9 @@ namespace HostelMealManagement.Infrastructure.Migrations
                             Name = "",
                             NormalizedEmail = "MANAGER@LOCALHOST.COM",
                             NormalizedUserName = "MANAGER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHyvAO5URHtrXjrcEG/HzWdzRxdkpssgOUtA4yOrlPfXhpxQMnoxW7W/SLpKdunHOg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEB5sDfSgC+5AzbJbjAgf5n/9R7LQZJYWYJhj3R+2Zqs8O35hz0ARjfSW6kp72e9AIw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ebc7ae91-87db-4c9e-a1f0-4928a1f02b4e",
+                            SecurityStamp = "fd5cf079-8a99-431c-bb6c-ac39c19baf41",
                             TwoFactorEnabled = false,
                             UserName = "Manager@localhost.com"
                         });
@@ -634,9 +634,16 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("ModifiedDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<decimal>("NetPayable")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("OtherBill")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("PaidStatus")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("ServantBill")
                         .HasPrecision(18, 2)
@@ -658,6 +665,10 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal>("TotalPaidAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("TotalPayable")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -672,7 +683,7 @@ namespace HostelMealManagement.Infrastructure.Migrations
 
                     b.HasIndex("MemberId");
 
-                    b.ToTable("MealBill");
+                    b.ToTable("MealBill", (string)null);
                 });
 
             modelBuilder.Entity("HostelMealManagement.Core.Entities.MealCycle", b =>
@@ -891,6 +902,16 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
+                    b.Property<long>("MealCycleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
+
+                    b.Property<long?>("MealCycleId1")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
+
                     b.Property<long>("MemberId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
@@ -920,11 +941,102 @@ namespace HostelMealManagement.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MealCycleId");
+
+                    b.HasIndex("MealCycleId1");
+
                     b.HasIndex("MemberId");
 
                     b.HasIndex("MemberId1");
 
                     b.ToTable("NormalPayments", (string)null);
+                });
+
+            modelBuilder.Entity("HostelMealManagement.Core.Entities.PaymentTransaction", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("BankTransactionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardIssuer")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Currency")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("MealBillId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
+
+                    b.Property<long>("MealCycleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
+
+                    b.Property<long>("MemberId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
+
+                    b.Property<long?>("ModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("ModifiedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("RiskLevel")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("StoreAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TransactionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ValidatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ValidationId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MealBillId");
+
+                    b.HasIndex("MealCycleId");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("PaymentTransaction", (string)null);
                 });
 
             modelBuilder.Entity("HostelMealManagement.Core.Entities.UtilityBill", b =>
@@ -1075,6 +1187,17 @@ namespace HostelMealManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("HostelMealManagement.Core.Entities.NormalPayment", b =>
                 {
+                    b.HasOne("HostelMealManagement.Core.Entities.MealCycle", null)
+                        .WithMany("NormalPayment")
+                        .HasForeignKey("MealCycleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HostelMealManagement.Core.Entities.MealCycle", "MealCycle")
+                        .WithMany()
+                        .HasForeignKey("MealCycleId1")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("HostelMealManagement.Core.Entities.Member", null)
                         .WithMany("NormalPayment")
                         .HasForeignKey("MemberId")
@@ -1086,6 +1209,35 @@ namespace HostelMealManagement.Infrastructure.Migrations
                         .HasForeignKey("MemberId1")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.Navigation("MealCycle");
+
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("HostelMealManagement.Core.Entities.PaymentTransaction", b =>
+                {
+                    b.HasOne("HostelMealManagement.Core.Entities.MealBill", "MealBill")
+                        .WithMany("PaymentTransaction")
+                        .HasForeignKey("MealBillId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HostelMealManagement.Core.Entities.MealCycle", "MealCycle")
+                        .WithMany("PaymentTransaction")
+                        .HasForeignKey("MealCycleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HostelMealManagement.Core.Entities.Member", "Member")
+                        .WithMany("PaymentTransaction")
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("MealBill");
+
+                    b.Navigation("MealCycle");
+
                     b.Navigation("Member");
                 });
 
@@ -1094,9 +1246,18 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     b.Navigation("Items");
                 });
 
+            modelBuilder.Entity("HostelMealManagement.Core.Entities.MealBill", b =>
+                {
+                    b.Navigation("PaymentTransaction");
+                });
+
             modelBuilder.Entity("HostelMealManagement.Core.Entities.MealCycle", b =>
                 {
                     b.Navigation("MealBills");
+
+                    b.Navigation("NormalPayment");
+
+                    b.Navigation("PaymentTransaction");
                 });
 
             modelBuilder.Entity("HostelMealManagement.Core.Entities.Member", b =>
@@ -1106,6 +1267,8 @@ namespace HostelMealManagement.Infrastructure.Migrations
                     b.Navigation("MealBills");
 
                     b.Navigation("NormalPayment");
+
+                    b.Navigation("PaymentTransaction");
                 });
 #pragma warning restore 612, 618
         }

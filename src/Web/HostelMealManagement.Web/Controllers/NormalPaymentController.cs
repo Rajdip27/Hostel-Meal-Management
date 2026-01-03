@@ -16,6 +16,7 @@ public class NormalPaymentController : Controller
 {
     private readonly INormalPaymentRepository _normalPaymentRepository;
     private readonly IMemberRepository _memberRepository;
+    private readonly IMealCycleRepository _mealCycleRepository;
     private readonly IMapper _mapper;
     private readonly IAppLogger<NormalPaymentController> _logger;
     private readonly IMealBillRepository _mealBillRepository;
@@ -23,12 +24,14 @@ public class NormalPaymentController : Controller
     public NormalPaymentController(
         INormalPaymentRepository normalPaymentRepository,
         IMemberRepository memberRepository,
+        IMealCycleRepository mealCycleRepository,
         IMapper mapper,
         IAppLogger<NormalPaymentController> logger,
         IMealBillRepository mealBillRepository)
     {
         _normalPaymentRepository = normalPaymentRepository;
         _memberRepository = memberRepository;
+        _mealCycleRepository = mealCycleRepository;
         _mapper = mapper;
         _logger = logger;
         _mealBillRepository = mealBillRepository;
@@ -61,10 +64,20 @@ public class NormalPaymentController : Controller
         {
             var vm = new NormalPaymentVm();
 
-            // Dropdown: Member List
+            // Member Dropdown
             ViewBag.MemberList = (await _memberRepository.GetAllAsync())
                 .Where(x => !x.IsDelete)
-                .Select(x => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.Name
+                })
+                .ToList();
+
+            // Meal Cycle Dropdown
+            ViewBag.CycleList = (await _mealCycleRepository.GetAllAsync())
+                .Where(x => !x.IsDelete)
+                .Select(x => new SelectListItem
                 {
                     Value = x.Id.ToString(),
                     Text = x.Name
@@ -110,12 +123,20 @@ public class NormalPaymentController : Controller
                 })
                 .ToList();
 
+            ViewBag.CycleList = (await _mealCycleRepository.GetAllAsync())
+                .Where(x => !x.IsDelete)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.Name
+                })
+                .ToList();
+
             return View(vm);
         }
 
         try
         {
-            // 🔐 Ensure amount is never zero
             if (vm.PaymentAmount <= 0)
             {
                 TempData["AlertMessage"] = "Payment amount is invalid.";
@@ -126,44 +147,45 @@ public class NormalPaymentController : Controller
             decimal oldPaymentAmount = 0;
             var entity = _mapper.Map<NormalPayment>(vm);
 
-            var bill = await _mealBillRepository.FindAsync(x=>x.MemberId==vm.MemberId,x=>x.MealCycleId==vm.CycleId);
+            var bill = await _mealBillRepository.FindAsync(
+                x => x.MemberId == vm.MemberId,
+                x => x.MealCycleId == vm.CycleId);
 
             if (vm.Id > 0)
             {
                 var payment = await _normalPaymentRepository.FindAsync(vm.Id);
-                
-                    if (payment != null)
-                    {
-                        oldPaymentAmount = entity.PaymentAmount;
-                    }
+                if (payment != null)
+                {
+                    oldPaymentAmount = entity.PaymentAmount;
+                }
                 await _normalPaymentRepository.UpdateAsync(entity);
             }
             else
             {
-               
-
                 await _normalPaymentRepository.InsertAsync(entity);
             }
-            bill.TotalPaidAmount = bill.TotalPaidAmount - oldPaymentAmount + entity.PaymentAmount;
 
-            // Ensure NetPayable is never negative
-            bill.NetPayable = Math.Max(bill.TotalPayable - bill.TotalPaidAmount, 0);
-
-            // Set PaidStatus
-            switch (bill.NetPayable)
+            if (bill is not null)
             {
-                case 0:
-                    bill.PaidStatus = "Paid";
-                    break;
-                default:
-                    if (bill.TotalPaidAmount > 0)
-                        bill.PaidStatus = "Partial";
-                    else
-                        bill.PaidStatus = "Unpaid";
-                    break;
-            }
+                bill.TotalPaidAmount = bill.TotalPaidAmount - oldPaymentAmount + entity.PaymentAmount;
 
-            await _mealBillRepository.UpdateAsync(bill);
+                bill.NetPayable = Math.Max(bill.TotalPayable - bill.TotalPaidAmount, 0);
+
+                switch (bill.NetPayable)
+                {
+                    case 0:
+                        bill.PaidStatus = "Paid";
+                        break;
+                    default:
+                        if (bill.TotalPaidAmount > 0)
+                            bill.PaidStatus = "Partial";
+                        else
+                            bill.PaidStatus = "Unpaid";
+                        break;
+                }
+
+                await _mealBillRepository.UpdateAsync(bill);
+            }
 
             TempData["AlertMessage"] = vm.Id > 0
                 ? "Payment updated successfully!"
@@ -181,4 +203,17 @@ public class NormalPaymentController : Controller
         }
     }
 
+    // ========================= AUTO PAYMENT AMOUNT (AJAX) =========================
+    [HttpGet]
+    public async Task<IActionResult> GetCyclePayableAmount(long memberId, long cycleId)
+    {
+        var bill = await _mealBillRepository.FindAsync(
+            x => x.MemberId == memberId,
+            x => x.MealCycleId == cycleId);
+
+        if (bill == null)
+            return Json(new { amount = 0 });
+
+        return Json(new { amount = bill.NetPayable });
+    }
 }

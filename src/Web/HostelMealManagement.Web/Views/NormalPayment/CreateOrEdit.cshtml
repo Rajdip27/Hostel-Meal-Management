@@ -24,10 +24,23 @@
                     <label asp-for="MemberId" class="form-label"></label>
                     <select asp-for="MemberId"
                             class="form-control"
-                            asp-items="ViewBag.MemberList">
+                            asp-items="ViewBag.MemberList"
+                            id="MemberId">
                         <option value="">-- Select Member --</option>
                     </select>
                     <span asp-validation-for="MemberId" class="text-danger"></span>
+                </div>
+
+                <!-- Meal Cycle -->
+                <div class="col-md-6 mb-3">
+                    <label asp-for="CycleId" class="form-label"></label>
+                    <select asp-for="CycleId"
+                            class="form-control"
+                            asp-items="ViewBag.CycleList"
+                            id="CycleId">
+                        <option value="">-- Select Meal Cycle --</option>
+                    </select>
+                    <span asp-validation-for="CycleId" class="text-danger"></span>
                 </div>
 
                 <!-- Payment Date -->
@@ -39,7 +52,7 @@
                     <span asp-validation-for="PaymentDate" class="text-danger"></span>
                 </div>
 
-                <!-- Payment Amount (MANUAL INPUT) -->
+                <!-- Payment Amount -->
                 <div class="col-md-6 mb-3">
                     <label asp-for="PaymentAmount" class="form-label"></label>
                     <input asp-for="PaymentAmount"
@@ -47,17 +60,19 @@
                            step="0.01"
                            min="0"
                            class="form-control"
+                           id="PaymentAmount"
                            placeholder="Enter payment amount" />
                     <span asp-validation-for="PaymentAmount" class="text-danger"></span>
                 </div>
 
-                <!-- Remarks (DROPDOWN) -->
+                <!-- Remarks -->
                 <div class="col-md-6 mb-3">
                     <label asp-for="Remarks" class="form-label"></label>
-                    <select asp-for="Remarks"
-                            class="form-control"
-                            asp-items="ViewBag.RemarksList">
+                    <select asp-for="Remarks" class="form-control">
                         <option value="">-- Select Remarks --</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Partial Paid">Partial Paid</option>
+                        <option value="Unpaid">Unpaid</option>
                     </select>
                     <span asp-validation-for="Remarks" class="text-danger"></span>
                 </div>
@@ -74,4 +89,32 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+
+            $('#CycleId').change(function () {
+
+                var memberId = $('#MemberId').val();
+                var cycleId = $(this).val();
+
+                if (memberId && cycleId) {
+                    $.ajax({
+                        url: '/NormalPayment/GetCyclePayableAmount',
+                        type: 'GET',
+                        data: {
+                            memberId: memberId,
+                            cycleId: cycleId
+                        },
+                        success: function (response) {
+                            if (response && response.amount !== undefined) {
+                                $('#PaymentAmount').val(response.amount);
+                            }
+                        }
+                    });
+                }
+            });
+
+        });
+    </script>
 }
