@@ -10,4 +10,6 @@ public class MealCycle:AuditableEntity
     public int TotalDays { get; set; }
     public ICollection<MealBill> MealBills { get; set; } = new List<MealBill>();
     public ICollection<PaymentTransaction> PaymentTransaction { get; set; } = new List<PaymentTransaction>();
+    public ICollection<NormalPayment> NormalPayment { get; set; } = new List<NormalPayment>();
+
 }

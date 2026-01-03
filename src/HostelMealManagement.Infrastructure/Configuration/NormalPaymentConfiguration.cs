@@ -31,5 +31,9 @@ public class NormalPaymentConfiguration : IEntityTypeConfiguration<NormalPayment
                 .WithMany(x=>x.NormalPayment)
                 .HasForeignKey(x => x.MemberId)
                 .OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<MealCycle>()
+               .WithMany(x => x.NormalPayment)
+               .HasForeignKey(x => x.MealCycleId)
+               .OnDelete(DeleteBehavior.Restrict);
     }
 }

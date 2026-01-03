@@ -10,6 +10,8 @@ public class NormalPayment : AuditableEntity
     // Member Id (from Member table)
     public long MemberId { get; set; }
 
+    public long MealCycleId { get; set; }
+
     // Payment amount (comes from Meal Bill)
     public decimal PaymentAmount { get; set; }
 
@@ -17,4 +19,6 @@ public class NormalPayment : AuditableEntity
     public string Remarks { get; set; } = string.Empty;
 
     public Member Member{get; set;}
-}
+
+    public MealCycle MealCycle { get; set; }
+    }
