@@ -21,8 +21,7 @@ public class MealBillRepository : BaseService<MealBill>, IMealBillRepository
     {
         try
         {
-            var sql = @"
-      DECLARE
+            var sql = @"      DECLARE
       @MealCycleId BIGINT = @MealCycleIdParam,
       @StartDate DATETIMEOFFSET,
       @EndDate DATETIMEOFFSET,
@@ -108,78 +107,180 @@ SET @PerMemberCurrentBill =
       THEN @TotalBazarsAmount / @GrandTotalMeals 
       ELSE 0 
   END;
+  ---update data
   DELETE FROM MealBill
   WHERE MealCycleId = @MealCycleId;   
+
+  --temp table
   
-  ;WITH MemberMeals AS
-  (
-      SELECT
-          MA.MemberId,
-          TotalMemberMeal = SUM(
-              CASE WHEN MA.IsBreakfast=1 THEN 1 ELSE 0 END +
-              CASE WHEN MA.IsLunch=1 THEN 1 ELSE 0 END +
-              CASE WHEN MA.IsDinner=1 THEN 1 ELSE 0 END
-          ),
-          TotalGuestMeal = SUM(
-              ISNULL(MA.GuestBreakfastQty,0) +
-              ISNULL(MA.GuestLunchQty,0) +
-              ISNULL(MA.GuestDinnerQty,0)
-          )
-      FROM MealAttendances MA
-      WHERE MA.MealDate BETWEEN @StartDate AND @EndDate
-        AND MA.IsDelete = 0
-      GROUP BY MA.MemberId
-  )
-  
-  INSERT INTO MealBill
-  (
-      MemberId, TotalBazar, TotalMemberMeal, TotalMeal, TotalGuestMeal, 
-      MealRate, MealAmount, HouseBill, UtilityBill, OtherBill, TotalPayable, 
-      MealCycleId, CreatedDate, CreatedBy, IsDelete,CurrentBill,GasBill,ServantBill
-  )
-  SELECT
-      MM.MemberId,
-      @TotalBazarsAmount,
-      MM.TotalMemberMeal,
-      MM.TotalMemberMeal + MM.TotalGuestMeal,
-      MM.TotalGuestMeal,
-      @MealRate,
-      (MM.TotalMemberMeal + MM.TotalGuestMeal) * @MealRate,
-      ISNULL(M.HouseBill,0),
-      ISNULL(M.UtilityBill,0),
-      ISNULL(M.OtherBill,0),
-      (MM.TotalMemberMeal + MM.TotalGuestMeal) * @MealRate + ISNULL(M.HouseBill,0) + ISNULL(M.UtilityBill,0) + ISNULL(M.OtherBill,0)+@PerMemberCurrentBill+@PerMemberGasBill+@PerMemberServantBill,
-      @MealCycleId,
-      SYSDATETIMEOFFSET(),
-      @CreatedBy,
-      0,
-	  @PerMemberCurrentBill,
-	  @PerMemberGasBill,
-	  @PerMemberServantBill
+ IF OBJECT_ID('tempdb..#Members') IS NOT NULL DROP TABLE #Members;
 
-  FROM MemberMeals MM
-  INNER JOIN Member M ON M.Id = MM.MemberId
-  WHERE M.MealStatus = 1 AND M.IsDelete = 0
+ --insert data temp table
 
-  UNION ALL
-
--- 🔹 Non-Meal Members
-SELECT
-    M.Id,
-    0,0,0,0,0,0,
-    ISNULL(M.HouseBill,0),
-    ISNULL(M.UtilityBill,0),
-    ISNULL(M.OtherBill,0),
-    ISNULL(M.HouseBill,0) + ISNULL(M.UtilityBill,0) + ISNULL(M.OtherBill,0)+@PerMemberCurrentBill,
-    @MealCycleId,
-    SYSDATETIMEOFFSET(),
-    @CreatedBy,
-    0,
-	@PerMemberCurrentBill,
-	 0,
-	 0
+SELECT 
+    ROW_NUMBER() OVER (ORDER BY M.Id) AS RowNum,
+    M.Id AS MemberId,
+    M.MealStatus,
+    ISNULL(M.HouseBill,0) AS HouseBill,
+    ISNULL(M.UtilityBill,0) AS UtilityBill,
+    ISNULL(M.OtherBill,0) AS OtherBill
+INTO #Members
 FROM Member M
-WHERE M.MealStatus = 0 AND M.IsDelete = 0";
+WHERE M.IsDelete = 0;
+
+DECLARE 
+    @i INT = 1,
+    @MaxRow INT,
+    @MemberId BIGINT,
+    @MealStatus BIT,
+    @HouseBill  DECIMAL(18,2),
+    @UtilityBill  DECIMAL(18,2),
+    @OtherBill  DECIMAL(18,2),
+    @TotalMemberMeal INT,
+    @TotalGuestMeal INT,
+	@TotalPaymentAmount  DECIMAL(18,2),
+	@PaidStatus VARCHAR(20),
+    @TotalPayable DECIMAL(18,2),
+	@NetPayable DECIMAL(18,2);
+
+SELECT @MaxRow = MAX(RowNum) FROM #Members;
+
+WHILE @i <= @MaxRow
+BEGIN
+    SELECT 
+        @MemberId = MemberId,
+        @MealStatus = MealStatus,
+        @HouseBill = HouseBill,
+        @UtilityBill = UtilityBill,
+        @OtherBill = OtherBill
+		
+    FROM #Members
+    WHERE RowNum = @i;
+
+    SET @TotalMemberMeal = 0;
+    SET @TotalGuestMeal = 0;
+
+
+	SELECT @TotalPaymentAmount=ISNULL(SUM(PaymentAmount),0) FROM NormalPayment WHERE MemberId=@MemberId AND MealCycleId=@MealCycleId 
+
+    IF @MealStatus = 1
+    BEGIN
+        SELECT
+            @TotalMemberMeal = SUM(
+                CASE WHEN IsBreakfast = 1 THEN 1 ELSE 0 END +
+                CASE WHEN IsLunch = 1 THEN 1 ELSE 0 END +
+                CASE WHEN IsDinner = 1 THEN 1 ELSE 0 END
+            ),
+            @TotalGuestMeal = SUM(
+                ISNULL(GuestBreakfastQty,0) +
+                ISNULL(GuestLunchQty,0) +
+                ISNULL(GuestDinnerQty,0)
+            )
+        FROM MealAttendances
+        WHERE MemberId = @MemberId
+          AND MealDate BETWEEN @StartDate AND @EndDate
+          AND IsDelete = 0;
+
+		  SET @TotalPayable =
+(
+    (ISNULL(@TotalMemberMeal,0) + ISNULL(@TotalGuestMeal,0)) * @MealRate
+    + ISNULL(@HouseBill,0)
+    + ISNULL(@UtilityBill,0)
+    + ISNULL(@OtherBill,0)
+    + ISNULL(@PerMemberCurrentBill,0)
+    + ISNULL(@PerMemberGasBill,0)
+    + ISNULL(@PerMemberServantBill,0)
+);
+
+
+SET @NetPayable =
+CASE 
+    WHEN @TotalPayable - ISNULL(@TotalPaymentAmount,0) < 0 THEN 0
+    ELSE @TotalPayable - ISNULL(@TotalPaymentAmount,0)
+END;
+
+SET @PaidStatus =
+CASE
+    WHEN @NetPayable = 0 THEN 'Paid'
+    WHEN ISNULL(@TotalPaymentAmount,0) > 0 THEN 'Partial'
+    ELSE 'Unpaid'
+END;
+
+
+
+
+        INSERT INTO MealBill
+        (
+            MemberId, TotalBazar, TotalMemberMeal, TotalMeal, TotalGuestMeal,
+            MealRate, MealAmount,
+            HouseBill, UtilityBill, OtherBill,
+            TotalPayable,
+            MealCycleId, CreatedDate, CreatedBy, IsDelete,
+            CurrentBill, GasBill, ServantBill,TotalPaidAmount,NetPayable,PaidStatus
+        )
+        VALUES
+        (
+            @MemberId,
+            @TotalBazarsAmount,
+            ISNULL(@TotalMemberMeal,0),
+            ISNULL(@TotalMemberMeal,0) + ISNULL(@TotalGuestMeal,0),
+            ISNULL(@TotalGuestMeal,0),
+            @MealRate,
+            (ISNULL(@TotalMemberMeal,0) + ISNULL(@TotalGuestMeal,0)) * @MealRate,
+            @HouseBill,
+            @UtilityBill,
+            @OtherBill,
+            (ISNULL(@TotalMemberMeal,0) + ISNULL(@TotalGuestMeal,0)) * @MealRate
+              + @HouseBill + @UtilityBill + @OtherBill
+              + @PerMemberCurrentBill + @PerMemberGasBill + @PerMemberServantBill,
+            @MealCycleId,
+            SYSDATETIMEOFFSET(),
+            @CreatedBy,
+            0,
+            @PerMemberCurrentBill,
+            @PerMemberGasBill,
+            @PerMemberServantBill,
+			@TotalPaymentAmount,
+			@NetPayable,
+			@PaidStatus
+
+        );
+    END
+    ELSE
+    BEGIN
+        INSERT INTO MealBill
+        (
+            MemberId, TotalBazar, TotalMemberMeal, TotalMeal, TotalGuestMeal,
+            MealRate, MealAmount,
+            HouseBill, UtilityBill, OtherBill,
+            TotalPayable,
+            MealCycleId, CreatedDate, CreatedBy, IsDelete,
+            CurrentBill, GasBill, ServantBill,TotalPaidAmount,NetPayable,PaidStatus
+        )
+        VALUES
+        (
+            @MemberId,
+            0,0,0,0,0,0,
+            @HouseBill,
+            @UtilityBill,
+            @OtherBill,
+            @HouseBill + @UtilityBill + @OtherBill + @PerMemberCurrentBill,
+            @MealCycleId,
+            SYSDATETIMEOFFSET(),
+            @CreatedBy,
+            0,
+            @PerMemberCurrentBill,
+            0,
+            0,
+			@TotalPaymentAmount,
+			@NetPayable,
+			@PaidStatus
+        );
+    END
+
+    SET @i = @i + 1;
+END;
+DROP TABLE #Members;";
 
             int affectedRows = await _context.Database.ExecuteSqlRawAsync(
                 sql,
