@@ -7,4 +7,6 @@ public class PaymentResult
     public string Status { get; set; }
     public string Message { get; set; }
     public string CustomerName { get; set; }
+    public long MealBillId { get; set; }
+    public long MealCycleId { get; set; }
 }

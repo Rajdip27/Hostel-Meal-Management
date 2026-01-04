@@ -16,6 +16,8 @@ public record SSLPaymentRequest(
     string CustomerName,
     string CustomerEmail,
     string CustomerPhone,
-    string ProductName
+    string ProductName,
+    string value_a,
+    string value_b
 );
 

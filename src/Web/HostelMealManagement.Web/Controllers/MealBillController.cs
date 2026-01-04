@@ -13,7 +13,7 @@ public class MealBillController : Controller
 {
     private readonly IMemberRepository _memberRepository;
     private readonly IMealCycleRepository _mealCycleRepository;
-    private readonly  IMealBillRepository _mealAttendanceRepository;
+    private readonly IMealBillRepository _mealAttendanceRepository;
     private ISignInHelper SignInHelper;
     private readonly IAppLogger<MealAttendanceController> _logger;
     private readonly IRazorViewToStringRenderer _razorViewToStringRenderer;

@@ -7,7 +7,6 @@ using HostelMealManagement.Core.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Diagnostics;
 
 namespace HostelMealManagement.Web.Controllers;
 
@@ -45,13 +44,12 @@ public class NormalPaymentController : Controller
         {
             var payments = await _normalPaymentRepository.GetAllAsync();
             var paymentVmList = _mapper.Map<List<NormalPaymentVm>>(payments);
-
             return View(paymentVmList);
         }
         catch (Exception ex)
         {
             _logger.LogError("Error fetching normal payments", ex);
-            return StatusCode(500, "An error occurred while fetching payments.");
+            return StatusCode(500);
         }
     }
 
@@ -64,7 +62,6 @@ public class NormalPaymentController : Controller
         {
             var vm = new NormalPaymentVm();
 
-            // Member Dropdown
             ViewBag.MemberList = (await _memberRepository.GetAllAsync())
                 .Where(x => !x.IsDelete)
                 .Select(x => new SelectListItem
@@ -74,7 +71,6 @@ public class NormalPaymentController : Controller
                 })
                 .ToList();
 
-            // Meal Cycle Dropdown
             ViewBag.CycleList = (await _mealCycleRepository.GetAllAsync())
                 .Where(x => !x.IsDelete)
                 .Select(x => new SelectListItem
@@ -89,7 +85,7 @@ public class NormalPaymentController : Controller
                 var payment = await _normalPaymentRepository.FindAsync(Id);
                 if (payment == null)
                 {
-                    TempData["AlertMessage"] = $"Payment with Id {Id} not found.";
+                    TempData["AlertMessage"] = "Payment not found.";
                     TempData["AlertType"] = "Error";
                     return RedirectToAction(nameof(Index));
                 }
@@ -147,17 +143,19 @@ public class NormalPaymentController : Controller
             decimal oldPaymentAmount = 0;
             var entity = _mapper.Map<NormalPayment>(vm);
 
+            // ✅ FIX 1: SINGLE PREDICATE
             var bill = await _mealBillRepository.FindAsync(
-                x => x.MemberId == vm.MemberId,
-                x => x.MealCycleId == vm.CycleId);
+                x => x.MemberId == vm.MemberId && x.MealCycleId == vm.CycleId);
 
             if (vm.Id > 0)
             {
                 var payment = await _normalPaymentRepository.FindAsync(vm.Id);
                 if (payment != null)
                 {
-                    oldPaymentAmount = entity.PaymentAmount;
+                    // ✅ FIX 2: read OLD payment amount from DB
+                    oldPaymentAmount = payment.PaymentAmount;
                 }
+
                 await _normalPaymentRepository.UpdateAsync(entity);
             }
             else
@@ -167,29 +165,24 @@ public class NormalPaymentController : Controller
 
             if (bill is not null)
             {
-                bill.TotalPaidAmount = bill.TotalPaidAmount - oldPaymentAmount + entity.PaymentAmount;
+                bill.TotalPaidAmount =
+                    bill.TotalPaidAmount - oldPaymentAmount + entity.PaymentAmount;
 
-                bill.NetPayable = Math.Max(bill.TotalPayable - bill.TotalPaidAmount, 0);
+                bill.NetPayable = Math.Max(
+                    bill.TotalPayable - bill.TotalPaidAmount, 0);
 
-                switch (bill.NetPayable)
-                {
-                    case 0:
-                        bill.PaidStatus = "Paid";
-                        break;
-                    default:
-                        if (bill.TotalPaidAmount > 0)
-                            bill.PaidStatus = "Partial";
-                        else
-                            bill.PaidStatus = "Unpaid";
-                        break;
-                }
+                if (bill.NetPayable == 0)
+                    bill.PaidStatus = "Paid";
+                else if (bill.TotalPaidAmount > 0)
+                    bill.PaidStatus = "Partial";
+                else
+                    bill.PaidStatus = "Unpaid";
 
                 await _mealBillRepository.UpdateAsync(bill);
             }
 
-            TempData["AlertMessage"] = vm.Id > 0
-                ? "Payment updated successfully!"
-                : "Payment created successfully!";
+            TempData["AlertMessage"] =
+                vm.Id > 0 ? "Payment updated successfully!" : "Payment created successfully!";
             TempData["AlertType"] = "Success";
 
             return RedirectToAction(nameof(Index));
@@ -208,8 +201,7 @@ public class NormalPaymentController : Controller
     public async Task<IActionResult> GetCyclePayableAmount(long memberId, long cycleId)
     {
         var bill = await _mealBillRepository.FindAsync(
-            x => x.MemberId == memberId,
-            x => x.MealCycleId == cycleId);
+            x => x.MemberId == memberId && x.MealCycleId == cycleId);
 
         if (bill == null)
             return Json(new { amount = 0 });

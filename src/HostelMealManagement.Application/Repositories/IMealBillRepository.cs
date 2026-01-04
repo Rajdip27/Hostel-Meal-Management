@@ -21,7 +21,7 @@ public class MealBillRepository : BaseService<MealBill>, IMealBillRepository
     {
         try
         {
-            var sql = @"      DECLARE
+            var sql = @"DECLARE
       @MealCycleId BIGINT = @MealCycleIdParam,
       @StartDate DATETIMEOFFSET,
       @EndDate DATETIMEOFFSET,
@@ -30,7 +30,7 @@ public class MealBillRepository : BaseService<MealBill>, IMealBillRepository
       @TotalGuestMeals INT,
       @GrandTotalMeals INT,
       @MealRate DECIMAL(18,2),
-      @CreatedBy BIGINT = @CreatedByParam,
+      @CreatedBy BIGINT = @MealCycleIdParam,
 	  @CurrentBill DECIMAL(18,2),
 	  @GasBill DECIMAL(18,2),
 	  @ServantBill  DECIMAL(18,2),
@@ -161,7 +161,7 @@ BEGIN
     SET @TotalGuestMeal = 0;
 
 
-	SELECT @TotalPaymentAmount=ISNULL(SUM(PaymentAmount),0) FROM NormalPayment WHERE MemberId=@MemberId AND MealCycleId=@MealCycleId 
+	SELECT @TotalPaymentAmount=ISNULL(SUM(PaymentAmount),0) FROM NormalPayments WHERE MemberId=@MemberId AND MealCycleId=@MealCycleId 
 
     IF @MealStatus = 1
     BEGIN
@@ -198,6 +198,8 @@ CASE
     WHEN @TotalPayable - ISNULL(@TotalPaymentAmount,0) < 0 THEN 0
     ELSE @TotalPayable - ISNULL(@TotalPaymentAmount,0)
 END;
+
+
 
 SET @PaidStatus =
 CASE
@@ -248,6 +250,32 @@ END;
     END
     ELSE
     BEGIN
+
+    	  SET @TotalPayable =
+(
+    
+    ISNULL(@HouseBill,0)
+    + ISNULL(@UtilityBill,0)
+    + ISNULL(@OtherBill,0)
+    + ISNULL(@PerMemberCurrentBill,0)
+);
+
+
+SET @NetPayable =
+CASE 
+    WHEN @TotalPayable - ISNULL(@TotalPaymentAmount,0) < 0 THEN 0
+    ELSE @TotalPayable - ISNULL(@TotalPaymentAmount,0)
+END;
+
+
+
+SET @PaidStatus =
+CASE
+    WHEN @NetPayable = 0 THEN 'Paid'
+    WHEN ISNULL(@TotalPaymentAmount,0) > 0 THEN 'Partial'
+    ELSE 'Unpaid'
+END;
+
         INSERT INTO MealBill
         (
             MemberId, TotalBazar, TotalMemberMeal, TotalMeal, TotalGuestMeal,
@@ -273,14 +301,16 @@ END;
             0,
             0,
 			@TotalPaymentAmount,
-			@NetPayable,
+			ISNULL(@NetPayable,0),
 			@PaidStatus
         );
     END
 
     SET @i = @i + 1;
 END;
-DROP TABLE #Members;";
+DROP TABLE #Members;
+
+";
 
             int affectedRows = await _context.Database.ExecuteSqlRawAsync(
                 sql,
@@ -298,7 +328,9 @@ DROP TABLE #Members;";
 
     public async Task<List<MealBill>> GetMealBillsWithMemberAsync(long mealCycleId, long? memberId)
     {
-        return await _context.Set<MealBill>()
+        try
+        {
+            var data= await _context.Set<MealBill>()
         .Include(mb => mb.Member)
         .Include(mb => mb.MealCycle)
         .Where(mb =>
@@ -306,6 +338,14 @@ DROP TABLE #Members;";
             !mb.IsDelete &&
             (memberId == 0 || mb.MemberId == memberId))
         .ToListAsync();
+            return data;
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+        
     }
 
 }

@@ -148,6 +148,7 @@ public class BaseService<T> : IBaseService<T> where T : AuditableEntity
     }
     public async Task InsertAsync(T entity)
     {
+        
         entity.CreatedDate = DateTime.UtcNow;
         await entities.AddAsync(entity);
         await _context.SaveChangesAsync();

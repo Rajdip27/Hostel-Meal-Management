@@ -4,6 +4,7 @@
 
 @{
     Layout = null;
+
     decimal totalBazar = 0;
     decimal totalMealAmount = 0;
     decimal totalHouseBill = 0;
@@ -85,11 +86,20 @@
                     <th>Meal Rate</th>
                     <th>Meal Amount</th>
                     <th>House Bill</th>
+                    <th>Total Current Bill</th>
                     <th>Current Bill</th>
                     <th>Gas Bill</th>
                     <th>Servant Bill</th>
-                    <th>Other Bill</th> 
+                    <th>Other Bill</th>
+                    <th>Total Paid Amount</th>
                     <th>Total Payable</th>
+                    <th>Total Deu Amount</th>
+                    <th>Status</th>
+                    @if (User.IsInRole("Member"))
+                    {
+                        <th>Action</th>
+                    }
+
                 </tr>
             </thead>
 
@@ -115,34 +125,57 @@
                         <td>@bill.MealRate.ToString("0.00")</td>
                         <td><strong>@bill.MealAmount.ToString("0.00")</strong></td>
                         <td>@bill.HouseBill.ToString("0.00")</td>
+                        <td>@totalCurrentBill.ToString("0.00")</td>
                         <td>@bill.CurrentBill.ToString("0.00")</td>
                         <td>@bill.GasBill.ToString("0.00")</td>
                         <td>@bill.ServantBill.ToString("0.00")</td>
                         <td>@bill.OtherBill.ToString("0.00")</td>
+                        <td>@bill.TotalPaidAmount.ToString("0.00")</td>
                         <td class="text-primary fw-bold">
                             @bill.TotalPayable.ToString("0.00")
                         </td>
+                        <td>@bill.NetPayable.ToString("0.00")</td>
+                        <td>@bill.PaidStatus</td>
+
+                        <!-- ONLY ADDED PART -->
+                        <td>
+                            @if (User.IsInRole("Member"))
+                            {
+                                @if (bill.NetPayable != 0)
+                                {
+                                    <a asp-controller="Payment"
+                                       asp-action="Pay"
+                                       asp-route-BillId="@bill.Id"
+                                       asp-route-CycleId="@bill.MealCycleId"
+                                       class="btn btn-sm btn-success">
+                                        Pay
+                                    </a>
+                                }
+
+                            }
+
+                        </td>
+                        <!-- END -->
                     </tr>
                 }
             </tbody>
-
-            <tfoot>
-                <tr>
-                    <td colspan="2">TOTAL</td>
-                    <td>@totalBazar.ToString("0.00")</td>
-                    <td colspan="3"></td>
-                    <td></td>
-                    <td>@totalMealAmount.ToString("0.00")</td>
-                    <td>@totalHouseBill.ToString("0.00")</td>
-                    <td>@totalCurrentBill.ToString("0.00")</td>
-                    <td>@totalGasBill.ToString("0.00")</td>
-                    <td>@totalServantBill.ToString("0.00")</td>
-                    <td>@totalOtherBill.ToString("0.00")</td>
-                    <td class="text-primary">
-                        @grandTotalPayable.ToString("0.00")
-                    </td>
-                </tr>
-            </tfoot>
+            @* <tfoot>
+    <tr>
+        <td colspan="2">TOTAL</td>
+        <td>@totalBazar.ToString("0.00")</td>
+        <td colspan="3"></td>
+        <td></td>
+        <td>@totalMealAmount.ToString("0.00")</td>
+        <td>@totalHouseBill.ToString("0.00")</td>
+        <td>@totalCurrentBill.ToString("0.00")</td>
+        <td>@totalGasBill.ToString("0.00")</td>
+        <td>@totalServantBill.ToString("0.00")</td>
+        <td>@totalOtherBill.ToString("0.00")</td>
+        <td class="text-primary">
+            @grandTotalPayable.ToString("0.00")
+        </td>
+    </tr>
+</tfoot> *@
         </table>
     </div>
 
