@@ -31,66 +31,68 @@
         page-break-after: always;
     }
 
-    /* ✅ NO EXTRA BLANK PAGE */
-    .page:last-child {
-        page-break-after: auto;
-    }
+        /* ✅ NO EXTRA BLANK PAGE */
+        .page:last-child {
+            page-break-after: auto;
+        }
 
-    /* ✅ SINGLE OUTER BOX ONLY */
+    /* ✅ OUTER PROFESSIONAL BOX */
     .bill-container {
         max-width: 820px;
         margin: 0 auto;
         background: #ffffff;
         border: 2px solid #000;
-        padding: 20px;
         page-break-inside: avoid;
         break-inside: avoid;
     }
 
     .header {
         text-align: center;
-        padding-bottom: 15px;
-        margin-bottom: 20px;
+        padding: 18px;
         border-bottom: 2px solid #000;
     }
 
-    .header h1 {
-        margin: 0;
-        font-size: 26px;
-        font-weight: 700;
-        text-transform: uppercase;
-    }
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
 
-    .header .meta {
-        margin-top: 8px;
-        font-size: 13px;
-        line-height: 1.6;
+        .header .meta {
+            margin-top: 8px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+    .content {
+        padding: 20px;
     }
 
     .section {
-        margin-bottom: 18px;
+        margin-bottom: 20px;
         page-break-inside: avoid;
     }
 
-    .section h2 {
-        font-size: 17px;
-        font-weight: 600;
-        margin-bottom: 6px;
-        text-decoration: underline;
-    }
+        .section h2 {
+            border-bottom: 1px solid #000;
+            padding-bottom: 4px;
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
 
-    /* ✅ NO INNER BOXES */
     table {
         width: 100%;
         border-collapse: collapse;
+        page-break-inside: avoid;
     }
 
     th, td {
-        padding: 4px 2px;
-        border: none;
+        padding: 7px 9px;
+        border: 1px solid #000;
         font-size: 13px;
         text-align: left;
-        vertical-align: top;
     }
 
     th {
@@ -98,23 +100,23 @@
         font-weight: 600;
     }
 
+    .total-row th,
     .total-row td {
         font-weight: 700;
         font-size: 15px;
-        padding-top: 10px;
     }
 
+    /* ✅ FOOTER */
     .footer {
-        margin-top: 25px;
-        padding-top: 15px;
         border-top: 2px solid #000;
+        padding: 18px;
         font-size: 13px;
         page-break-inside: avoid;
     }
 
     .terms {
         line-height: 1.6;
-        margin-bottom: 25px;
+        margin-bottom: 22px;
         font-size: 12.5px;
     }
 
@@ -139,7 +141,10 @@
     }
 
     @@media print {
-        body { padding: 0; }
+        body {
+            padding: 0;
+        }
+
         .page {
             transform: scale(0.95);
             transform-origin: top left;
@@ -163,65 +168,66 @@
             </div>
 
             <!-- CONTENT -->
+            <div class="content">
 
-            <div class="section">
-                <h2>Bill Period</h2>
-                <table>
-                    <tr><th>Meal Cycle</th><td>@bill.MealCycle.StartDate.ToString("MMMM yyyy")</td></tr>
-                    <tr><th>Period</th><td>@bill.MealCycle.StartDate.ToString("dd MMMM yyyy") - @bill.MealCycle.EndDate.ToString("dd MMMM yyyy")</td></tr>
-                </table>
+                <div class="section">
+                    <h2>Bill Period</h2>
+                    <table>
+                        <tr><th>Meal Cycle</th><td>@bill.MealCycle.StartDate.ToString("MMMM yyyy")</td></tr>
+                        <tr><th>Period</th><td>@bill.MealCycle.StartDate.ToString("dd MMMM yyyy") - @bill.MealCycle.EndDate.ToString("dd MMMM yyyy")</td></tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <h2>Member Details</h2>
+                    <table>
+                        <tr><th>Member Name</th><td>@bill.Member.Name</td></tr>
+                        <tr><th>Member ID</th><td>@bill.Member.MemberCode</td></tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <h2>Meal Summary</h2>
+                    <table>
+                        <tr><th>Total Bazar Costs</th><td>@bill.TotalBazar</td></tr>
+                        <tr><th>Member Meals</th><td>@bill.TotalMemberMeal</td></tr>
+                        <tr><th>Meals (incl. Guests)</th><td>@bill.TotalGuestMeal</td></tr>
+                        <tr><th>Total Meals</th><td>@bill.TotalMeal</td></tr>
+                        <tr><th>Meal Rate</th><td>@bill.MealRate</td></tr>
+                        <tr><th>Your Meal Amount</th><td>@bill.MealAmount</td></tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <h2>Other Bills</h2>
+                    <table>
+                        <tr><th>House / Rent Bill</th><td>@bill.HouseBill.ToString("0.00")</td></tr>
+                        <tr><th colspan="2" style="text-align:center;font-weight:600;">Electric / Current Bill</th></tr>
+                        <tr><th>Total Current Bill</th><td>@totalCurrentBill.ToString("0.00")</td></tr>
+                        <tr><th>Total Members</th><td>@totalMember</td></tr>
+                        <tr><th>Per Person Current Bill</th><td>@perHeadCurrent.ToString("0.00")</td></tr>
+                        <tr><th colspan="2" style="text-align:center;font-weight:600;">Gas Bill</th></tr>
+                        <tr><th>Total Gas Bill</th><td>@totalGasBill.ToString("0.00")</td></tr>
+                        <tr><th>Total Members</th><td>@totalMember</td></tr>
+                        <tr><th>Per Person Gas Bill</th><td>@perHeadGas.ToString("0.00")</td></tr>
+                        <tr><th>Other Bill</th><td>@bill.OtherBill.ToString("0.00")</td></tr>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <table>
+                        <tr class="total-row">
+                            <th>Total Payable Amount</th>
+                            <td>@bill.TotalPayable</td>
+                        </tr>
+                    </table>
+                </div>
+
             </div>
-
-            <div class="section">
-                <h2>Member Details</h2>
-                <table>
-                    <tr><th>Member Name</th><td>@bill.Member.Name</td></tr>
-                    <tr><th>Member ID</th><td>@bill.Member.MemberCode</td></tr>
-                </table>
-            </div>
-
-            <div class="section">
-                <h2>Meal Summary</h2>
-                <table>
-                    <tr><th>Total Bazar Costs</th><td>@bill.TotalBazar</td></tr>
-                    <tr><th>Member Meals</th><td>@bill.TotalMemberMeal</td></tr>
-                    <tr><th>Meals (incl. Guests)</th><td>@bill.TotalGuestMeal</td></tr>
-                    <tr><th>Total Meals</th><td>@bill.TotalMeal</td></tr>
-                    <tr><th>Meal Rate</th><td>@bill.MealRate</td></tr>
-                    <tr><th>Your Meal Amount</th><td>@bill.MealAmount</td></tr>
-                </table>
-            </div>
-
-            <div class="section">
-                <h2>Other Bills</h2>
-                <table>
-                    <tr><th>House / Rent Bill</th><td>@bill.HouseBill.ToString("0.00")</td></tr>
-                    <tr><th>Total Current Bill</th><td>@totalCurrentBill.ToString("0.00")</td></tr>
-                    <tr><th>Per Person Current Bill</th><td>@perHeadCurrent.ToString("0.00")</td></tr>
-                    <tr><th>Total Gas Bill</th><td>@totalGasBill.ToString("0.00")</td></tr>
-                    <tr><th>Per Person Gas Bill</th><td>@perHeadGas.ToString("0.00")</td></tr>
-                    <tr><th>Other Bill</th><td>@bill.OtherBill.ToString("0.00")</td></tr>
-                </table>
-            </div>
-
-            <table>
-                <tr class="total-row">
-                    <th>Total Payable Amount</th>
-                    <td>@bill.TotalPayable</td>
-                </tr>
-            </table>
 
             <!-- FOOTER -->
             <div class="footer">
-                <div class="terms">
-                    <strong>Terms & Conditions:</strong><br />
-                    • This bill is generated from hostel records.<br />
-                    • Utility bills are shared equally.<br />
-                    • Payments must be completed within the billing cycle.<br />
-                    • Report discrepancies within 3 days.
-                </div>
-
-                <div class="signature-area">
+                    <div class="signature-area">
                     <div class="signature-line">Authorized Signature</div>
                 </div>
 
@@ -233,7 +239,6 @@
         </div>
     </div>
 }
-
 
 <script>
     // 🔥 AUTO DOWNLOAD PDF (NO PRINT)
