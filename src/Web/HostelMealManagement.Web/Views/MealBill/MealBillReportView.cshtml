@@ -199,14 +199,88 @@
             </div>
 
             <!-- OTHER BILLS -->
+            @{
+                int totalMember = Model.Count();
+
+                decimal totalCurrentBill = Model.Sum(x => x.CurrentBill);
+                decimal totalGasBill = Model.Sum(x => x.GasBill);
+
+                decimal perHeadCurrent = totalMember > 0
+                ? totalCurrentBill / totalMember
+                : 0;
+
+                decimal perHeadGas = totalMember > 0
+                ? totalGasBill / totalMember
+                : 0;
+            }
+
             <div class="section">
                 <h2>Other Bills</h2>
+
                 <table>
-                    <tr><th>House / Rent Bill</th><td>৳ @bill.HouseBill</td></tr>
-                    <tr><th>Utility Bill</th><td>৳ @bill.UtilityBill</td></tr>
-                    <tr><th>Other Bill</th><td>৳ @bill.OtherBill</td></tr>
+                    <!-- HOUSE -->
+                    <tr>
+                        <th>House / Rent Bill</th>
+                        <td>৳ @bill.HouseBill.ToString("0.00")</td>
+                    </tr>
+
+                    <!-- ELECTRIC BILL -->
+                    <tr>
+                        <th colspan="2"
+                            style="background:#eef2ff;
+               font-weight:600;
+               text-align:center;
+               vertical-align:middle;">
+                            Electric / Current Bill
+                        </th>
+
+                    </tr>
+                    <tr>
+                        <th>Total Current Bill</th>
+                        <td>৳ @totalCurrentBill.ToString("0.00")</td>
+                    </tr>
+                    <tr>
+                        <th>Total Members</th>
+                        <td>@totalMember</td>
+                    </tr>
+                    <tr>
+                        <th>Per Person Current Bill</th>
+                        <td>৳ @perHeadCurrent.ToString("0.00")</td>
+                    </tr>
+
+                    <!-- GAS BILL -->
+                    <tr>
+                        <th colspan="2"
+                            style="background:#eef2ff;
+               font-weight:600;
+               text-align:center;
+               vertical-align:middle;">
+                            Gas Bill
+                        </th>
+
+                    </tr>
+                    <tr>
+                        <th>Total Gas Bill</th>
+                        <td>৳ @totalGasBill.ToString("0.00")</td>
+                    </tr>
+                    <tr>
+                        <th>Total Members</th>
+                        <td>@totalMember</td>
+                    </tr>
+                    <tr>
+                        <th>Per Person Gas Bill</th>
+                        <td>৳ @perHeadGas.ToString("0.00")</td>
+                    </tr>
+
+                    <!-- OTHER -->
+                    <tr>
+                        <th>Other Bill</th>
+                        <td>৳ @bill.OtherBill.ToString("0.00")</td>
+                    </tr>
                 </table>
             </div>
+
+
 
             <!-- TOTAL -->
             <div class="section">

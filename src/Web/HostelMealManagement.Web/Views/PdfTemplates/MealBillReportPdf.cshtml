@@ -3,130 +3,172 @@
 
 @{
     Layout = null;
+
+    var issuedDate = DateTime.Now;
+    var issuedDay = issuedDate.ToString("dddd");
+    var issuedTime = issuedDate.ToString("hh:mm tt");
+
+    int totalMember = Model.Count();
+    decimal totalCurrentBill = Model.Sum(x => x.CurrentBill);
+    decimal totalGasBill = Model.Sum(x => x.GasBill);
+
+    decimal perHeadCurrent = totalMember > 0 ? totalCurrentBill / totalMember : 0;
+    decimal perHeadGas = totalMember > 0 ? totalGasBill / totalMember : 0;
 }
 
 <style>
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #ffffff;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #ffffff;
         margin: 0;
         padding: 20px;
-        color: #333;
-    }
-
-    .bill-container {
-        max-width: 800px;
-        margin: 0 auto 40px auto;
-        background: white;
-        border-radius: 10px;
-        overflow: hidden;
-        page-break-after: always;
-    }
-
-        /* 🔴 Prevent extra blank page */
-        .bill-container:last-child {
-            page-break-after: auto;
-        }
-
-    .header {
-        background-color: #1f3a5f;
-        color: white;
-        padding: 28px;
-        text-align: center;
-    }
-
-        .header h1 {
-            margin: 0;
-            font-size: 26px;
-            letter-spacing: 1px;
-        }
-
-        .header p {
-            margin: 6px 0 0;
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-    .content {
-        padding: 30px;
-    }
-
-    .section {
-        margin-bottom: 25px;
-    }
-
-        .section h2 {
-            border-bottom: 2px solid #1f3a5f;
-            padding-bottom: 6px;
-            font-size: 18px;
-            color: #1f3a5f;
-        }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
-
-    th, td {
-        padding: 10px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
+        color: #000000;
         font-size: 14px;
     }
 
-    th {
-        background-color: #f1f5f9;
-        color: #1f3a5f;
-        width: 40%;
+    .page {
+        width: 100%;
+        page-break-after: always;
     }
 
-    .total-row {
-        font-weight: bold;
-        font-size: 16px;
-        background-color: #e6f2ff;
+    /* ✅ NO EXTRA BLANK PAGE */
+    .page:last-child {
+        page-break-after: auto;
     }
 
-    .notes {
-        background-color: #f8f9fa;
-        padding: 14px;
-        border-radius: 8px;
+    /* ✅ SINGLE OUTER BOX ONLY */
+    .bill-container {
+        max-width: 820px;
+        margin: 0 auto;
+        background: #ffffff;
+        border: 2px solid #000;
+        padding: 20px;
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    .header {
+        text-align: center;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #000;
+    }
+
+    .header h1 {
+        margin: 0;
+        font-size: 26px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .header .meta {
+        margin-top: 8px;
         font-size: 13px;
         line-height: 1.6;
     }
 
-    .footer {
-        text-align: center;
-        padding: 18px;
-        background-color: #1f3a5f;
-        color: white;
+    .section {
+        margin-bottom: 18px;
+        page-break-inside: avoid;
+    }
+
+    .section h2 {
+        font-size: 17px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        text-decoration: underline;
+    }
+
+    /* ✅ NO INNER BOXES */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 4px 2px;
+        border: none;
         font-size: 13px;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    th {
+        width: 45%;
+        font-weight: 600;
+    }
+
+    .total-row td {
+        font-weight: 700;
+        font-size: 15px;
+        padding-top: 10px;
+    }
+
+    .footer {
+        margin-top: 25px;
+        padding-top: 15px;
+        border-top: 2px solid #000;
+        font-size: 13px;
+        page-break-inside: avoid;
+    }
+
+    .terms {
+        line-height: 1.6;
+        margin-bottom: 25px;
+        font-size: 12.5px;
+    }
+
+    .signature-area {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 35px;
+    }
+
+    .signature-line {
+        border-top: 1px solid #000;
+        width: 220px;
+        text-align: center;
+        padding-top: 5px;
+        font-weight: 600;
+    }
+
+    .thank-you {
+        text-align: center;
+        margin-top: 18px;
+        font-weight: 600;
+    }
+
+    @@media print {
+        body { padding: 0; }
+        .page {
+            transform: scale(0.95);
+            transform-origin: top left;
+        }
     }
 </style>
 
 @foreach (var bill in Model)
 {
-    <div class="bill-container">
-        <div class="header">
-            <h1>HOSTEL MEAL BILL</h1>
-            <p>Fiesta Hostel</p>
-            <p>Generated on: @DateTime.Now.ToString("MMMM dd, yyyy")</p>
-        </div>
+    <div class="page">
+        <div class="bill-container">
 
-        <div class="content">
+            <!-- HEADER -->
+            <div class="header">
+                <h1>Fiesta Hostel</h1>
+                <div class="meta">
+                    <strong>Issued Date:</strong> @issuedDate.ToString("dd MMMM yyyy") <br />
+                    <strong>Issued Day:</strong> @issuedDay <br />
+                    <strong>Issued Time:</strong> @issuedTime
+                </div>
+            </div>
+
+            <!-- CONTENT -->
 
             <div class="section">
                 <h2>Bill Period</h2>
                 <table>
                     <tr><th>Meal Cycle</th><td>@bill.MealCycle.StartDate.ToString("MMMM yyyy")</td></tr>
-                    <tr>
-                        <th>Period</th>
-                        <td>
-                            @bill.MealCycle.StartDate.ToString("dd MMM yyyy")
-                            -
-                            @bill.MealCycle.EndDate.ToString("dd MMM yyyy")
-                        </td>
-                    </tr>
+                    <tr><th>Period</th><td>@bill.MealCycle.StartDate.ToString("dd MMMM yyyy") - @bill.MealCycle.EndDate.ToString("dd MMMM yyyy")</td></tr>
                 </table>
             </div>
 
@@ -141,48 +183,57 @@
             <div class="section">
                 <h2>Meal Summary</h2>
                 <table>
-                    <tr><th>Total Bazar Costs</th><td>৳ @bill.TotalBazar</td></tr>
+                    <tr><th>Total Bazar Costs</th><td>@bill.TotalBazar</td></tr>
                     <tr><th>Member Meals</th><td>@bill.TotalMemberMeal</td></tr>
-                    <tr><th>Guest Meals</th><td>@bill.TotalGuestMeal</td></tr>
+                    <tr><th>Meals (incl. Guests)</th><td>@bill.TotalGuestMeal</td></tr>
                     <tr><th>Total Meals</th><td>@bill.TotalMeal</td></tr>
-                    <tr><th>Meal Rate</th><td>৳ @bill.MealRate</td></tr>
-                    <tr><th>Your Meal Amount</th><td>৳ @bill.MealAmount</td></tr>
+                    <tr><th>Meal Rate</th><td>@bill.MealRate</td></tr>
+                    <tr><th>Your Meal Amount</th><td>@bill.MealAmount</td></tr>
                 </table>
             </div>
 
             <div class="section">
                 <h2>Other Bills</h2>
                 <table>
-                    <tr><th>House / Rent Bill</th><td>৳ @bill.HouseBill</td></tr>
-                    <tr><th>Utility Bill</th><td>৳ @bill.UtilityBill</td></tr>
-                    <tr><th>Other Bill</th><td>৳ @bill.OtherBill</td></tr>
+                    <tr><th>House / Rent Bill</th><td>@bill.HouseBill.ToString("0.00")</td></tr>
+                    <tr><th>Total Current Bill</th><td>@totalCurrentBill.ToString("0.00")</td></tr>
+                    <tr><th>Per Person Current Bill</th><td>@perHeadCurrent.ToString("0.00")</td></tr>
+                    <tr><th>Total Gas Bill</th><td>@totalGasBill.ToString("0.00")</td></tr>
+                    <tr><th>Per Person Gas Bill</th><td>@perHeadGas.ToString("0.00")</td></tr>
+                    <tr><th>Other Bill</th><td>@bill.OtherBill.ToString("0.00")</td></tr>
                 </table>
             </div>
 
-            <div class="section">
-                <table>
-                    <tr class="total-row">
-                        <th>Total Payable Amount</th>
-                        <td>৳ @bill.TotalPayable</td>
-                    </tr>
-                </table>
+            <table>
+                <tr class="total-row">
+                    <th>Total Payable Amount</th>
+                    <td>@bill.TotalPayable</td>
+                </tr>
+            </table>
+
+            <!-- FOOTER -->
+            <div class="footer">
+                <div class="terms">
+                    <strong>Terms & Conditions:</strong><br />
+                    • This bill is generated from hostel records.<br />
+                    • Utility bills are shared equally.<br />
+                    • Payments must be completed within the billing cycle.<br />
+                    • Report discrepancies within 3 days.
+                </div>
+
+                <div class="signature-area">
+                    <div class="signature-line">Authorized Signature</div>
+                </div>
+
+                <div class="thank-you">
+                    Thank you for staying with Fiesta Hostel.
+                </div>
             </div>
 
-            <div class="notes">
-                <strong>Notes:</strong><br />
-                • Meal rate = Total Bazar ÷ Total Meals<br />
-                • Guest meals included in shared calculation<br />
-                • Please pay within due date<br />
-                • Contact hostel management for any issues
-            </div>
-
-        </div>
-
-        <div class="footer">
-            Thank you for staying with us! | Signature: ________________________
         </div>
     </div>
 }
+
 
 <script>
     // 🔥 AUTO DOWNLOAD PDF (NO PRINT)

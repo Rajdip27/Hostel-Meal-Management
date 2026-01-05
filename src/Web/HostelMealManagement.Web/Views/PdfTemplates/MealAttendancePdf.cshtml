@@ -3,88 +3,110 @@
 
 @{
     Layout = null;
-    var issueDate = DateTime.Now.ToString("dd MMM yyyy");
+
+    var reportDate = DateTime.Now;
+    var reportDay = reportDate.ToString("dddd");
+    var reportTime = reportDate.ToString("hh:mm tt");
+
+    decimal totalCurrentBill = Model.Sum(x => x.CurrentBill);
+    decimal totalGasBill = Model.Sum(x => x.GasBill);
+    int totalMember = Model.Count();
 }
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Meal Bill Statement</title>
+    <title>Meal Bill Report</title>
 
     <style>
         body {
             font-family: "Segoe UI", Arial, sans-serif;
             background: #ffffff;
-            padding: 30px;
             color: #000;
-        }
-
-        /* ================= HEADER ================= */
-        .pdf-header {
-            text-align: center;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #000;
-            padding-bottom: 12px;
-        }
-
-            .pdf-header h2 {
-                margin: 0;
-                font-size: 22px;
-                font-weight: 700;
-                letter-spacing: .5px;
-            }
-
-            .pdf-header p {
-                margin: 6px 0 0;
-                font-size: 13px;
-            }
-
-        /* ================= TABLE ================= */
-        table {
-            width: 100%;
-            border-collapse: collapse;
+            margin: 0;
+            padding: 30px;
             font-size: 13px;
         }
 
-        thead th {
-            border: 1px solid #000;
-            padding: 8px;
-            font-weight: 700;
+        /* ---------- HEADER ---------- */
+        .header {
             text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            margin: 4px 0;
+            font-size: 13px;
+        }
+
+        .meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+
+        /* ---------- TABLE ---------- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 6px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        th {
+            font-weight: 700;
             background: #f5f5f5;
         }
 
-        tbody td {
-            border: 1px solid #000;
-            padding: 8px;
-            text-align: center;
-        }
-
-        /* ================= EMPHASIS ================= */
-        .text-bold {
+        td strong {
             font-weight: 700;
         }
 
-        .amount {
-            text-align: right;
-            padding-right: 10px;
-        }
-
-        /* ================= FOOTER ================= */
-        .pdf-footer {
-            margin-top: 25px;
-            font-size: 12px;
+        /* ---------- FOOTER ---------- */
+        .footer {
+            margin-top: 40px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
 
         .signature {
-            margin-top: 40px;
-            border-top: 1px solid #000;
-            width: 180px;
             text-align: center;
-            padding-top: 6px;
+            width: 220px;
+        }
+
+        .signature-line {
+            border-top: 1px solid #000;
+            margin-top: 40px;
+            padding-top: 5px;
+            font-size: 12px;
+        }
+
+        .note {
+            font-size: 11px;
+            margin-top: 15px;
+        }
+
+         {
+            size: A4;
+            margin: 15mm;
         }
     </style>
 </head>
@@ -92,13 +114,22 @@
 <body>
 
     <!-- ================= HEADER ================= -->
-    <div class="pdf-header">
-        <h2>Fiesta Hostel</h2>
-        <p><strong>Meal Bill Statement</strong></p>
-        <p>Issue Date: @issueDate</p>
+    <div class="header">
+        <h1>Fiesta Hostel</h1>
+        <p><strong>Meal Bill Report</strong></p>
+
+        <div class="meta">
+            <div>
+                <strong>Date:</strong> @reportDate.ToString("dd MMM yyyy") <br />
+                <strong>Day:</strong> @reportDay
+            </div>
+            <div>
+                <strong>Issued Time:</strong> @reportTime
+            </div>
+        </div>
     </div>
 
-    <!-- ================= DATA TABLE ================= -->
+    <!-- ================= TABLE ================= -->
     <table>
         <thead>
             <tr>
@@ -111,38 +142,66 @@
                 <th>Meal Rate</th>
                 <th>Meal Amount</th>
                 <th>House Bill</th>
-                <th>Utility Bill</th>
+                <th>Electric Bill</th>
+                <th>Gas Bill</th>
+                <th>Servant Bill</th>
                 <th>Other Bill</th>
+                <th>Total Paid</th>
                 <th>Total Payable</th>
+                <th>Due Amount</th>
+                <th>Status</th>
             </tr>
         </thead>
+
         <tbody>
             @foreach (var bill in Model)
             {
                 <tr>
-                    <td class="text-bold">@bill.Member.Name</td>
-                    <td>@bill.Member.MemberCode</td>
-                    <td class="amount">@bill.TotalBazar</td>
+                    <td>@bill.Member?.Name</td>
+                    <td>@bill.Member?.MemberCode</td>
+                    <td>@bill.TotalBazar.ToString("0.00")</td>
                     <td>@bill.TotalMemberMeal</td>
                     <td>@bill.TotalGuestMeal</td>
                     <td>@bill.TotalMeal</td>
-                    <td class="amount">@bill.MealRate</td>
-                    <td class="amount text-bold">@bill.MealAmount</td>
-                    <td class="amount">@bill.HouseBill</td>
-                    <td class="amount">@bill.UtilityBill</td>
-                    <td class="amount">@bill.OtherBill</td>
-                    <td class="amount text-bold">@bill.TotalPayable</td>
+                    <td>@bill.MealRate.ToString("0.00")</td>
+                    <td><strong>@bill.MealAmount.ToString("0.00")</strong></td>
+                    <td>@bill.HouseBill.ToString("0.00")</td>
+
+                    <!-- Electric Bill -->
+                    <td>
+                        Total: @totalCurrentBill.ToString("0.00") <br />
+                        Per Head:
+                        @(totalMember > 0 ? (totalCurrentBill / totalMember).ToString("0.00") : "0.00")
+                    </td>
+
+                    <!-- Gas Bill -->
+                    <td>
+                        Total: @totalGasBill.ToString("0.00") <br />
+                        Per Head:
+                        @(totalMember > 0 ? (totalGasBill / totalMember).ToString("0.00") : "0.00")
+                    </td>
+
+                    <td>@bill.ServantBill.ToString("0.00")</td>
+                    <td>@bill.OtherBill.ToString("0.00")</td>
+                    <td>@bill.TotalPaidAmount.ToString("0.00")</td>
+                    <td><strong>@bill.TotalPayable.ToString("0.00")</strong></td>
+                    <td>@bill.NetPayable.ToString("0.00")</td>
+                    <td>@bill.PaidStatus</td>
                 </tr>
             }
         </tbody>
     </table>
 
     <!-- ================= FOOTER ================= -->
-    <div class="pdf-footer">
-        
+    <div class="footer">
+        <div class="note">
+            This document is system generated and valid without seal.
+        </div>
 
         <div class="signature">
-            Authorized Signature
+            <div class="signature-line">
+                Authorized Signature
+            </div>
         </div>
     </div>
 

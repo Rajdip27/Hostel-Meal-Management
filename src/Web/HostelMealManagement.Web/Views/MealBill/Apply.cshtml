@@ -13,6 +13,8 @@
     decimal totalServantBill = 0;
     decimal totalOtherBill = 0;
     decimal grandTotalPayable = 0;
+
+    int totalMember = Model.Count();
 }
 
 <!DOCTYPE html>
@@ -53,6 +55,7 @@
             font-size: 14px;
             text-align: center;
             color: #2b3340;
+            white-space: nowrap;
         }
 
         .table tbody tr:hover {
@@ -64,120 +67,116 @@
             background: #f8f9fc;
             border-top: 2px solid #cfd6e0;
         }
-
-        .text-right {
-            text-align: right;
-        }
     </style>
 </head>
 
 <body>
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped">
-            <thead class="custom-header">
-                <tr>
-                    <th>Member Name</th>
-                    <th>Card No</th>
-                    <th>Total Bazar</th>
-                    <th>Member Meal</th>
-                    <th>Guest Meal</th>
-                    <th>Total Meal</th>
-                    <th>Meal Rate</th>
-                    <th>Meal Amount</th>
-                    <th>House Bill</th>
-                    <th>Total Current Bill</th>
-                    <th>Current Bill</th>
-                    <th>Gas Bill</th>
-                    <th>Servant Bill</th>
-                    <th>Other Bill</th>
-                    <th>Total Paid Amount</th>
-                    <th>Total Payable</th>
-                    <th>Total Deu Amount</th>
-                    <th>Status</th>
-                    @if (User.IsInRole("Member"))
-                    {
-                        <th>Action</th>
-                    }
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="custom-header">
+        <tr>
+            <th>Member Name</th>
+            <th>Card No</th>
+            <th>Total Bazar</th>
+            <th>Member Meal</th>
+            <th>Guest Meal</th>
+            <th>Total Meal</th>
+            <th>Meal Rate</th>
+            <th>Meal Amount</th>
+            <th>House Bill</th>
+            <th>Electric Bill</th>
+            <th>Gas Bill</th>
+            <th>Servant Bill</th>
+            <th>Other Bill</th>
+            <th>Total Paid Amount</th>
+            <th>Total Payable</th>
+            <th>Total Due Amount</th>
+            <th>Status</th>
+            @if (User.IsInRole("Member"))
+            {
+                <th>Action</th>
+            }
+        </tr>
+        </thead>
 
-                </tr>
-            </thead>
+        <tbody>
+        @foreach (var bill in Model)
+        {
+            totalBazar += bill.TotalBazar;
+            totalMealAmount += bill.MealAmount;
+            totalHouseBill += bill.HouseBill;
+            totalCurrentBill += bill.CurrentBill;
+            totalGasBill += bill.GasBill;
+            totalServantBill += bill.ServantBill;
+            totalOtherBill += bill.OtherBill;
+            grandTotalPayable += bill.TotalPayable;
 
-            <tbody>
-                @foreach (var bill in Model)
+            <tr>
+                <td><strong>@bill.Member?.Name</strong></td>
+                <td>@bill.Member?.MemberCode</td>
+                <td>@bill.TotalBazar.ToString("0.00")</td>
+                <td>@bill.TotalMemberMeal</td>
+                <td>@bill.TotalGuestMeal</td>
+                <td>@bill.TotalMeal</td>
+                <td>@bill.MealRate.ToString("0.00")</td>
+                <td><strong>@bill.MealAmount.ToString("0.00")</strong></td>
+                <td>@bill.HouseBill.ToString("0.00")</td>
+
+                <!-- ELECTRIC BILL : SINGLE ROW -->
+                <td>
+                    <strong>Total:</strong> @totalCurrentBill.ToString("0.00")
+                    |
+                    <strong>Member:</strong> @totalMember
+                    |
+                    <strong>Per Head:</strong>
+                    @(totalMember > 0
+                        ? (totalCurrentBill / totalMember).ToString("0.00")
+                        : "0.00")
+                </td>
+
+                <!-- GAS BILL : SINGLE ROW -->
+                <td>
+                    <strong>Total:</strong> @totalGasBill.ToString("0.00")
+                    |
+                    <strong>Member:</strong> @totalMember
+                    |
+                    <strong>Per Head:</strong>
+                    @(totalMember > 0
+                        ? (totalGasBill / totalMember).ToString("0.00")
+                        : "0.00")
+                </td>
+
+                <td>@bill.ServantBill.ToString("0.00")</td>
+                <td>@bill.OtherBill.ToString("0.00")</td>
+                <td>@bill.TotalPaidAmount.ToString("0.00")</td>
+                <td class="text-primary fw-bold">
+                    @bill.TotalPayable.ToString("0.00")
+                </td>
+                <td>@bill.NetPayable.ToString("0.00")</td>
+                <td>@bill.PaidStatus</td>
+
+                @if (User.IsInRole("Member"))
                 {
-                    totalBazar += bill.TotalBazar;
-                    totalMealAmount += bill.MealAmount;
-                    totalHouseBill += bill.HouseBill;
-                    totalCurrentBill += bill.CurrentBill;
-                    totalGasBill += bill.GasBill;
-                    totalServantBill += bill.ServantBill;
-                    totalOtherBill += bill.OtherBill;
-                    grandTotalPayable += bill.TotalPayable;
-
-                    <tr>
-                        <td><strong>@bill.Member?.Name</strong></td>
-                        <td>@bill.Member?.MemberCode</td>
-                        <td>@bill.TotalBazar.ToString("0.00")</td>
-                        <td>@bill.TotalMemberMeal</td>
-                        <td>@bill.TotalGuestMeal</td>
-                        <td>@bill.TotalMeal</td>
-                        <td>@bill.MealRate.ToString("0.00")</td>
-                        <td><strong>@bill.MealAmount.ToString("0.00")</strong></td>
-                        <td>@bill.HouseBill.ToString("0.00")</td>
-                        <td>@totalCurrentBill.ToString("0.00")</td>
-                        <td>@bill.CurrentBill.ToString("0.00")</td>
-                        <td>@bill.GasBill.ToString("0.00")</td>
-                        <td>@bill.ServantBill.ToString("0.00")</td>
-                        <td>@bill.OtherBill.ToString("0.00")</td>
-                        <td>@bill.TotalPaidAmount.ToString("0.00")</td>
-                        <td class="text-primary fw-bold">
-                            @bill.TotalPayable.ToString("0.00")
-                        </td>
-                        <td>@bill.NetPayable.ToString("0.00")</td>
-                        <td>@bill.PaidStatus</td>
-
-                        <!-- ONLY ADDED PART -->
-                        <td>
-                            @if (User.IsInRole("Member"))
-                            {
-                                @if (bill.NetPayable != 0)
-                                {
-                                    <a asp-controller="Payment"
-                                       asp-action="Pay"
-                                       asp-route-BillId="@bill.Id"
-                                       asp-route-CycleId="@bill.MealCycleId"
-                                       class="btn btn-sm btn-success">
-                                        Pay
-                                    </a>
-                                }
-
-                            }
-
-                        </td>
-                        <!-- END -->
-                    </tr>
+                    <td>
+                        @if (bill.NetPayable != 0)
+                        {
+                            <a asp-controller="Payment"
+                               asp-action="Pay"
+                               asp-route-BillId="@bill.Id"
+                               asp-route-CycleId="@bill.MealCycleId"
+                               class="btn btn-sm btn-success">
+                                Pay
+                            </a>
+                        }
+                    </td>
                 }
-            </tbody>
-            @* <tfoot>
-    <tr>
-        <td colspan="2">TOTAL</td>
-        <td>@totalBazar.ToString("0.00")</td>
-        <td colspan="3"></td>
-        <td></td>
-        <td>@totalMealAmount.ToString("0.00")</td>
-        <td>@totalHouseBill.ToString("0.00")</td>
-        <td>@totalCurrentBill.ToString("0.00")</td>
-        <td>@totalGasBill.ToString("0.00")</td>
-        <td>@totalServantBill.ToString("0.00")</td>
-        <td>@totalOtherBill.ToString("0.00")</td>
-        <td class="text-primary">
-            @grandTotalPayable.ToString("0.00")
-        </td>
-    </tr>
-</tfoot> *@
-        </table>
-    </div>
+            </tr>
+        }
+        </tbody>
+
+    </table>
+</div>
 
 </body>
 </html>

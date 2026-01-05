@@ -134,6 +134,15 @@
                     <i class="bi bi-arrow-repeat"></i> Process
                 </button>
                 }
+            @if (User.IsInRole("Administrator"))
+            {
+                <button type="submit"
+                        formaction="@Url.Action("Process", "MealBill")"
+                        class="btn btn-process">
+                    <i class="bi bi-arrow-repeat"></i> Process
+                </button>
+            }
+
                 
 
             <button type="button"
