@@ -5,9 +5,11 @@ using HostelMealManagement.Application.Repositories.SSLCommerz;
 using HostelMealManagement.Application.ViewModel.SSLCommerz;
 using HostelMealManagement.Core.Entities;
 using HostelMealManagement.Infrastructure.Helper.Acls;
+using HostelMealManagement.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
 using System.Text.Json;
+using static HostelMealManagement.Core.Entities.Auth.IdentityModel;
 
 namespace HostelMealManagement.Web.Controllers;
 
@@ -18,16 +20,24 @@ public class PaymentController : Controller
     private readonly ISignInHelper _signInHelper;
     private readonly IMealBillRepository _mealBillRepository;
 
+    // ✅ ADDED (EMAIL SUPPORT)
+    private readonly IEmailService _emailService;
+    private readonly UserManager<User> _userManager;
+
     public PaymentController(
         ISSLCommerzService ssl,
         IPaymentTransactionRepository paymentTransactionRepository,
         ISignInHelper signInHelper,
-        IMealBillRepository mealBillRepository)
+        IMealBillRepository mealBillRepository,
+        IEmailService emailService,            // ✅ ADD
+        UserManager<User> userManager)         // ✅ ADD
     {
         _ssl = ssl;
         _paymentTransactionRepository = paymentTransactionRepository;
         _signInHelper = signInHelper;
         _mealBillRepository = mealBillRepository;
+        _emailService = emailService;          // ✅ ADD
+        _userManager = userManager;            // ✅ ADD
     }
 
     // ===========================
@@ -50,6 +60,7 @@ public class PaymentController : Controller
             TempData["Error"] = "Payment info not found or already paid.";
             return RedirectToAction("Index", "MealBill");
         }
+
         var payload = new PaymentPayload
         {
             BillId = billId,
@@ -59,7 +70,6 @@ public class PaymentController : Controller
         };
 
         var token = PaymentTokenHelper.Generate(payload);
-
         var host = $"{Request.Scheme}://{Request.Host}";
 
         var request = new SSLPaymentRequest(
@@ -72,8 +82,6 @@ public class PaymentController : Controller
             CustomerEmail: paymentVM.CustomerEmail,
             CustomerPhone: paymentVM.CustomerPhone,
             ProductName: paymentVM.ProductName,
-
-            // ✅ REQUIRED FOR CALLBACK
             value_a: billId.ToString(),
             value_b: cycleId.ToString()
         );
@@ -106,7 +114,6 @@ public class PaymentController : Controller
             if (paymentResult.Status != "Success")
                 return RedirectToAction(nameof(Fail));
 
-          
             // 🔹 Save Transaction
             var transaction = new PaymentTransaction
             {
@@ -125,8 +132,7 @@ public class PaymentController : Controller
             //await _paymentTransactionRepository.InsertAsync(transaction);
 
             // 🔹 Update Bill
-            var bill = await _mealBillRepository.FindAsync(x =>
-                x.Id == billId );
+            var bill = await _mealBillRepository.FindAsync(x => x.Id == billId);
 
             if (bill != null)
             {
@@ -140,6 +146,28 @@ public class PaymentController : Controller
 
                 await _mealBillRepository.UpdateAsync(bill);
             }
+
+            // ================= EMAIL AFTER PAYMENT SUCCESS =================
+            var user = await _userManager.FindByIdAsync(memberId.ToString());
+
+            if (user != null && !string.IsNullOrWhiteSpace(user.Email))
+            {
+                var subject = "Payment Successful – Hostel Meal Management";
+
+                var body = $@"
+                    <h3>Hello {paymentResult.CustomerName}</h3>
+                    <p>Your payment has been completed successfully.</p>
+                    <p><b>Transaction ID:</b> {transaction.TransactionId}</p>
+                    <p><b>Amount Paid:</b> {transaction.Amount} BDT</p>
+                    <p><b>Date:</b> {DateTime.Now:dd MMM yyyy hh:mm tt}</p>
+                    <br/>
+                    <p>Thank you for your payment.</p>
+                    <p>Hostel Meal Management System</p>
+                ";
+
+                await _emailService.SendAsync(user.Email, subject, body);
+            }
+            // ===============================================================
 
             return View(new PaymentSuccessViewModel
             {
@@ -164,7 +192,7 @@ public class PaymentController : Controller
     public IActionResult Cancel() => View();
 
     // ===========================
-    // JSON PARSER (FIXED)
+    // JSON PARSER
     // ===========================
     private PaymentResult ParsePaymentResult(string json)
     {
@@ -172,7 +200,6 @@ public class PaymentController : Controller
 
         if (data == null)
             return new PaymentResult { Status = "Failed" };
-        
 
         return new PaymentResult
         {
@@ -180,14 +207,8 @@ public class PaymentController : Controller
             Amount = Convert.ToDecimal(data.amount),
             Status = data.status == "VALID" ? "Success" : "Failed",
             CustomerName = data.cus_name,
-
-            MealBillId = long.TryParse(data.value_a, out var billId)
-                ? billId
-                : 0,
-
-            MealCycleId = long.TryParse(data.value_b, out var cycleId)
-                ? cycleId
-                : 0
+            MealBillId = long.TryParse(data.value_a, out var billId) ? billId : 0,
+            MealCycleId = long.TryParse(data.value_b, out var cycleId) ? cycleId : 0
         };
     }
 }

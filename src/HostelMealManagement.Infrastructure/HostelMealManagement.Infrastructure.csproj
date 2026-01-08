@@ -6,6 +6,7 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="MailKit" Version="4.14.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Authorization" Version="9.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />

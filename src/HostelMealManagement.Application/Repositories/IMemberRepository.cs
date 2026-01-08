@@ -14,7 +14,7 @@ using static HostelMealManagement.Core.Entities.Auth.IdentityModel;
 public interface IMemberRepository : IBaseService<Member>
 {
     Task<bool> CreateOrUpdateMemberWithUserAsync(MemberVm vm,CancellationToken cancellationToken);
-    Task<User?> GetUserByMemberIdAsync(long memberId, CancellationToken cancellationToken = default);
+    Task<User> GetUserByMemberIdAsync(long memberId, CancellationToken cancellationToken = default);
     List<SelectListItem> GetMemberList();
 }
 

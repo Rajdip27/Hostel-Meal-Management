@@ -4,46 +4,150 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow border-success">
-                <div class="card-header bg-success text-white text-center">
-                    <h4>✅ Payment Successful</h4>
+<style>
+    .success-wrapper {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .success-card {
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        animation: fadeInUp 0.6s ease-in-out;
+    }
+
+    .success-header {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: #fff;
+        text-align: center;
+        padding: 30px 20px;
+    }
+
+    .success-icon {
+        font-size: 64px;
+        margin-bottom: 10px;
+        animation: popIn 0.6s ease;
+    }
+
+    .success-body {
+        padding: 30px;
+        background-color: #ffffff;
+    }
+
+    .success-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #198754;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .table-success-custom th {
+        width: 40%;
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .table-success-custom td {
+        color: #212529;
+    }
+
+    .badge-success-custom {
+        background-color: #28a745;
+        font-size: 0.9rem;
+        padding: 6px 12px;
+        border-radius: 12px;
+    }
+
+    .btn-home {
+        padding: 10px 28px;
+        font-size: 1rem;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+ fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+ popIn {
+        0% {
+            transform: scale(0.7);
+            opacity: 0;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+</style>
+
+<div class="container success-wrapper">
+    <div class="col-lg-6 col-md-8 col-sm-12">
+        <div class="card success-card">
+            <div class="success-header">
+                <div class="success-icon">✅</div>
+                <h3 class="mb-0">Payment Successful</h3>
+            </div>
+
+            <div class="success-body">
+                <div class="success-title">
+                    Thank you, @Model.CustomerName!
                 </div>
-                <div class="card-body">
-                    <p class="text-center text-success fw-bold">
-                        Thank you, @Model.CustomerName!
-                    </p>
 
-                    <table class="table table-bordered">
-                        <tr>
-                            <th>Transaction ID</th>
-                            <td>@Model.TransactionId</td>
-                        </tr>
-                        <tr>
-                            <th>Amount</th>
-                            <td>৳ @Model.Amount</td>
-                        </tr>
-                        <tr>
-                            <th>Status</th>
-                            <td>
-                                <span class="badge bg-success">@Model.Status</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Payment Date</th>
-                            <td>@Model.PaymentDate.ToString("dd MMM yyyy hh:mm tt")</td>
-                        </tr>
-                        <tr>
-                            <th>Message</th>
-                            <td>@Model.Message</td>
-                        </tr>
-                    </table>
+                <table class="table table-bordered table-success-custom mb-4">
+                    <tr>
+                        <th>Transaction ID</th>
+                        <td>@Model.TransactionId</td>
+                    </tr>
+                    <tr>
+                        <th>Amount Paid</th>
+                        <td>৳ @Model.Amount</td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td>
+                            <span class="badge badge-success-custom">
+                                @Model.Status
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Payment Date</th>
+                        <td>@Model.PaymentDate.ToString("dd MMM yyyy hh:mm tt")</td>
+                    </tr>
+                    <tr>
+                        <th>Message</th>
+                        <td>@Model.Message</td>
+                    </tr>
+                </table>
 
-                    <div class="text-center mt-3">
-                        <a href="/" class="btn btn-primary">🏠 Go Home</a>
-                    </div>
+ <div class="text-center mt-4">
+    <a asp-controller="Dashboard"
+       asp-action="Index"
+       class="btn btn-success btn-home">
+        🏠 Go to Dashboard
+    </a>
+</div>
+
                 </div>
             </div>
         </div>
