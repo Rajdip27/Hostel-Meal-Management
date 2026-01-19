@@ -85,25 +85,28 @@ public class MemberRepository : BaseService<Member>, IMemberRepository
             }
             else
             {
-                member = await _context.Set<Member>().FirstOrDefaultAsync(m => m.Id == vm.Id, cancellationToken);
-                if (member == null) return false;
+                var data = await FindAsync(vm.Id);
+                if (data == null) return false;
+                var stringimag = data.Picture;
 
-                _mapper.Map(vm, member);
+                _mapper.Map(vm, data);
+
+                data.Picture= stringimag; 
 
                 if (vm.ImageFile != null)
                 {
-                    if (!string.IsNullOrEmpty(member.Picture))
-                        _fileService.DeleteFile(member.Picture, CommonVariables.ProfileLocation);
-                    member.Picture = await _fileService.Upload(vm.ImageFile, CommonVariables.ProfileLocation);
+                    if (!string.IsNullOrEmpty(data.Picture))
+                        _fileService.DeleteFile(data.Picture, CommonVariables.ProfileLocation);
+                    data.Picture = await _fileService.Upload(vm.ImageFile, CommonVariables.ProfileLocation);
                 }
 
-                member.ModifiedBy = _signInHelper.UserId;
-                member.ModifiedDate = DateTimeOffset.UtcNow;
-                _context.Set<Member>().Update(member);
+                data.ModifiedBy = _signInHelper.UserId;
+                data.ModifiedDate = DateTimeOffset.UtcNow;
+                _context.Set<Member>().Update(data);
 
                 if (!string.IsNullOrWhiteSpace(vm.Password))
                 {
-                    var user = await _context.Set<User>().FirstOrDefaultAsync(u => u.MemberId == member.Id, cancellationToken);
+                    var user = await _context.Set<User>().FirstOrDefaultAsync(u => u.MemberId == data.Id, cancellationToken);
                     if (user != null)
                     {
                         var token = await _userManager.GeneratePasswordResetTokenAsync(user);

@@ -111,6 +111,6 @@ public class MemberVm:BaseEntity
     [NotMapped]
     public IFormFile? ImageFile { get; set; }
     [NotMapped]
-    public string? Password { get; set; } = string.Empty;    
+    public string Password { get; set; } = string.Empty;    
 
 }

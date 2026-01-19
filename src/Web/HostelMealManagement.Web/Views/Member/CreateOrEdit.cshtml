@@ -158,8 +158,13 @@
                         <input asp-for="MemberCode" class="form-control" />
                         <span asp-validation-for="MemberCode" class="text-danger"></span>
                     </div>
-                }
+                    }
+                    else
+                    {
+                    <input asp-for="MemberCode" type="hidden" class="form-control" />
+                    }
 
+               
                 <div class="col-md-6 mb-3">
                     <label asp-for="Name" class="form-label"></label>
                     <input asp-for="Name" class="form-control" />
@@ -283,6 +288,9 @@
                     <input asp-for="MealStatus" type="checkbox" class="form-check-input" />
                 </div>
 
+               
+                @* <input asp-for="HouseBill" class="form-control" />
+				<input asp-for="OtherBill" class="form-control" /> *@
                 @if (!isMember)
                 {
                     <div class="col-md-6 mb-3">
@@ -305,6 +313,10 @@
                         <input asp-for="OtherBill" class="form-control" />
                     </div>
                 }
+                    else
+                    {
+                    <input asp-for="NID" type="hidden" class="form-control" />
+                    }
 
             </div>
 
