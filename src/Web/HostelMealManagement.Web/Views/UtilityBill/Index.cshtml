@@ -1,6 +1,8 @@
-﻿@using HostelMealManagement.Application.ViewModel
+﻿@using HostelMealManagement.Application.Services
+@using HostelMealManagement.Application.ViewModel
 @using HostelMealManagement.Infrastructure.Helper.Acls
 @inject ISignInHelper SignInHelper
+@inject IRolePermissionService Permission
 
 @model IEnumerable<UtilityBillVm>
 
@@ -130,21 +132,27 @@ else
                             @if (!isMember)
                             {
                                 <td>
-                                    <a class="btn btn-sm btn-info"
-                                       asp-action="CreateOrEdit"
-                                       asp-route-id="@bill.Id">
-                                        Edit
-                                    </a>
-
-                                    <form asp-action="Delete"
-                                          asp-route-id="@bill.Id"
-                                          method="post"
-                                          style="display:inline"
-                                          onsubmit="return confirm('Are you sure you want to delete this utility bill?');">
-                                        <button class="btn btn-sm btn-danger">
-                                            Delete
-                                        </button>
-                                    </form>
+                                    @if(Permission.CanEdit(roles))
+                                    {
+                                        <a class="btn btn-sm btn-info"
+                                           asp-action="CreateOrEdit"
+                                           asp-route-id="@bill.Id">
+                                            Edit
+                                        </a>
+									}
+                                   
+                                    @if (Permission.CanDelete(roles))
+                                    {
+                                        <form asp-action="Delete"
+                                        asp-route-id="@bill.Id"
+                                        method="post"
+                                        style="display:inline"
+                                        onsubmit="return confirm('Are you sure you want to delete this utility bill?');">
+                                            <button class="btn btn-sm btn-danger">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    }
                                 </td>
                             }
                         </tr>

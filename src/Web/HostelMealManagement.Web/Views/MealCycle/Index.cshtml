@@ -1,11 +1,17 @@
-﻿@using HostelMealManagement.Application.ViewModel
+﻿@using HostelMealManagement.Application.Services
+@using HostelMealManagement.Application.ViewModel
+@using HostelMealManagement.Infrastructure.Helper.Acls
 @inject HostelMealManagement.Infrastructure.Helper.Acls.ISignInHelper SignInHelper
 @model IEnumerable<MealCycleVm>
+
+@inject IRolePermissionService Permission
+@inject ISignInHelper SignInHelper
 
 @{
     ViewData["Title"] = "Meal Cycle List";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     bool isMember = SignInHelper.Roles.Contains("Member");
+    var role = SignInHelper.Roles;
     int sl = 1;
 }
 
@@ -143,16 +149,25 @@
                 <td>@member.EndDate</td>
                 <td>@member.TotalDays</td>
                 <td>
-                    <a class="btn btn-sm btn-info"
-                       asp-action="createoredit"
-                       asp-route-id="@member.Id">
-                        Edit
-                    </a>
-                    <a class="btn btn-sm btn-danger"
-                       asp-action="Delete"
-                       asp-route-id="@member.Id">
-                        Delete
-                    </a>
+                    @if (Permission.CanEdit(role))
+                    {
+                        <a class="btn btn-sm btn-info"
+                           asp-action="createoredit"
+                           asp-route-id="@member.Id">
+                            Edit
+                        </a>
+                    }
+                    @if (Permission.CanDelete(role))
+                    {
+                        <form asp-action="Delete"
+                              asp-route-id="@member.Id"
+                              method="post"
+                              onsubmit="return confirm('Are you sure?');">
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                Delete
+                            </button>
+                        </form>
+                    }
                 </td>
             </tr>
             sl++;

@@ -160,12 +160,16 @@
                 </td>
 
                 <td>
+
                     <div style="display:flex; align-items:center; gap:6px;">
-                        <a class="btn btn-sm btn-info"
+    @if (Permission.CanEdit(role))
+    {
+                                        <a class="btn btn-sm btn-info"
                            asp-action="CreateOrEdit"
                            asp-route-id="@bazar.Id">
                             Edit
                         </a>
+    }
 
                         @if (Permission.CanDelete(role))
                         {
