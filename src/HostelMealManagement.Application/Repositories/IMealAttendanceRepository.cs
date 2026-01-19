@@ -12,7 +12,7 @@ public interface IMealAttendanceRepository : IBaseService<MealAttendance>
 {
     Task<bool> UpsertAsync(MealAttendanceVm vm);
     Task<MealAttendanceVm> GetByIdAsync(long id);
-    Task<List<MealAttendanceVm>> GetAllAsync();
+    Task<List<MealAttendanceVm>> GetAllAsync(long userId);
     Task<bool> DeleteAsync(long id);
     Task<int> GetTodayTotalMealAsync();
     Task<List<MealTrendDto>> GetMealTrendAsync(string type, long userId);
@@ -143,10 +143,28 @@ public class MealAttendanceRepository(ApplicationDbContext context)
             return false;
         }
     }
-    public async Task<List<MealAttendanceVm>> GetAllAsync()
+    public async Task<List<MealAttendanceVm>> GetAllAsync(long userId)
     {
-        return await context.Set<MealAttendance>()
-            .Include(a => a.Member)
+        var query = _context.Set<MealAttendance>()
+            .Include(a => a.Member) // Include here, so it's used in projection
+            .AsQueryable();
+
+        // Filter by user → member
+        if (userId > 0)
+        {
+            var memberId = await _context.Set<User>()
+                .Where(u => u.Id == userId)
+                .Select(u => u.MemberId)
+                .FirstOrDefaultAsync();
+
+            if (memberId != null)
+            {
+                query = query.Where(a => a.MemberId == memberId);
+            }
+        }
+
+        // Projection
+        return await query
             .OrderByDescending(a => a.MealDate)
             .Select(a => new MealAttendanceVm
             {

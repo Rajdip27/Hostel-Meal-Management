@@ -34,20 +34,17 @@ public class MealAttendanceController(
     {
         try
         {
-#if DEBUG
-            _logger.LogInfo("Start Watch");
-            var stopwatch = Stopwatch.StartNew();
-#endif
+            bool isMember = signInHelper?.Roles?.Any(r => r?.Trim().Equals("Member", StringComparison.OrdinalIgnoreCase) == true) == true;
 
-            var attendances = await _attendanceRepository.GetAllAsync();
-
-#if DEBUG
-            _logger.LogInfo($"GetAllAsync took {stopwatch.ElapsedMilliseconds}ms");
-#endif
-
-            _logger.LogInfo("Fetched MealAttendances");
-
-            return View(_mapper.Map<List<MealAttendanceVm>>(attendances));
+            if (isMember) {
+                var attendances = await _attendanceRepository.GetAllAsync(signInHelper.UserId??0);
+                return View(attendances);
+            }
+            else
+            {
+                var attendances = await _attendanceRepository.GetAllAsync();
+                return View(_mapper.Map<List<MealAttendanceVm>>(attendances));
+            }
         }
         catch (Exception ex)
         {
