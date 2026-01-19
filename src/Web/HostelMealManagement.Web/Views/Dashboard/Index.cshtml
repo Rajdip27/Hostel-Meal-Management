@@ -2,15 +2,16 @@
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewData["Title"] = "Dashboard";
+    var role = SignInHelper.Roles.FirstOrDefault();
 }
 
 <div class="dashboard-container">
     <div class="dashboard-header mb-4">
-        <h2 class="mb-2">Admin Dashboard</h2>
-        <p class="text-muted">Welcome back, Administrator! Here's what's happening today.</p>
+        <h2 class="mb-2">@role Dashboard</h2>
+        <p class="text-muted">Welcome back, @role! Here's what's happening today.</p>
     </div>
     <div class="row g-3 mb-4">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="stat-card card-1">
                 <div class="stat-icon">
                     <i class="fas fa-users"></i>
@@ -21,7 +22,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="stat-card card-2">
                 <div class="stat-icon">
                     <i class="fas fa-utensils"></i>
@@ -29,22 +30,6 @@
                 <div class="stat-content">
                     <h6>Today's Meals</h6>
                     <h2>@ViewBag.TodayTotalMeal</h2>
-                </div>
-            </div>
-        </div>
-
-        <!-- CARD 3 -->
-        <div class="col-md-4">
-            <div class="stat-card card-3">
-                <div class="stat-icon">
-                    <i class="fas fa-money-bill-wave"></i>
-                </div>
-                <div class="stat-content">
-                    <h6>Pending Payments</h6>
-                    <h2>৳45,670</h2>
-                    <small class="text-danger">
-                        <i class="fas fa-arrow-down"></i> 5% from last week
-                    </small>
                 </div>
             </div>
         </div>
