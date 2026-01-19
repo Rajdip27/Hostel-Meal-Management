@@ -9,7 +9,10 @@ namespace HostelMealManagement.Application.Repositories;
 public interface IMealBillRepository: IBaseService<MealBill>
 {
     Task<bool> GenerateMealBillAsync(long mealCycleId, long createdBy);
-    Task<List<MealBill>> GetMealBillsWithMemberAsync(long mealCycleId, long? memberId);
+    Task<List<MealBill>> GetMealBillsWithMemberAsync(
+     long mealCycleId,
+     long memberId,
+     string memberCode);
 }
 
 public class MealBillRepository : BaseService<MealBill>, IMealBillRepository
@@ -326,26 +329,26 @@ DROP TABLE #Members;
         }
     }
 
-    public async Task<List<MealBill>> GetMealBillsWithMemberAsync(long mealCycleId, long? memberId)
+    public async Task<List<MealBill>> GetMealBillsWithMemberAsync(
+     long mealCycleId,
+     long memberId,
+     string memberCode)
     {
-        try
+        var query = _context.Set<MealBill>()
+            .Include(mb => mb.Member)
+            .Include(mb => mb.MealCycle)
+            .Where(mb => mb.MealCycleId == mealCycleId && !mb.IsDelete);
+     
+        if (memberId>0)
         {
-            var data= await _context.Set<MealBill>()
-        .Include(mb => mb.Member)
-        .Include(mb => mb.MealCycle)
-        .Where(mb =>
-            mb.MealCycleId == mealCycleId &&
-            !mb.IsDelete &&
-            (memberId == 0 || mb.MemberId == memberId))
-        .ToListAsync();
-            return data;
+            query = query.Where(mb => mb.MemberId == memberId);
         }
-        catch (Exception ex)
+        if (!string.IsNullOrWhiteSpace(memberCode))
         {
-
-            throw;
+            query = query.Where(mb => mb.Member.MemberCode == memberCode);
         }
-        
+        return await query.ToListAsync();
     }
+
 
 }

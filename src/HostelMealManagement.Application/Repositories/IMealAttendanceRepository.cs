@@ -4,6 +4,7 @@ using HostelMealManagement.Core.Entities;
 using HostelMealManagement.Infrastructure.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using static HostelMealManagement.Core.Entities.Auth.IdentityModel;
 
 namespace HostelMealManagement.Application.Repositories;
 
@@ -14,15 +15,13 @@ public interface IMealAttendanceRepository : IBaseService<MealAttendance>
     Task<List<MealAttendanceVm>> GetAllAsync();
     Task<bool> DeleteAsync(long id);
     Task<int> GetTodayTotalMealAsync();
-    Task<List<MealTrendDto>> GetMealTrendAsync(string type);
+    Task<List<MealTrendDto>> GetMealTrendAsync(string type, long userId);
 }
 
 public class MealAttendanceRepository(ApplicationDbContext context)
     : BaseService<MealAttendance>(context), IMealAttendanceRepository
 {
-    // ----------------------------------------------------------------------
-    // UPSERT
-    // ----------------------------------------------------------------------
+ 
     public async Task<bool> UpsertAsync(MealAttendanceVm vm)
     {
         using var trx = await context.Database.BeginTransactionAsync();
@@ -31,7 +30,6 @@ public class MealAttendanceRepository(ApplicationDbContext context)
         {
             MealAttendance entity;
 
-            // ========== CREATE ==========
             if (vm.Id == 0)
             {
                 entity = new MealAttendance
@@ -58,7 +56,7 @@ public class MealAttendanceRepository(ApplicationDbContext context)
                 return true;
             }
 
-            // ========== UPDATE ==========
+          
             entity = await context.Set<MealAttendance>()
                 .FirstOrDefaultAsync(a => a.Id == vm.Id);
 
@@ -91,9 +89,7 @@ public class MealAttendanceRepository(ApplicationDbContext context)
         }
     }
 
-    // ----------------------------------------------------------------------
-    // GET BY ID
-    // ----------------------------------------------------------------------
+ 
     public async Task<MealAttendanceVm?> GetByIdAsync(long id)
     {
         var entity = await context.Set<MealAttendance>()
@@ -123,10 +119,6 @@ public class MealAttendanceRepository(ApplicationDbContext context)
             GuestDinnerQty = entity.GuestDinnerQty
         };
     }
-
-    // ----------------------------------------------------------------------
-    // DELETE
-    // ----------------------------------------------------------------------
     public async Task<bool> DeleteAsync(long id)
     {
         using var trx = await context.Database.BeginTransactionAsync();
@@ -151,10 +143,6 @@ public class MealAttendanceRepository(ApplicationDbContext context)
             return false;
         }
     }
-
-    // ----------------------------------------------------------------------
-    // GET ALL
-    // ----------------------------------------------------------------------
     public async Task<List<MealAttendanceVm>> GetAllAsync()
     {
         return await context.Set<MealAttendance>()
@@ -200,16 +188,26 @@ public class MealAttendanceRepository(ApplicationDbContext context)
         return totalMeal;
     }
 
-    public async Task<List<MealTrendDto>> GetMealTrendAsync(string type)
+    public async Task<List<MealTrendDto>> GetMealTrendAsync(string type, long userId)
     {
         var query = _context.Set<MealAttendance>().AsQueryable();
-
+        if (userId > 0)
+        {
+            var memberId = await _context.Set<User>()
+                .Where(u => u.Id == userId)
+                .Select(u => u.MemberId)
+                .FirstOrDefaultAsync();
+            if (memberId != null)
+            {
+                query = query.Where(x => x.MemberId == memberId);
+            }
+        }
+       
         if (type == "week")
         {
-            var start = DateTime.Now.Date.AddDays(-6);
-            var end = DateTime.Now.Date;
+            var start = DateTime.Today.AddDays(-6);
+            var end = DateTime.Today;
 
-            // Get raw data from DB
             var data = await query
                 .Where(x => x.MealDate.Date >= start && x.MealDate.Date <= end)
                 .GroupBy(x => x.MealDate.Date)
@@ -226,22 +224,19 @@ public class MealAttendanceRepository(ApplicationDbContext context)
                 })
                 .ToListAsync();
 
-            // Fill missing days with 0
             var result = new List<MealTrendDto>();
             for (var day = start; day <= end; day = day.AddDays(1))
             {
                 var dayData = data.FirstOrDefault(x => x.Date == day);
                 result.Add(new MealTrendDto
                 {
-                    Label = day.ToString("ddd", CultureInfo.InvariantCulture), // Mon, Tue...
+                    Label = day.ToString("ddd", CultureInfo.InvariantCulture),
                     TotalMeal = dayData?.TotalMeal ?? 0
                 });
             }
 
             return result;
         }
-
-        // Month
         if (type == "month")
         {
             var data = await query
@@ -266,8 +261,6 @@ public class MealAttendanceRepository(ApplicationDbContext context)
                 TotalMeal = x.TotalMeal
             }).ToList();
         }
-
-        // Year
         var yearData = await query
             .GroupBy(x => x.MealDate.Year)
             .Select(g => new
@@ -290,5 +283,4 @@ public class MealAttendanceRepository(ApplicationDbContext context)
             TotalMeal = x.TotalMeal
         }).ToList();
     }
-
 }

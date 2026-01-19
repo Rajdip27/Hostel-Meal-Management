@@ -19,6 +19,7 @@ public class MealBillController : Controller
     private readonly IRazorViewToStringRenderer _razorViewToStringRenderer;
     private readonly IPdfService _pdfService;
 
+
     public MealBillController(
         IMemberRepository memberRepository,
         IMealCycleRepository mealCycleRepository,
@@ -35,16 +36,41 @@ public class MealBillController : Controller
         SignInHelper = signInHelper;
         _razorViewToStringRenderer = razorViewToStringRenderer;
         _pdfService = pdfService;
+        
+    
     }
 
 
     [HttpGet]
     [Route("meala-bill")]
-    public IActionResult MealAttendanceProcess()
+    public async Task<IActionResult> MealAttendanceProcess()
     {
-        ViewBag.Members = _memberRepository.GetMemberList();
-        ViewBag.MealCycle = _mealCycleRepository.GetMealCycleList();
-        return View();
+        // Debug roles
+        foreach (var role in SignInHelper.Roles ?? new List<string>())
+        {
+            Console.WriteLine($"Role: '{role}'");
+        }
+
+        FilterViewModel viewModel = new FilterViewModel();
+
+        bool isMember = SignInHelper?.Roles?.Any(r => r?.Trim().Equals("Member", StringComparison.OrdinalIgnoreCase) == true) == true;
+
+        if (isMember)
+        {
+            ViewBag.Members = await _memberRepository.GetMemberList(SignInHelper.UserId ?? 0);
+            var data = await _memberRepository.GetMemberByUserIdAsync(SignInHelper.UserId ?? 0);
+            if (data != null)
+            {
+                viewModel.MemberCodeNo = data.MemberCode;
+            }
+        }
+        else
+        {
+            ViewBag.Members =  _memberRepository.GetMemberList(); // assumed async version
+        }
+        ViewBag.MealCycle = _mealCycleRepository.GetMealCycleList(); // assumed async version
+
+        return View(viewModel);
     }
 
 
@@ -91,7 +117,7 @@ public class MealBillController : Controller
             var sw = Stopwatch.StartNew();
 #endif
 
-            var bills = await _mealAttendanceRepository.GetMealBillsWithMemberAsync(model.MealCycleId, model.SelectedMember);
+            var bills = await _mealAttendanceRepository.GetMealBillsWithMemberAsync(model.MealCycleId, model.SelectedMember,model.MemberCodeNo);
 
 #if DEBUG
             _logger.LogInfo($"ElectricBill GetAllAsync took {sw.ElapsedMilliseconds}ms");
@@ -116,11 +142,30 @@ public class MealBillController : Controller
     }
     [HttpGet]
     [Route("meal-bill-report")]
-    public IActionResult MealBillReport()
+    public async Task<IActionResult> MealBillReportAsync()
     {
-        ViewBag.Members = _memberRepository.GetMemberList();
+       
+
+        FilterViewModel viewModel = new FilterViewModel();
+
+        bool isMember = SignInHelper?.Roles?.Any(r => r?.Trim().Equals("Member", StringComparison.OrdinalIgnoreCase) == true) == true;
+
+        if (isMember)
+        {
+            ViewBag.Members = await _memberRepository.GetMemberList(SignInHelper.UserId ?? 0);
+            var data = await _memberRepository.GetMemberByUserIdAsync(SignInHelper.UserId ?? 0);
+            if (data != null)
+            {
+                viewModel.MemberCodeNo = data.MemberCode;
+            }
+        }
+        else
+        {
+            ViewBag.Members = _memberRepository.GetMemberList(); // assumed async version
+        }
+ 
         ViewBag.MealCycle = _mealCycleRepository.GetMealCycleList();
-        return View();
+        return View(viewModel);
     }
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -132,7 +177,7 @@ public class MealBillController : Controller
             var sw = Stopwatch.StartNew();
 #endif
 
-            var bills = await _mealAttendanceRepository.GetMealBillsWithMemberAsync(model.MealCycleId, model.SelectedMember);
+            var bills = await _mealAttendanceRepository.GetMealBillsWithMemberAsync(model.MealCycleId, model.SelectedMember,model.MemberCodeNo);
 
 #if DEBUG
             _logger.LogInfo($"ElectricBill GetAllAsync took {sw.ElapsedMilliseconds}ms");
@@ -154,7 +199,7 @@ public class MealBillController : Controller
         try
         {
             // Example data
-            var data = await _mealAttendanceRepository.GetMealBillsWithMemberAsync(model.MealCycleId, model.SelectedMember);
+            var data = await _mealAttendanceRepository.GetMealBillsWithMemberAsync(model.MealCycleId, model.SelectedMember, model.MemberCodeNo);
 
             // Render Razor view to string
             var htmlContent = await _razorViewToStringRenderer.RenderViewToStringAsync("PdfTemplates/MealBillReportPdf", data);
@@ -190,7 +235,7 @@ public class MealBillController : Controller
         try
         {
             // 1. Get data
-            var bills = await _mealAttendanceRepository.GetMealBillsWithMemberAsync(model.MealCycleId, model.SelectedMember);
+            var bills = await _mealAttendanceRepository.GetMealBillsWithMemberAsync(model.MealCycleId, model.SelectedMember, model.MemberCodeNo);
 
             if (bills == null || !bills.Any())
             {

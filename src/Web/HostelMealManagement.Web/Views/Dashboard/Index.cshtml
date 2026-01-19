@@ -5,17 +5,11 @@
 }
 
 <div class="dashboard-container">
-
-    <!-- Header -->
     <div class="dashboard-header mb-4">
         <h2 class="mb-2">Admin Dashboard</h2>
         <p class="text-muted">Welcome back, Administrator! Here's what's happening today.</p>
     </div>
-
-    <!-- ================= STATS CARDS (FIXED) ================= -->
     <div class="row g-3 mb-4">
-
-        <!-- CARD 1 -->
         <div class="col-md-4">
             <div class="stat-card card-1">
                 <div class="stat-icon">
@@ -27,8 +21,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- CARD 2 -->
         <div class="col-md-4">
             <div class="stat-card card-2">
                 <div class="stat-icon">
@@ -56,9 +48,7 @@
                 </div>
             </div>
         </div>
-
     </div>
-    <!-- ================= END FIX ================= -->
 
 </div>
 
@@ -139,6 +129,9 @@
                 </div>
             </div>
         </div>
+
+    @if (SignInHelper.Roles.Contains("Administrator") ||
+        SignInHelper.Roles.Contains("Manager")){
         <div class="col-md-6">
             <div class="chart-card">
                 <div class="chart-header">
@@ -165,6 +158,7 @@
                 </div>
             </div>
         </div>
+	}
     </div>
 </div>
 

@@ -16,6 +16,8 @@ public interface IMemberRepository : IBaseService<Member>
     Task<bool> CreateOrUpdateMemberWithUserAsync(MemberVm vm,CancellationToken cancellationToken);
     Task<User> GetUserByMemberIdAsync(long memberId, CancellationToken cancellationToken = default);
     List<SelectListItem> GetMemberList();
+    Task<List<SelectListItem>> GetMemberList(long userId);
+    Task<Member> GetMemberByUserIdAsync(long userId);
 }
 
 public class MemberRepository : BaseService<Member>, IMemberRepository
@@ -141,4 +143,47 @@ public class MemberRepository : BaseService<Member>, IMemberRepository
         return await _context.Set<User>()
                              .FirstOrDefaultAsync(u => u.MemberId == memberId, cancellationToken);
     }
+
+    public async Task<List<SelectListItem>> GetMemberList(long userId)
+    {
+        var query = _context.Set<Member>()
+                            .Where(x => !x.IsDelete);
+
+        if (userId > 0)
+        {
+            var user = await _context.Set<User>()
+                                     .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+                return new List<SelectListItem>();
+
+            query = query.Where(x => x.Id == user.MemberId);
+        }
+
+        return await query
+            .Select(x => new SelectListItem
+            {
+                Value = x.Id.ToString(),
+                Text = x.Name
+            })
+            .ToListAsync();
+    }
+
+    public async Task<Member> GetMemberByUserIdAsync(long userId)
+    {
+        if (userId <= 0)
+            return null;
+
+        var user = await _context.Set<User>()
+                                 .AsNoTracking()
+                                 .FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user == null || user.MemberId == null)
+            return null;
+
+        return await _context.Set<Member>()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(m => !m.IsDelete && m.Id == user.MemberId);
+    }
+
 }
